@@ -95,51 +95,51 @@ h4, .h4 { font-weight: 600; }
 
 /* ---------- Photo banners ---------- */
 .banners .section-head { margin-bottom: 20px; }
-.banners__grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+.banners__grid { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 750px) { .banners__grid { grid-template-columns: repeat(min(var(--cols), 2), minmax(0, 1fr)); gap: 16px; } }
 @media (min-width: 1100px) { .banners__grid { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); } }
-.banner {
+.pbanner {
   position: relative; display: block; overflow: hidden; isolation: isolate; border-radius: var(--radius);
   background: #1a1714; color: #fff; aspect-ratio: 4 / 4.2;
 }
-.banners--hero .banner { aspect-ratio: 4 / 4.4; }
-@media (min-width: 750px) { .banners--hero .banner { aspect-ratio: 1 / 1; } }
-@media (min-width: 1100px) { .banners--hero .banner { aspect-ratio: auto; height: min(72vh, 680px); min-height: 460px; } }
-.banners--wide .banner { aspect-ratio: 16 / 11; }
-@media (min-width: 750px) { .banners--wide .banner { aspect-ratio: 16 / 8; } }
-.banner__media, .banner__media img, .banner__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.banner__media img { transform: scale(1.02); transition: transform 2.4s var(--ease-out); }
-.banner:hover .banner__media img { transform: scale(1.08); }
-.banner::after {
+.banners--hero .pbanner { aspect-ratio: 4 / 4.4; }
+@media (min-width: 750px) { .banners--hero .pbanner { aspect-ratio: 1 / 1; } }
+@media (min-width: 1100px) { .banners--hero .pbanner { aspect-ratio: auto; height: min(72vh, 680px); min-height: 460px; } }
+.banners--wide .pbanner { aspect-ratio: 16 / 11; }
+@media (min-width: 750px) { .banners--wide .pbanner { aspect-ratio: 16 / 8; } }
+.pbanner__media, .pbanner__media img, .pbanner__media .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pbanner__media img { transform: scale(1.02); transition: transform 2.4s var(--ease-out); }
+.pbanner:hover .pbanner__media img { transform: scale(1.08); }
+.pbanner::after {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
   background: linear-gradient(to top, rgba(10,8,6,.82) 0%, rgba(10,8,6,.45) 34%, rgba(10,8,6,0) 64%);
 }
-.banners--wide .banner::after { background: linear-gradient(90deg, rgba(10,8,6,.85) 0%, rgba(10,8,6,.5) 40%, rgba(10,8,6,0) 75%); }
-.banner__body {
+.banners--wide .pbanner::after { background: linear-gradient(90deg, rgba(10,8,6,.85) 0%, rgba(10,8,6,.5) 40%, rgba(10,8,6,0) 75%); }
+.pbanner__body {
   position: absolute; z-index: 1; left: 0; right: 0; bottom: 0;
   display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: clamp(22px, 3vw, 44px);
 }
-.banners--wide .banner__body { top: 0; bottom: 0; justify-content: center; right: 40%; }
-.banner__badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 12px; border-radius: 999px; background: rgba(255,255,255,.92); color: #111; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
-.banner__title { font-family: var(--font-heading); font-weight: 600; font-size: clamp(26px, 1.8vw + 14px, 48px); line-height: 1.08; letter-spacing: -.02em; max-width: 14ch; text-wrap: balance; }
-.banners--wide .banner__title { font-size: clamp(24px, 1.2vw + 14px, 38px); }
-.banner__text { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,.85); max-width: 40ch; }
-.banner__btn { margin-top: 6px; }
-.banner--dark-text { color: #111; }
-.banner--dark-text::after { background: linear-gradient(to top, rgba(255,255,255,.85), rgba(255,255,255,0) 60%); }
-.banner--dark-text .banner__text { color: rgba(0,0,0,.7); }
+.banners--wide .pbanner__body { top: 0; bottom: 0; justify-content: center; right: 40%; }
+.pbanner__badge { display: inline-flex; align-items: center; min-height: 26px; padding: 0 12px; border-radius: 999px; background: rgba(255,255,255,.92); color: #111; font-size: 11px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; }
+.pbanner__title { font-family: var(--font-heading); font-weight: 600; font-size: clamp(26px, 1.8vw + 14px, 48px); line-height: 1.08; letter-spacing: -.02em; max-width: 14ch; text-wrap: balance; }
+.banners--wide .pbanner__title { font-size: clamp(24px, 1.2vw + 14px, 38px); }
+.pbanner__text { font-size: 15px; line-height: 1.55; color: rgba(255,255,255,.85); max-width: 40ch; }
+.pbanner__btn { margin-top: 6px; }
+.pbanner--dark-text { color: #111; }
+.pbanner--dark-text::after { background: linear-gradient(to top, rgba(255,255,255,.85), rgba(255,255,255,0) 60%); }
+.pbanner--dark-text .pbanner__text { color: rgba(0,0,0,.7); }
 /* Small tiles: caption under the photo */
 .banners--tiles .banners__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 @media (min-width: 750px) { .banners--tiles .banners__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 1100px) { .banners--tiles .banners__grid { grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 16px; } }
-.banners--tiles .banner { aspect-ratio: auto; background: none; color: var(--c-ink); overflow: visible; border-radius: 0; }
-.banners--tiles .banner::after { display: none; }
-.banners--tiles .banner__media { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-sm); overflow: hidden; background: var(--c-subtle); }
-.banners--tiles .banner__body { position: static; padding: 12px 2px 0; flex-direction: row; justify-content: space-between; align-items: center; gap: 8px; }
-.banners--tiles .banner__badge, .banners--tiles .banner__text, .banners--tiles .banner__btn { display: none; }
-.banners--tiles .banner__title { font-size: 16px; font-weight: 600; letter-spacing: 0; max-width: none; }
-.banners--tiles .banner__body::after { content: "→"; font-size: 16px; transition: transform .5s var(--ease-out); }
-.banners--tiles .banner:hover .banner__body::after { transform: translateX(4px); color: var(--c-gold-text); }
+.banners--tiles .pbanner { aspect-ratio: auto; background: none; color: var(--c-ink); overflow: visible; border-radius: 0; }
+.banners--tiles .pbanner::after { display: none; }
+.banners--tiles .pbanner__media { position: relative; display: block; aspect-ratio: 1 / 1; border-radius: var(--radius-sm); overflow: hidden; background: var(--c-subtle); }
+.banners--tiles .pbanner__body { position: static; padding: 12px 2px 0; flex-direction: row; justify-content: space-between; align-items: center; gap: 8px; }
+.banners--tiles .pbanner__badge, .banners--tiles .pbanner__text, .banners--tiles .pbanner__btn { display: none; }
+.banners--tiles .pbanner__title { font-size: 16px; font-weight: 600; letter-spacing: 0; max-width: none; }
+.banners--tiles .pbanner__body::after { content: "→"; font-size: 16px; transition: transform .5s var(--ease-out); }
+.banners--tiles .pbanner:hover .pbanner__body::after { transform: translateX(4px); color: var(--c-gold-text); }
 
 /* ---------- Product cards and rows ---------- */
 .product-grid { gap: 32px 14px; }
@@ -238,17 +238,17 @@ h4, .h4 { font-weight: 600; }
 
 /* ---------- Fixes ---------- */
 html, body { overflow-x: clip; }
-.banners--tiles .banner__media { height: auto; inset: auto; }
+.banners--tiles .pbanner__media { height: auto; inset: auto; }
 @media (min-width: 1100px) {
   .header__nav-list { padding-inline: var(--gutter); justify-content: safe center; }
 }
 .template-index .main-content > .shopify-section:first-child .section { padding-top: clamp(16px, 2vw, 28px); }
-@media (min-width: 1100px) { .banners--hero .banner { height: min(66vh, 620px); } }
+@media (min-width: 1100px) { .banners--hero .pbanner { height: min(66vh, 620px); } }
 @media (max-width: 749px) {
-  .banners--hero .banner { aspect-ratio: 1 / 1.08; }
-  .banners--wide .banner { aspect-ratio: 1 / .95; }
-  .banners--wide .banner::after { background: linear-gradient(to top, rgba(10,8,6,.85) 0%, rgba(10,8,6,.4) 45%, rgba(10,8,6,0) 75%); }
-  .banners--wide .banner__body { top: auto; right: 0; }
+  .banners--hero .pbanner { aspect-ratio: 1 / 1.08; }
+  .banners--wide .pbanner { aspect-ratio: 1 / .95; }
+  .banners--wide .pbanner::after { background: linear-gradient(to top, rgba(10,8,6,.85) 0%, rgba(10,8,6,.4) 45%, rgba(10,8,6,0) 75%); }
+  .banners--wide .pbanner__body { top: auto; right: 0; }
   .section-products .tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
   .section-products .tab { white-space: nowrap; }
   .section-head { gap: 14px; }
