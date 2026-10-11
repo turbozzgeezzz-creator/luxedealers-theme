@@ -78,7 +78,7 @@
         "hide_on_scroll": false,
         "highlight_item": "",
         "menu": "main-menu-2",
-        "nav_hide": "Home, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
+        "nav_hide": "Home, New Arrivals, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
         "overlay_home": false,
         "pill_label": "New in",
         "pill_link": "/collections/new-arrivals",
