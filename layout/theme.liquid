@@ -48,6 +48,7 @@
 
     <script>
       document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      try { if (sessionStorage.getItem('luxe:splash')) document.documentElement.classList.add('splash-seen'); } catch (e) {}
       window.Luxe = {
         routes: {
           root: {{ routes.root_url | json }},
@@ -78,6 +79,7 @@
 
   <body class="template-{{ template.name | handle }}{% if template.suffix %} template-{{ template.suffix | handle }}{% endif %}">
     <a class="skip-link" href="#MainContent">{{ 'general.skip' | t }}</a>
+    {% render 'splash' %}
 
     {% sections 'header-group' %}
 
@@ -92,6 +94,11 @@
     {% section 'newsletter-popup' %}
     {% render 'search-overlay' %}
     {% render 'quick-view' %}
+    {% render 'welcome-back' %}
+    {%- if settings.advisor_float and settings.advisor_whatsapp != blank -%}
+      <a class="advisor-float" href="https://wa.me/{{ settings.advisor_whatsapp }}" target="_blank" rel="noopener"><span class="advisor__dot" aria-hidden="true"></span>{{ settings.advisor_label }}</a>
+    {%- endif -%}
+    {%- if settings.view_cursor and settings.motion != 'off' -%}<div class="view-cursor" aria-hidden="true">{{ 'products.view' | t }}</div>{%- endif -%}
 
     <div class="visually-hidden" aria-live="polite" role="status" id="A11yStatus"></div>
   </body>

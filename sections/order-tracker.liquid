@@ -1,0 +1,38 @@
+{%- assign s = section.settings -%}
+<section class="section section--flush-top">
+  <div class="container">
+    <ol class="tracker" role="list" data-stagger>
+      {%- for block in section.blocks -%}
+        <li class="tracker__step" {{ block.shopify_attributes }}>
+          <h3>{{ block.settings.title }}</h3>
+          <p>{{ block.settings.text }}</p>
+        </li>
+      {%- endfor -%}
+    </ol>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-top: 48px" data-reveal>
+      {%- if shop.customer_accounts_enabled -%}<a class="btn" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{{ 'tracker.view_orders' | t }}</a>{%- endif -%}
+      {%- if s.contact_page != blank -%}<a class="btn btn--outline" href="{{ s.contact_page.url }}">{{ 'footer.contact_us' | t }}</a>{%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Order tracking",
+  "class": "section-tracker",
+  "settings": [
+    { "type": "page", "id": "contact_page", "label": "Contact page" }
+  ],
+  "blocks": [
+    {
+      "type": "step",
+      "name": "Step",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Order confirmed" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "You'll get an email with your order number straight away." }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Order tracking" }]
+}
+{% endschema %}

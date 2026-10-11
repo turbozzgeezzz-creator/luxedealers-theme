@@ -78,7 +78,14 @@
     "delivery_returns": "Delivery and returns",
     "care": "Care",
     "share": "Share",
-    "copy_link": "Copy link"
+    "copy_link": "Copy link",
+    "dispatch": "Estimated dispatch:",
+    "advisor_message": "Hello, I have a question about {{ title }}:",
+    "this_piece": "This piece",
+    "set_total": "Total",
+    "add_selected": "Add selected",
+    "choose_options": "Choose options",
+    "view": "View"
   },
   "cart": {
     "title": "Your bag",
@@ -249,5 +256,13 @@
     "shop": "Start shopping",
     "print": "Print",
     "apple_wallet": "Add to Apple Wallet"
+  },
+  "tracker": {
+    "view_orders": "View my orders"
+  },
+  "welcome": {
+    "back": "Welcome back",
+    "continue": "Pick up where you left off",
+    "dismiss": "Dismiss"
   }
 }

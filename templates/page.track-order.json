@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "hero": { "type": "page-hero", "settings": { "eyebrow": "Client care", "heading": "Track your order", "text": "Every order is sent with tracking. Here's how to follow yours." } },
+    "steps": {
+      "type": "order-tracker",
+      "blocks": {
+        "a": { "type": "step", "settings": { "title": "Order confirmed", "text": "You'll get an email with your order number straight away." } },
+        "b": { "type": "step", "settings": { "title": "Dispatched", "text": "When your order ships, we email a tracking link for your country's carrier." } },
+        "c": { "type": "step", "settings": { "title": "On its way", "text": "Follow every step with the tracking link, or in your account under Orders." } },
+        "d": { "type": "step", "settings": { "title": "Delivered", "text": "Something not right? Contact us and we'll help." } }
+      },
+      "block_order": ["a", "b", "c", "d"],
+      "settings": {}
+    }
+  },
+  "order": ["hero", "steps"]
+}

@@ -9,7 +9,7 @@
         {%- if section.settings.link_label != blank -%}<a class="link" href="{{ section.settings.link | default: routes.collections_url }}" data-reveal>{{ section.settings.link_label }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>{%- endif -%}
       </div>
     {%- endif -%}
-    <div class="doors{% if section.settings.feature_first %} doors--feature-first{% endif %}" style="--cols: {{ section.settings.columns }}">
+    <div class="doors{% if section.settings.feature_first %} doors--feature-first{% endif %}{% if section.settings.labels == 'below' %} doors--below{% endif %}" style="--cols: {{ section.settings.columns }}">
       {%- for block in section.blocks -%}
         {%- liquid
           assign c = block.settings.collection
@@ -51,6 +51,16 @@
     { "type": "url", "id": "link", "label": "Link" },
     { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 5, "step": 1, "default": 4 },
     { "type": "checkbox", "id": "feature_first", "label": "Make the first tile large", "default": true },
+    {
+      "type": "select",
+      "id": "labels",
+      "label": "Titles",
+      "options": [
+        { "value": "overlay", "label": "On the image" },
+        { "value": "below", "label": "Under the image" }
+      ],
+      "default": "overlay"
+    },
     { "type": "checkbox", "id": "subtle", "label": "Soft background", "default": false }
   ],
   "blocks": [

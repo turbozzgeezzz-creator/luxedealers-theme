@@ -50,6 +50,13 @@
     {%- else -%}
       {% render 'placeholder' %}
     {%- endif -%}
+    {%- for m in product.media -%}
+      {%- if m.media_type == 'video' -%}
+        {%- assign mp4 = m.sources | where: 'format', 'mp4' | first -%}
+        {%- if mp4 -%}<video class="card__video" data-src="{{ mp4.url }}" muted loop playsinline preload="none" aria-hidden="true"></video>{%- endif -%}
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
   </a>
   <div class="card__badges">
     {%- if product.available == false -%}

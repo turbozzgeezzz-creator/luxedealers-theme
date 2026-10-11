@@ -1,0 +1,10 @@
+{%- comment -%} Logo intro, first page of each visit only. theme.js fades it out on load. {%- endcomment -%}
+{%- if settings.intro_splash and settings.motion != 'off' -%}
+  <div class="splash" id="Splash" aria-hidden="true">
+    <div class="splash__inner">
+      <img class="splash__mark" src="{{ 'logo-mark.webp' | asset_url }}" alt="" width="458" height="480">
+      <span class="splash__word"><span><span class="gold-text">LUXE</span>DEALERS</span></span>
+      <span class="splash__line"><i></i></span>
+    </div>
+  </div>
+{%- endif -%}

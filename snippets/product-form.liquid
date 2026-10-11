@@ -1,6 +1,6 @@
 {%- comment -%}
   Variant picker, price, stock line and buttons.
-  Params: product, form_id, show_dynamic (bool), show_qty (bool), threshold
+  Params: product, form_id, show_dynamic (bool), show_qty (bool), threshold, size_page
   Stock lines use real tracked inventory only.
 {%- endcomment -%}
 {%- liquid
@@ -42,7 +42,9 @@
       endif
     -%}
     <fieldset class="option" data-option-index="{{ forloop.index0 }}">
-      <legend class="option__legend">{{ option.name }}: <span data-option-label>{{ option.selected_value }}</span></legend>
+      <legend class="option__legend">{{ option.name }}: <span data-option-label>{{ option.selected_value }}</span>
+        {%- if size_page != blank and oname contains 'size' -%}<button type="button" class="option__guide" data-drawer-open="SizeGuide">{{ 'products.size_guide' | t }}</button>{%- endif -%}
+      </legend>
       <div class="option__values">
         {%- for val in option.values -%}
           {%- assign oid = form_id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
@@ -74,6 +76,9 @@
     assign stock_text = 'products.backorder' | t
   endif
 -%}
+{%- if settings.dispatch_days > 0 and current.available -%}
+  <p class="dispatch" data-dispatch data-days="{{ settings.dispatch_days }}" data-cutoff="{{ settings.dispatch_cutoff }}" data-offset="{{ 'now' | date: '%z' }}" data-label="{{ 'products.dispatch' | t | escape }}" hidden>{% render 'icon', name: 'truck', class: 'icon--sm' %} <span></span></p>
+{%- endif -%}
 <p class="{{ stock_class }}" data-stock data-threshold="{{ threshold }}" data-in="{{ 'products.in_stock' | t | escape }}" data-out="{{ 'products.sold_out' | t | escape }}" data-low="{{ low | escape }}" data-backorder="{{ 'products.backorder' | t | escape }}">{{ stock_text }}</p>
 
 {%- form 'product', product, id: form_id, class: 'buy-buttons', data-product-form: '', novalidate: 'novalidate' -%}

@@ -1,0 +1,34 @@
+{%- comment -%}
+  Buy together: this piece plus up to three chosen (or complementary)
+  products. Totals are the real sum of prices; no discount is implied.
+  Params: product, block
+{%- endcomment -%}
+{%- liquid
+  assign others = block.settings.products
+  if others == blank or others.size == 0
+    assign others = product.metafields['shopify--discovery--product_recommendation'].complementary_products.value
+  endif
+-%}
+{%- if others != blank and others.size > 0 -%}
+  {%- assign current = product.selected_or_first_available_variant -%}
+  <div class="set" data-set>
+    <p class="set__title">{{ block.settings.title }}</p>
+    <div class="set__list">
+      <label class="set__item">
+        <input type="checkbox" checked disabled data-set-main data-price="{{ current.price }}">
+        <span class="set__media">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</span>
+        <span><span class="set__name">{{ 'products.this_piece' | t }}: {{ product.title }}</span><br><span class="set__price">{{ current.price | money }}</span></span>
+      </label>
+      {%- for p in others limit: 3 -%}
+        {%- if p.available == false or p.id == product.id -%}{%- continue -%}{%- endif -%}
+        {%- assign v = p.selected_or_first_available_variant -%}
+        <label class="set__item">
+          <input type="checkbox" checked data-set-variant="{{ v.id }}" data-price="{{ v.price }}">
+          <span class="set__media">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</span>
+          <span><span class="set__name">{{ p.title }}{% unless p.has_only_default_variant %} · {{ v.title }}{% endunless %}</span><br><span class="set__price">{{ v.price | money }}</span></span>
+        </label>
+      {%- endfor -%}
+    </div>
+    <div class="set__total"><span>{{ 'products.set_total' | t }} <strong data-set-total>—</strong></span><button type="button" class="btn btn--sm" data-set-add>{{ 'products.add_selected' | t }}</button></div>
+  </div>
+{%- endif -%}

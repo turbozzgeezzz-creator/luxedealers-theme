@@ -54,7 +54,7 @@
         "id": "color_subtle",
         "label": "Soft panels",
         "info": "Image backgrounds and quiet bands.",
-        "default": "#F7F6F3"
+        "default": "#F6F5F3"
       },
       {
         "type": "color",
@@ -72,7 +72,7 @@
         "type": "color",
         "id": "color_border",
         "label": "Lines and borders",
-        "default": "#E7E4DE"
+        "default": "#E6E4E0"
       },
       {
         "type": "color",
@@ -113,10 +113,28 @@
     "name": "Typography",
     "settings": [
       {
+        "type": "select",
+        "id": "typeface",
+        "label": "Typeface",
+        "options": [
+          {
+            "value": "maison",
+            "label": "Maison (Jost and Cormorant)"
+          },
+          {
+            "value": "custom",
+            "label": "Fonts below"
+          }
+        ],
+        "default": "maison",
+        "info": "Maison is bundled with the theme: a clean geometric sans with an italic serif for accents."
+      },
+      {
         "type": "font_picker",
         "id": "font_heading",
         "label": "Headings",
-        "default": "playfair_display_n4"
+        "default": "playfair_display_n4",
+        "info": "Used when Typeface is set to Fonts below."
       },
       {
         "type": "font_picker",
@@ -144,9 +162,18 @@
         "id": "motion",
         "label": "Animation level",
         "options": [
-          { "value": "off", "label": "Off" },
-          { "value": "subtle", "label": "Subtle" },
-          { "value": "full", "label": "Full" }
+          {
+            "value": "off",
+            "label": "Off"
+          },
+          {
+            "value": "subtle",
+            "label": "Subtle"
+          },
+          {
+            "value": "full",
+            "label": "Full"
+          }
         ],
         "default": "full",
         "info": "Visitors whose device asks for reduced motion always get animations off."
@@ -162,6 +189,20 @@
         "id": "page_transitions",
         "label": "Fade between pages",
         "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "intro_splash",
+        "label": "Logo intro on first visit",
+        "default": true,
+        "info": "A short logo reveal, once per visit. Skipped for reduced motion."
+      },
+      {
+        "type": "checkbox",
+        "id": "view_cursor",
+        "label": "View cursor over products",
+        "default": true,
+        "info": "Desktop only."
       }
     ]
   },
@@ -173,9 +214,18 @@
         "id": "card_ratio",
         "label": "Image shape",
         "options": [
-          { "value": "portrait", "label": "Portrait 4:5" },
-          { "value": "square", "label": "Square" },
-          { "value": "tall", "label": "Tall 2:3" }
+          {
+            "value": "portrait",
+            "label": "Portrait 4:5"
+          },
+          {
+            "value": "square",
+            "label": "Square"
+          },
+          {
+            "value": "tall",
+            "label": "Tall 2:3"
+          }
         ],
         "default": "portrait"
       },
@@ -235,8 +285,14 @@
         "id": "cart_type",
         "label": "When something is added",
         "options": [
-          { "value": "drawer", "label": "Open cart drawer" },
-          { "value": "page", "label": "Go to cart page" }
+          {
+            "value": "drawer",
+            "label": "Open cart drawer"
+          },
+          {
+            "value": "page",
+            "label": "Go to cart page"
+          }
         ],
         "default": "drawer"
       },
@@ -285,6 +341,67 @@
     ]
   },
   {
+    "name": "Client services",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Client advisor"
+      },
+      {
+        "type": "text",
+        "id": "advisor_whatsapp",
+        "label": "WhatsApp number",
+        "info": "International format, digits only, e.g. 447700900123. Shows a Contact an advisor button."
+      },
+      {
+        "type": "text",
+        "id": "advisor_label",
+        "label": "Advisor button text",
+        "default": "Contact an advisor"
+      },
+      {
+        "type": "checkbox",
+        "id": "advisor_float",
+        "label": "Floating advisor button",
+        "default": false
+      },
+      {
+        "type": "header",
+        "content": "Dispatch estimate"
+      },
+      {
+        "type": "range",
+        "id": "dispatch_days",
+        "label": "Business days to dispatch",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "default": 0,
+        "info": "0 hides the estimate. Use your real handling time."
+      },
+      {
+        "type": "range",
+        "id": "dispatch_cutoff",
+        "label": "Same-day cutoff hour (store time zone)",
+        "min": 0,
+        "max": 23,
+        "step": 1,
+        "default": 14
+      },
+      {
+        "type": "header",
+        "content": "Returning visitors"
+      },
+      {
+        "type": "checkbox",
+        "id": "welcome_back",
+        "label": "Welcome back panel",
+        "default": true,
+        "info": "Shows the last piece a returning visitor looked at. Uses their own browsing on this device."
+      }
+    ]
+  },
+  {
     "name": "Store details",
     "settings": [
       {
@@ -313,12 +430,36 @@
   {
     "name": "Social media",
     "settings": [
-      { "type": "text", "id": "social_instagram", "label": "Instagram" },
-      { "type": "text", "id": "social_tiktok", "label": "TikTok" },
-      { "type": "text", "id": "social_facebook", "label": "Facebook" },
-      { "type": "text", "id": "social_pinterest", "label": "Pinterest" },
-      { "type": "text", "id": "social_youtube", "label": "YouTube" },
-      { "type": "text", "id": "social_x", "label": "X" }
+      {
+        "type": "text",
+        "id": "social_instagram",
+        "label": "Instagram"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok",
+        "label": "TikTok"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook",
+        "label": "Facebook"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest",
+        "label": "Pinterest"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube",
+        "label": "YouTube"
+      },
+      {
+        "type": "text",
+        "id": "social_x",
+        "label": "X"
+      }
     ]
   },
   {

@@ -13,7 +13,7 @@
 
   <div class="product">
     {%- comment -%} Gallery {%- endcomment -%}
-    <div class="gallery{% if s.gallery == 'grid' %} gallery--grid{% endif %}" data-gallery data-zoom="{{ s.hover_zoom }}">
+    <div class="gallery gallery--{{ s.gallery }}" data-gallery data-zoom="{{ s.hover_zoom }}">
       <div class="gallery__main" tabindex="0" aria-label="{{ 'products.gallery' | t }}">
         {%- for media in product.media -%}
           <div class="gallery__slide ratio-{{ ratio }}" data-media-id="{{ media.id }}"{% if forloop.first %} data-reveal="zoom"{% endif %}>
@@ -89,12 +89,37 @@
               <hr class="product__divider" {{ block.shopify_attributes }}>
             {%- when 'buy' -%}
               <div style="display: flex; flex-direction: column; gap: 22px" {{ block.shopify_attributes }}>
-                {% render 'product-form', product: product, form_id: 'ProductForm', show_dynamic: block.settings.dynamic, show_qty: block.settings.qty %}
+                {%- liquid
+                  assign size_page = nil
+                  for b in section.blocks
+                    if b.type == 'accordions' and b.settings.size_page != blank
+                      assign size_page = b.settings.size_page
+                    endif
+                  endfor
+                -%}
+                {% render 'product-form', product: product, form_id: 'ProductForm', show_dynamic: block.settings.dynamic, show_qty: block.settings.qty, size_page: size_page %}
                 <div class="pickup">
                   {%- assign sku_hidden = true -%}{%- if current.sku != blank -%}{%- assign sku_hidden = false -%}{%- endif -%}
                   <span {% if sku_hidden %}hidden{% endif %}>{{ 'products.ref' | t }}: <span data-sku>{{ current.sku }}</span></span>
                 </div>
               </div>
+            {%- when 'advisor' -%}
+              {%- if settings.advisor_whatsapp != blank -%}
+                {%- capture msg -%}{{ 'products.advisor_message' | t: title: product.title }} {{ request.origin }}{{ product.url }}{%- endcapture -%}
+                <a class="advisor" href="https://wa.me/{{ settings.advisor_whatsapp }}?text={{ msg | url_encode }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+                  <span class="advisor__dot" aria-hidden="true"></span>
+                  <span><strong style="font-weight: 500">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
+                  {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
+                </a>
+              {%- elsif block.settings.page != blank -%}
+                <a class="advisor" href="{{ block.settings.page.url }}" {{ block.shopify_attributes }}>
+                  {% render 'icon', name: 'chat', class: 'icon--sm' %}
+                  <span><strong style="font-weight: 500">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
+                  {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
+                </a>
+              {%- endif -%}
+            {%- when 'set' -%}
+              <div {{ block.shopify_attributes }}>{% render 'complete-set', product: product, block: block %}</div>
             {%- when 'text' -%}
               <div class="rte muted" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
             {%- when 'trust' -%}
@@ -181,6 +206,18 @@
   </div>
 </section>
 
+{%- for b in section.blocks -%}
+  {%- if b.type == 'accordions' and b.settings.size_page != blank -%}
+    <div class="drawer" id="SizeGuide" aria-hidden="true">
+      <div class="drawer__overlay" data-drawer-close></div>
+      <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="SizeGuideTitle" tabindex="-1">
+        <div class="drawer__head"><h2 class="drawer__title" id="SizeGuideTitle">{{ b.settings.size_page.title }}</h2><button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
+        <div class="drawer__body"><div class="rte">{{ b.settings.size_page.content }}</div></div>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endfor -%}
+
 {%- comment -%} Sticky add to bag on scroll (all screen sizes) {%- endcomment -%}
 {%- if s.sticky_bar -%}
   <div class="sticky-atc" data-sticky-atc aria-hidden="false">
@@ -205,10 +242,11 @@
       "id": "gallery",
       "label": "Desktop gallery",
       "options": [
+        { "value": "stack", "label": "Full-height stack" },
         { "value": "grid", "label": "Photo grid" },
         { "value": "slider", "label": "Slider" }
       ],
-      "default": "grid"
+      "default": "stack"
     },
     { "type": "checkbox", "id": "hover_zoom", "label": "Zoom on hover", "default": true },
     { "type": "checkbox", "id": "sticky_bar", "label": "Sticky add to bag bar", "default": true }
@@ -252,7 +290,25 @@
         { "type": "richtext", "id": "care_text", "label": "Care text" }
       ]
     },
-    { "type": "share", "name": "Share", "limit": 1, "settings": [] }
+    { "type": "share", "name": "Share", "limit": 1, "settings": [] },
+    {
+      "type": "advisor",
+      "name": "Advisor button",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Questions about this piece? Chat with us." },
+        { "type": "page", "id": "page", "label": "Contact page (if no WhatsApp)" }
+      ]
+    },
+    {
+      "type": "set",
+      "name": "Complete the set",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Complete the set" },
+        { "type": "product_list", "id": "products", "label": "Products", "limit": 3, "info": "Leave empty to use complementary products from the Search & Discovery app." }
+      ]
+    }
   ]
 }
 {% endschema %}

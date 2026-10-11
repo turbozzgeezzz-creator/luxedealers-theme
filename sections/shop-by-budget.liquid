@@ -1,0 +1,68 @@
+{%- liquid
+  assign s = section.settings
+  assign base = s.collection.url | default: routes.all_products_collection_url
+-%}
+<section class="section section--tight">
+  <div class="container">
+    {%- if s.heading != blank -%}
+      <div class="section-head">
+        <div class="section-head__text">
+          {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
+          <h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>
+        </div>
+      </div>
+    {%- endif -%}
+    <div class="budget" style="--cols: {{ section.blocks.size | at_most: 5 }}" data-stagger>
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign b = block.settings
+          assign url = b.link
+          if url == blank
+            assign url = base | append: '?filter.v.price.lte=' | append: b.amount
+          endif
+        -%}
+        <a class="budget__tile" href="{{ url }}" {{ block.shopify_attributes }}>
+          <span class="budget__label">{{ b.label }}</span>
+          <span class="budget__amount">{{ b.amount | times: 100 | money_without_trailing_zeros }}</span>
+          <span class="budget__go">{{ s.cta }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop by budget",
+  "class": "section-budget",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Gifting" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Gifts by budget" },
+    { "type": "collection", "id": "collection", "label": "Collection to filter", "info": "Tiles link to this collection filtered by price. Turn on the Price filter in the Search & Discovery app." },
+    { "type": "text", "id": "cta", "label": "Link text", "default": "Shop" }
+  ],
+  "blocks": [
+    {
+      "type": "tier",
+      "name": "Price tier",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Under" },
+        { "type": "number", "id": "amount", "label": "Amount (store currency)", "default": 500 },
+        { "type": "url", "id": "link", "label": "Custom link (optional)" }
+      ]
+    }
+  ],
+  "max_blocks": 5,
+  "presets": [
+    {
+      "name": "Shop by budget",
+      "blocks": [
+        { "type": "tier", "settings": { "label": "Under", "amount": 250 } },
+        { "type": "tier", "settings": { "label": "Under", "amount": 500 } },
+        { "type": "tier", "settings": { "label": "Under", "amount": 1000 } },
+        { "type": "tier", "settings": { "label": "Under", "amount": 2500 } }
+      ]
+    }
+  ]
+}
+{% endschema %}

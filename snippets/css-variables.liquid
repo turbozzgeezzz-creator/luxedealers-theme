@@ -12,9 +12,17 @@
   assign fb_italic = fb | font_modify: 'style', 'italic'
   assign scale = settings.heading_scale | divided_by: 100.0
 -%}
+{%- if settings.typeface == 'custom' -%}
 {{ fh | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
 {{ fb | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{%- else -%}
+{{ 'jost-var.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{%- endif -%}
 <style>
+  @font-face { font-family: 'Jost'; font-style: normal; font-weight: 100 900; font-display: swap; src: url({{ 'jost-var.woff2' | asset_url }}) format('woff2'); }
+  @font-face { font-family: 'Cormorant Garamond'; font-style: italic; font-weight: 400; font-display: swap; src: url({{ 'cormorant-italic.woff2' | asset_url }}) format('woff2'); }
+  @font-face { font-family: 'Cormorant Garamond'; font-style: normal; font-weight: 400; font-display: swap; src: url({{ 'cormorant.woff2' | asset_url }}) format('woff2'); }
+  {%- if settings.typeface == 'custom' -%}
   {{ fh | font_face: font_display: 'swap' }}
   {{ fh_italic | font_face: font_display: 'swap' }}
   {{ fb | font_face: font_display: 'swap' }}
@@ -22,6 +30,7 @@
   {{ fb_semi | font_face: font_display: 'swap' }}
   {{ fb_bold | font_face: font_display: 'swap' }}
   {{ fb_italic | font_face: font_display: 'swap' }}
+  {%- endif -%}
 
   :root {
     --c-bg: {{ settings.color_background }};
@@ -41,10 +50,19 @@
     --c-error-soft: {{ settings.color_error | color_modify: 'alpha', 0.08 }};
     --gold-metal: linear-gradient(115deg, {{ settings.color_gold | color_darken: 14 }} 0%, {{ settings.color_gold | color_lighten: 22 }} 22%, {{ settings.color_gold }} 42%, {{ settings.color_gold | color_lighten: 30 }} 58%, {{ settings.color_gold | color_darken: 8 }} 78%, {{ settings.color_gold | color_lighten: 14 }} 100%);
 
+    {%- if settings.typeface == 'custom' %}
     --font-heading: {{ fh.family }}, {{ fh.fallback_families }};
     --font-heading-weight: {{ fh.weight }};
     --font-body: {{ fb.family }}, {{ fb.fallback_families }};
     --font-body-weight: {{ fb.weight }};
+    --font-serif: {{ fh.family }}, {{ fh.fallback_families }};
+    {%- else %}
+    --font-heading: 'Jost', 'Futura', 'Helvetica Neue', Arial, sans-serif;
+    --font-heading-weight: 300;
+    --font-body: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+    --font-body-weight: 400;
+    --font-serif: 'Cormorant Garamond', 'Didot', Georgia, serif;
+    {%- endif %}
     --heading-scale: {{ scale }};
     --logo-h: {{ settings.logo_height }}px;
   }

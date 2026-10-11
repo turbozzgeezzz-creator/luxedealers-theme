@@ -1,6 +1,6 @@
 {%- comment -%}
   Country / currency and language pickers, from Settings > Markets and
-  Languages. Params: id (unique), direction ('down' opens below), show_language (bool)
+  Languages. Params: id (unique), direction ('down' opens below), show_language (bool), compact (bool: currency only)
 {%- endcomment -%}
 {%- if localization.available_countries.size > 1 or localization.available_languages.size > 1 -%}
   {%- form 'localization', id: id, class: 'localization-form' -%}
@@ -10,7 +10,7 @@
           <button type="button" class="localization__btn" aria-expanded="false" aria-controls="{{ id }}-countries">
             {% render 'icon', name: 'globe', class: 'icon--sm' %}
             <span class="visually-hidden">{{ 'localization.country' | t }}</span>
-            {{ localization.country.name }} · {{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }}
+            {%- if compact -%}{{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }}{%- else -%}{{ localization.country.name }} · {{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }}{%- endif -%}
             {% render 'icon', name: 'chevron-down' %}
           </button>
           <div class="localization__list" id="{{ id }}-countries" hidden>

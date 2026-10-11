@@ -3,25 +3,96 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "title": { "type": "title", "settings": {} },
-        "price": { "type": "price", "settings": {} },
-        "line1": { "type": "divider", "settings": {} },
-        "buy": { "type": "buy", "settings": { "qty": false, "dynamic": true } },
-        "trust": { "type": "trust", "settings": { "icon_1": "diamond", "text_1": "Brand new", "icon_2": "globe", "text_2": "Ships worldwide", "icon_3": "lock", "text_3": "Secure checkout" } },
-        "tabs": { "type": "accordions", "settings": { "open_first": true } },
-        "share": { "type": "share", "settings": {} }
+        "title": {
+          "type": "title",
+          "settings": {}
+        },
+        "price": {
+          "type": "price",
+          "settings": {}
+        },
+        "line1": {
+          "type": "divider",
+          "settings": {}
+        },
+        "buy": {
+          "type": "buy",
+          "settings": {
+            "qty": false,
+            "dynamic": true
+          }
+        },
+        "trust": {
+          "type": "trust",
+          "settings": {
+            "icon_1": "diamond",
+            "text_1": "Brand new",
+            "icon_2": "globe",
+            "text_2": "Ships worldwide",
+            "icon_3": "lock",
+            "text_3": "Secure checkout"
+          }
+        },
+        "tabs": {
+          "type": "accordions",
+          "settings": {
+            "open_first": true
+          }
+        },
+        "share": {
+          "type": "share",
+          "settings": {}
+        },
+        "advisor": {
+          "type": "advisor",
+          "settings": {
+            "text": "Questions about this piece? Chat with us."
+          }
+        },
+        "set": {
+          "type": "set",
+          "settings": {
+            "title": "Complete the set"
+          }
+        }
       },
-      "block_order": ["title", "price", "line1", "buy", "trust", "tabs", "share"],
-      "settings": { "gallery": "grid", "hover_zoom": true, "sticky_bar": true }
+      "block_order": [
+        "title",
+        "price",
+        "line1",
+        "buy",
+        "advisor",
+        "set",
+        "trust",
+        "tabs",
+        "share"
+      ],
+      "settings": {
+        "gallery": "stack",
+        "hover_zoom": true,
+        "sticky_bar": true
+      }
     },
     "recommendations": {
       "type": "product-recommendations",
-      "settings": { "eyebrow": "You may also like", "heading": "Pairs well with", "intent": "related", "limit": 8 }
+      "settings": {
+        "eyebrow": "You may also like",
+        "heading": "Pairs well with",
+        "intent": "related",
+        "limit": 8
+      }
     },
     "recent": {
       "type": "recently-viewed",
-      "settings": { "heading": "Recently viewed", "limit": 8 }
+      "settings": {
+        "heading": "Recently viewed",
+        "limit": 8
+      }
     }
   },
-  "order": ["main", "recommendations", "recent"]
+  "order": [
+    "main",
+    "recommendations",
+    "recent"
+  ]
 }
