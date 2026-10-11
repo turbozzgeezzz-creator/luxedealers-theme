@@ -253,3 +253,9 @@ html, body { overflow-x: clip; }
   .section-products .tab { white-space: nowrap; }
   .section-head { gap: 14px; }
 }
+
+/* Heavier weights for the Poppins look */
+.menu-overlay__link { font-weight: 600; letter-spacing: -.02em; }
+.menu-overlay__link:hover { color: var(--c-gold-text); }
+.drawer__title, .search-form input, .door__title, .mosaic__title, .bento__title, .budget__amount, .split__stat strong, .rich-text__quote, .story__text, .marquee__item { font-weight: 600; letter-spacing: -.02em; }
+.product__title, .main-product h1 { font-weight: 600; }
