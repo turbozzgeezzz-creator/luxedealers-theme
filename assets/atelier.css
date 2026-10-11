@@ -519,3 +519,8 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .wb-card__stock { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #1E7A3C; }
 .wb-card__price { font-size: 24px; font-weight: 700; letter-spacing: -.02em; }
 .wb-card .btn { margin-top: 4px; }
+.announcement__loc .localization__btn { white-space: nowrap; }
+.dept { min-height: 500px; }
+.dept .tile__art { width: 74%; top: 2%; }
+@media (min-width: 1100px) { .dept { min-height: 540px; } }
+.nav-link { padding: 0 8px; font-size: 14.5px; }

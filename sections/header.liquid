@@ -48,7 +48,8 @@
 
     {%- if menu != blank and section.settings.show_nav -%}
       {%- liquid
-        assign hide_list = section.settings.nav_hide | downcase | split: ','
+        assign hide_csv = section.settings.nav_hide | downcase | replace: ', ', ',' | replace: ' ,', ','
+        assign hide_csv = ',' | append: hide_csv | append: ','
       -%}
       <nav class="header__nav" aria-label="{{ 'header.main_menu' | t }}">
         <div class="container header__nav-inner">
@@ -56,15 +57,10 @@
           {%- for link in menu.links -%}
             {%- liquid
               assign lt = link.title | downcase | strip
+              assign key = ',' | append: lt | append: ','
               assign skip = false
-              for h in hide_list
-                assign hh = h | strip
-                if hh == lt
-                  assign skip = true
-                endif
-              endfor
-              if skip
-                continue
+              if hide_csv contains key
+                assign skip = true
               endif
               assign has_mega = false
               if link.links.size > 0
@@ -100,6 +96,7 @@
                 endif
               endif
             -%}
+            {%- unless skip -%}
             <li class="nav-item"{% if has_mega %} data-has-mega{% endif %}>
               <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{% render 'icon', name: icon, class: 'nav-link__icon' %}{{ link.title }}{% if has_mega %}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}{% endif %}</a>
               {%- if has_mega -%}
@@ -129,6 +126,7 @@
                 </div>
               {%- endif -%}
             </li>
+            {%- endunless -%}
           {%- endfor -%}
           {%- if section.settings.help_menu != blank -%}
             <li class="nav-item nav-item--help" data-has-mega>

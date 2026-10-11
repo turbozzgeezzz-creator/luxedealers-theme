@@ -54,7 +54,7 @@
             <span><small>{{ 'sections.together' | t }}</small><strong>{{ v1.price | plus: v2.price | money }}</strong></span>
             {%- if v1.available and v2.available -%}<button type="submit" class="btn btn--sm">{% render 'icon', name: 'bag', class: 'icon--sm' %} {{ 'sections.add_both' | t }}</button>{%- endif -%}
           </form>
-          {%- unless p1.has_only_default_variant and p2.has_only_default_variant -%}<p class="deal__note">{{ 'sections.bundle_note' | t }}</p>{%- endunless -%}
+          {%- if p1.variants.size > 1 or p2.variants.size > 1 -%}<p class="deal__note">{{ 'sections.bundle_note' | t }}</p>{%- endif -%}
         </div>
       {%- endif -%}
 
