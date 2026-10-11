@@ -1,12 +1,4 @@
 <footer class="site-footer">
-  {%- if section.settings.show_signoff -%}
-    <div class="footer__hero">
-      <div class="container" data-reveal>
-        {%- if section.settings.signoff != blank -%}<p class="eyebrow eyebrow--plain" style="justify-content: center; margin-bottom: 18px">{{ section.settings.signoff }}</p>{%- endif -%}
-        <div class="footer__big" aria-hidden="true"><span class="gold-text">LUXE</span>DEALERS</div>
-      </div>
-    </div>
-  {%- endif -%}
 
   <div class="container footer__main">
     {%- for block in section.blocks -%}
@@ -77,8 +69,6 @@
 {
   "name": "Footer",
   "settings": [
-    { "type": "checkbox", "id": "show_signoff", "label": "Show large logo sign-off", "default": true },
-    { "type": "text", "id": "signoff", "label": "Sign-off line", "default": "Considered style, sent with tracking" },
     { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true }
   ],
   "blocks": [
@@ -88,7 +78,7 @@
       "limit": 1,
       "settings": [
         { "type": "text", "id": "title", "label": "Heading", "default": "LuxeDealers" },
-        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Clothing, shoes, bags and accessories, hand-checked and sent with tracking to most countries.</p>" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Shop premium 1:1 inspired fashion including clothing, handbags, shoes and accessories.</p>" },
         { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter sign-up", "default": true }
       ]
     },

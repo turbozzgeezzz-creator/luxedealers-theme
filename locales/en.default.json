@@ -24,7 +24,8 @@
     "cart": "Bag",
     "contact": "Contact",
     "announcements": "Announcements",
-    "shop_all": "Shop all {{ title }}"
+    "shop_all": "Shop all {{ title }}",
+    "search_placeholder": "Search for products, brands and more"
   },
   "footer": {
     "all_products": "All products",

@@ -33,7 +33,7 @@
     endif
   endfor
 -%}
-<div class="card"{% unless reveal == false %} data-reveal{% endunless %}>
+<div class="card" data-pid="{{ product.id }}"{% if extra %} data-extra hidden{% endif %}{% unless reveal == false %} data-reveal{% endunless %}>
   <div class="card__visual">
   <a class="card__media ratio-{{ ratio }}" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
     {%- if img1 -%}

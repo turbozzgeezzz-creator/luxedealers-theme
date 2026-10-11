@@ -5,14 +5,59 @@
     "footer": {
       "type": "footer",
       "blocks": {
-        "brand": { "type": "brand", "settings": { "title": "Join the list", "show_newsletter": true } },
-        "shop": { "type": "menu", "settings": { "title": "Shop", "fallback": "shop" } },
-        "help": { "type": "menu", "settings": { "title": "Help", "fallback": "help" } },
-        "contact": { "type": "contact", "settings": { "title": "Client care" } }
+        "brand": {
+          "type": "brand",
+          "settings": {
+            "title": "LuxeDealers",
+            "text": "<p>Shop premium 1:1 inspired fashion including clothing, handbags, shoes and accessories. Hand-checked and sent with tracking to most countries.</p>",
+            "show_newsletter": false
+          }
+        },
+        "shop": {
+          "type": "menu",
+          "settings": {
+            "title": "Menu",
+            "menu": "main-menu-1",
+            "fallback": "shop"
+          }
+        },
+        "support": {
+          "type": "menu",
+          "settings": {
+            "title": "Support",
+            "menu": "support-menu",
+            "fallback": "help"
+          }
+        },
+        "legal": {
+          "type": "menu",
+          "settings": {
+            "title": "Legal",
+            "menu": "legal-menu",
+            "fallback": "help"
+          }
+        },
+        "contact": {
+          "type": "contact",
+          "settings": {
+            "title": "Contact",
+            "page": "contact"
+          }
+        }
       },
-      "block_order": ["brand", "shop", "help", "contact"],
-      "settings": { "show_signoff": true, "show_payment": true }
+      "block_order": [
+        "brand",
+        "shop",
+        "support",
+        "legal",
+        "contact"
+      ],
+      "settings": {
+        "show_payment": true
+      }
     }
   },
-  "order": ["footer"]
+  "order": [
+    "footer"
+  ]
 }

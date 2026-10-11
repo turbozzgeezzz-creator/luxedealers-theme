@@ -999,7 +999,30 @@
     if (slide) { var hero = slide.closest('[data-slideshow]'); var dots = $$('.hero__dot', hero); var idx = $$('.hero__slide', hero).indexOf(slide); if (dots[idx]) dots[idx].click(); }
   });
 
+  /* ---------- No repeated photos ----------
+     Banners and product rows register the products they show. A row then
+     skips any product already shown higher up the page and fills its
+     place from the spare cards rendered after it. */
+  function dedupeProducts() {
+    var seen = {};
+    $$('[data-pid]').forEach(function (el) {
+      if (el.classList.contains('card')) return;
+      seen[el.getAttribute('data-pid')] = true;
+    });
+    $$('[data-dedupe]').forEach(function (panel) {
+      var limit = parseInt(panel.getAttribute('data-dedupe'), 10) || 8;
+      var shown = 0;
+      $$('.card[data-pid]', panel).forEach(function (card) {
+        var id = card.getAttribute('data-pid');
+        if (seen[id] || shown >= limit) { card.remove(); return; }
+        seen[id] = true; shown++;
+        card.hidden = false; card.removeAttribute('data-extra');
+      });
+    });
+  }
+
   /* ---------- Init ---------- */
+  dedupeProducts();
   prepareStories();
   prepareRunways();
   initReveals();

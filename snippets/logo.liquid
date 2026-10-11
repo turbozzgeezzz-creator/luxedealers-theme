@@ -1,19 +1,10 @@
 {%- comment -%}
-  The LD diamond mark (or the uploaded logo) with the optional wordmark.
-  Params: wordmark (bool, default from settings), eager (bool)
+  Header logo: the uploaded logo (Theme settings > Logo), or the gold
+  LUXEDEALERS wordmark set in Cinzel. Shown in the header only.
 {%- endcomment -%}
-{%- liquid
-  assign show_word = settings.logo_wordmark
-  if wordmark == false
-    assign show_word = false
-  endif
-  assign h2x = settings.logo_height | times: 2
--%}
 {%- if settings.logo != blank -%}
+  {%- assign h2x = settings.logo_height | times: 2 -%}
   {{ settings.logo | image_url: height: h2x | image_tag: height: settings.logo_height, alt: shop.name, loading: 'eager', fetchpriority: 'high' }}
 {%- else -%}
-  <img src="{{ 'logo-mark-sm.webp' | asset_url }}" srcset="{{ 'logo-mark-sm.webp' | asset_url }} 229w, {{ 'logo-mark.webp' | asset_url }} 458w" sizes="{{ h2x }}px" width="229" height="240" alt="{% if show_word %}{% else %}{{ shop.name | escape }}{% endif %}" loading="eager" fetchpriority="high">
-{%- endif -%}
-{%- if show_word -%}
-  <span class="wordmark"><span class="gold-text">LUXE</span>DEALERS<small>BRAND NEW · WORLDWIDE</small></span>
+  <span class="wordmark" aria-label="{{ shop.name | escape }}"><span class="wordmark__cap">L</span>UXE<span class="wordmark__cap">D</span>EALERS</span>
 {%- endif -%}

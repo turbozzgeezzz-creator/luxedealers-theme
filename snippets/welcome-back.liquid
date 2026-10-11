@@ -1,7 +1,7 @@
 {%- comment -%} Filled by theme.js from the visitor's own last viewed product (stored on their device). {%- endcomment -%}
 {%- if settings.welcome_back and request.page_type != 'product' and request.page_type != 'cart' -%}
   <aside class="welcome-back" data-welcome-back aria-label="{{ 'welcome.back' | t }}" hidden>
-    <a class="welcome-back__media" href="#" data-wb-link tabindex="-1" aria-hidden="true"><img src="" alt="" data-wb-img loading="lazy"></a>
+    <a class="welcome-back__media" href="#" data-wb-link tabindex="-1" aria-hidden="true"><img src="" alt="" data-wb-img loading="lazy" width="120" height="150"></a>
     <div class="welcome-back__text">
       <span class="eyebrow eyebrow--plain">{{ 'welcome.back' | t }}</span>
       <a class="welcome-back__title" href="#" data-wb-link data-wb-title></a>

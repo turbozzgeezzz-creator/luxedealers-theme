@@ -13,24 +13,25 @@
   <header class="site-header">
     <div class="container header__inner">
       <div class="header__left">
-        <button type="button" class="text-btn" data-drawer-open="MenuOverlay" aria-controls="MenuOverlay" aria-expanded="false">
-          {% render 'icon', name: 'menu' %}<span class="header__label">{{ 'header.menu' | t }}</span><span class="visually-hidden">{{ 'header.menu' | t }}</span>
+        <button type="button" class="icon-btn header__burger" data-drawer-open="MenuOverlay" aria-controls="MenuOverlay" aria-expanded="false" aria-label="{{ 'header.menu' | t }}">
+          {% render 'icon', name: 'menu' %}
         </button>
-        <button type="button" class="text-btn" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false">
-          {% render 'icon', name: 'search' %}<span class="header__label">{{ 'header.search' | t }}</span><span class="visually-hidden">{{ 'header.search' | t }}</span>
-        </button>
+        <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name | escape }}">
+          {% render 'logo' %}
+        </a>
       </div>
 
-      <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name | escape }}">
-        {% render 'logo' %}
-      </a>
+      <button type="button" class="header__search" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false">
+        {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
+      </button>
 
       <div class="header__right">
-        {%- if contact_url != blank -%}
-          <a href="{{ contact_url }}" class="text-btn header__contact"{% if settings.advisor_whatsapp != blank %} target="_blank" rel="noopener"{% endif %}><span>{{ section.settings.contact_label }}</span></a>
-        {%- endif -%}
+        <button type="button" class="icon-btn header__search-icon" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
         {%- if section.settings.show_localization -%}
           <div class="header__loc">{% render 'localization', id: 'HeaderLocalization', direction: 'down', show_language: false, compact: true %}</div>
+        {%- endif -%}
+        {%- if contact_url != blank -%}
+          <a href="{{ contact_url }}" class="header__contact"{% if settings.advisor_whatsapp != blank %} target="_blank" rel="noopener"{% endif %}>{% render 'icon', name: 'chat', class: 'icon--sm' %}<span>{{ section.settings.contact_label }}</span></a>
         {%- endif -%}
         {%- if section.settings.wishlist_page != blank -%}
           <a href="{{ section.settings.wishlist_page.url }}" class="icon-btn" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></a>
@@ -172,12 +173,12 @@
   "class": "section-header",
   "settings": [
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu", "info": "Second-level items become column titles, third level the links." },
-    { "type": "checkbox", "id": "show_nav", "label": "Show menu row under the logo", "default": false, "info": "Off gives the clean boutique look: everything sits in the Menu button." },
+    { "type": "checkbox", "id": "show_nav", "label": "Show menu row under the logo", "default": true, "info": "On phones the menu is always in the Menu button." },
     { "type": "text", "id": "highlight_item", "label": "Gold menu item", "info": "Exact title of a menu item to show in gold, e.g. New in." },
-    { "type": "checkbox", "id": "overlay_home", "label": "Transparent over homepage hero", "default": true },
-    { "type": "checkbox", "id": "hide_on_scroll", "label": "Hide when scrolling down", "default": true },
+    { "type": "checkbox", "id": "overlay_home", "label": "Transparent over homepage hero", "default": false },
+    { "type": "checkbox", "id": "hide_on_scroll", "label": "Hide when scrolling down", "default": false },
     { "type": "checkbox", "id": "show_localization", "label": "Show country selector", "default": true, "info": "Countries come from Settings > Markets." },
-    { "type": "text", "id": "contact_label", "label": "Contact link text", "default": "Contact us" },
+    { "type": "text", "id": "contact_label", "label": "Contact link text", "default": "Help" },
     { "type": "page", "id": "contact_page", "label": "Contact page", "info": "Used when no advisor WhatsApp number is set in Theme settings > Client services." },
     { "type": "page", "id": "wishlist_page", "label": "Wishlist page", "info": "Create a page with the wishlist template, then pick it to show the heart icon." }
   ],

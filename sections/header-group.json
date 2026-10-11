@@ -8,22 +8,22 @@
         "msg1": {
           "type": "message",
           "settings": {
-            "text": "Tracked shipping to most countries",
-            "link": ""
+            "text": "Premium 1:1 inspired fashion, hand-checked before it ships",
+            "link": "/pages/why-choose-us"
           }
         },
         "msg2": {
           "type": "message",
           "settings": {
-            "text": "Prices shown in your currency",
-            "link": ""
+            "text": "Tracked shipping to most countries",
+            "link": "/policies/shipping-policy"
           }
         },
         "msg3": {
           "type": "message",
           "settings": {
-            "text": "14-day returns",
-            "link": "/policies/refund-policy"
+            "text": "Questions? support@luxedealers.com",
+            "link": "/pages/contact"
           }
         }
       },
@@ -35,16 +35,20 @@
       "settings": {
         "speed": 5,
         "left_text": "",
-        "show_contact": true
+        "show_contact": false
       }
     },
     "header": {
       "type": "header",
       "settings": {
-        "menu": "main-menu",
+        "menu": "main-menu-2",
+        "show_nav": true,
         "highlight_item": "New Arrivals",
-        "overlay_home": true,
-        "show_localization": true
+        "overlay_home": false,
+        "hide_on_scroll": false,
+        "show_localization": true,
+        "contact_label": "Help",
+        "contact_page": "contact"
       }
     }
   },

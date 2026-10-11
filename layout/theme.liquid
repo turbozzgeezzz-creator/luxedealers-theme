@@ -39,9 +39,10 @@
     {%- endif -%}
 
     {% render 'meta-tags', seo_title: seo_title, seo_desc: seo_desc, product: product %}
-    {% render 'structured-data', product: product, collection: collection %}
+    {% render 'schema-org', product: product, collection: collection %}
     {% render 'css-variables' %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {{ 'atelier.css' | asset_url | stylesheet_tag }}
     {%- if settings.page_transitions and settings.motion != 'off' -%}
       <style>@view-transition { navigation: auto; } ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }</style>
     {%- endif -%}

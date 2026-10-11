@@ -1,12 +1,25 @@
-{%- assign s = section.settings -%}
-<section class="section newsletter{% if s.style == 'ink' %} section--ink{% elsif s.style == 'subtle' %} section--subtle{% endif %}">
+{%- liquid
+  assign s = section.settings
+  assign img = s.image
+  assign pid = ''
+  if img == blank and s.product != blank
+    assign img = s.product.featured_media.preview_image
+    assign pid = s.product.id
+  endif
+-%}
+<section class="section newsletter{% if s.style == 'ink' %} section--ink{% elsif s.style == 'subtle' %} section--subtle{% elsif s.style == 'panel' %} newsletter--panel{% endif %}">
   <div class="container">
-    <div class="newsletter__inner">
-      {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
-      {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>{%- endif -%}
-      {%- if s.text != blank -%}<div class="rte{% unless s.style == 'ink' %} muted{% endunless %}" data-reveal>{{ s.text }}</div>{%- endif -%}
-      {%- if settings.welcome_code != blank and settings.welcome_offer != blank and s.show_offer -%}<p data-reveal><strong class="gold-text" style="font-size: 18px; letter-spacing: .06em">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
-      <div style="width: 100%" data-reveal>{% render 'newsletter-form', id: 'NewsletterSection', source: 'homepage' %}</div>
+    <div class="newsletter__wrap{% if img != blank %} newsletter__wrap--image{% endif %}">
+      <div class="newsletter__inner">
+        {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
+        {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>{%- endif -%}
+        {%- if s.text != blank -%}<div class="rte newsletter__text" data-reveal>{{ s.text }}</div>{%- endif -%}
+        {%- if settings.welcome_code != blank and settings.welcome_offer != blank and s.show_offer -%}<p data-reveal><strong class="gold-text" style="font-size: 18px; letter-spacing: .06em">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
+        <div style="width: 100%" data-reveal>{% render 'newsletter-form', id: 'NewsletterSection', source: 'homepage' %}</div>
+      </div>
+      {%- if img != blank -%}
+        <div class="newsletter__media"{% if pid != '' %} data-pid="{{ pid }}"{% endif %}>{{ img | image_url: width: 1400 | image_tag: widths: '480, 720, 960, 1200, 1400', sizes: '(min-width: 990px) 50vw, 100vw', loading: 'lazy', alt: '' }}</div>
+      {%- endif -%}
     </div>
   </div>
 </section>
@@ -23,10 +36,13 @@
       "options": [
         { "value": "white", "label": "White" },
         { "value": "subtle", "label": "Soft" },
-        { "value": "ink", "label": "Black" }
+        { "value": "ink", "label": "Black" },
+        { "value": "panel", "label": "Black panel with photo" }
       ],
       "default": "subtle"
     },
+    { "type": "image_picker", "id": "image", "label": "Photo (black panel)" },
+    { "type": "product", "id": "product", "label": "Or use a product photo" },
     { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The private list" },
     { "type": "textarea", "id": "heading", "label": "Heading", "default": "First to know,\nfirst to own" },
     { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New arrivals and members-only offers by email. Unsubscribe any time.</p>" },

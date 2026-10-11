@@ -2,6 +2,7 @@
   assign tabs = section.blocks
   assign limit = section.settings.limit
   assign uid = 'fc-' | append: section.id
+  assign fetch = limit | plus: 8
 -%}
 <section class="section{% if section.settings.subtle %} section--subtle{% endif %}">
   <div class="container">
@@ -34,17 +35,27 @@
 
     {%- for block in tabs -%}
       {%- assign c = block.settings.collection -%}
-      <div {% if tabs.size > 1 %}role="tabpanel" id="{{ uid }}-panel-{{ forloop.index }}" aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"{% endif %} class="tab-panel"{% unless forloop.first %} hidden{% endunless %}>
+      <div {% if tabs.size > 1 %}role="tabpanel" id="{{ uid }}-panel-{{ forloop.index }}" aria-labelledby="{{ uid }}-tab-{{ forloop.index }}"{% endif %} class="tab-panel" data-dedupe="{{ limit }}"{% unless forloop.first %} hidden{% endunless %}>
         {%- if section.settings.layout == 'rail' -%}
           <div class="rail" data-rail>
             <div class="rail__track" data-stagger>
-              {%- if c != blank -%}{%- for product in c.products limit: limit -%}{% render 'product-card', product: product, reveal: false %}{%- endfor -%}{%- else -%}{%- for i in (1..4) -%}{% render 'card-placeholder', n: i %}{%- endfor -%}{%- endif -%}
+              {%- if c != blank -%}{%- for product in c.products limit: fetch -%}{%- liquid
+                assign extra = false
+                if forloop.index > limit
+                  assign extra = true
+                endif
+              -%}{% render 'product-card', product: product, reveal: false, extra: extra %}{%- endfor -%}{%- else -%}{%- for i in (1..4) -%}{% render 'card-placeholder', n: i %}{%- endfor -%}{%- endif -%}
             </div>
             <div class="rail__progress" aria-hidden="true"><span></span></div>
           </div>
         {%- else -%}
           <div class="product-grid product-grid--4" data-stagger>
-            {%- if c != blank -%}{%- for product in c.products limit: limit -%}{% render 'product-card', product: product, reveal: false %}{%- endfor -%}{%- else -%}{%- for i in (1..4) -%}{% render 'card-placeholder', n: i %}{%- endfor -%}{%- endif -%}
+            {%- if c != blank -%}{%- for product in c.products limit: fetch -%}{%- liquid
+                assign extra = false
+                if forloop.index > limit
+                  assign extra = true
+                endif
+              -%}{% render 'product-card', product: product, reveal: false, extra: extra %}{%- endfor -%}{%- else -%}{%- for i in (1..4) -%}{% render 'card-placeholder', n: i %}{%- endfor -%}{%- endif -%}
           </div>
         {%- endif -%}
         {%- if c.products_count == 0 and request.design_mode -%}<p class="muted">{{ 'sections.empty_collection' | t }}</p>{%- endif -%}

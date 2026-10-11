@@ -8,29 +8,7 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }},
-      "logo": {{ 'logo-mark.webp' | asset_url | prepend: 'https:' | json }}
-      {%- liquid
-        assign sames = ''
-        if settings.social_instagram != blank
-          assign sames = sames | append: settings.social_instagram | append: '|'
-        endif
-        if settings.social_tiktok != blank
-          assign sames = sames | append: settings.social_tiktok | append: '|'
-        endif
-        if settings.social_facebook != blank
-          assign sames = sames | append: settings.social_facebook | append: '|'
-        endif
-        if settings.social_pinterest != blank
-          assign sames = sames | append: settings.social_pinterest | append: '|'
-        endif
-        if settings.social_youtube != blank
-          assign sames = sames | append: settings.social_youtube | append: '|'
-        endif
-        assign same_list = sames | split: '|'
-      -%}
-      {%- if same_list.size > 0 -%},
-      "sameAs": {{ same_list | json }}{%- endif %}
+      "url": {{ request.origin | append: routes.root_url | json }}
     }
   </script>
   <script type="application/ld+json">
@@ -73,8 +51,7 @@
         {
           "@type": "Offer",
           "name": {{ variant.title | json }},
-          "itemCondition": "https://schema.org/NewCondition",
-          "availability": "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
+                    "availability": "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
           "price": {{ variant.price | divided_by: 100.0 | json }},
           "priceCurrency": {{ cart.currency.iso_code | json }},
           "url": {{ request.origin | append: variant.url | json }}
