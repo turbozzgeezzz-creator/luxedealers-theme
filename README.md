@@ -35,9 +35,22 @@ footer), made calmer and more premium. `assets/atelier.css` is layered over `ass
 - **No repeated photos:** on any page, a product row skips products already shown in a banner or an earlier
   row, and fills the gap with the next product.
 
-The homepage, top to bottom: two large banners, Shop by category tiles, New Arrivals, Men's & Women's
-banners, Most wanted (tabs), Why shoppers trust us, Signature Fragrances, the journal, FAQ, the
-newsletter panel and recently viewed.
+**Sales homepage, top to bottom:** Promo grid (sliding main banner, side tile, four small tiles, each with a
+gold illustration and a live "From" price), a scrolling band of selling points, Department cards (illustration,
+lowest price and three real product photos), Shop the latest, Offers row (welcome offer or list sign-up, a
+two-product bundle with the real total and Add both, and a short product list), Shop by price (needs the
+Price filter in Search & Discovery), Shop by category tabs, Why shop with us, the journal, Help cards, the
+Sign-up offer band and recently viewed.
+
+**Gold illustrations:** `assets/lx-*.svg` (watch, quilted bag, sneaker, diamond, gift, parcel, ring, hoodie,
+heel, tote, necklace, perfume, sunglasses, coupon, envelope). Pick one per tile in the theme editor, or upload
+your own image instead.
+
+**Welcome offer:** the "10% off your first order" top-bar message, offer card and sign-up band only appear once
+a code is entered in **Theme settings > Welcome offer**, so the site never advertises an offer it can't honour.
+
+**Welcome back popup:** a visitor returning after 30+ minutes sees the last product they viewed, with its live
+price and stock, once per visit.
 
 ## Animation
 
