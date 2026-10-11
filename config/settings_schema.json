@@ -247,6 +247,13 @@
       },
       {
         "type": "checkbox",
+        "id": "card_button",
+        "label": "Show stock line and Add to bag button",
+        "default": true,
+        "info": "Replaces the hover Quick add."
+      },
+      {
+        "type": "checkbox",
         "id": "card_swatches",
         "label": "Colour swatches",
         "info": "Shown for an option named Color, Colour or Dial.",

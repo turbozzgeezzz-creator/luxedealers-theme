@@ -5,37 +5,67 @@
     "announcement": {
       "type": "announcement-bar",
       "blocks": {
-        "msg1": {
+        "m0": {
           "type": "message",
           "settings": {
-            "text": "Premium 1:1 inspired fashion, hand-checked before it ships",
-            "link": "/pages/why-choose-us"
+            "icon": "percent",
+            "text": "10% off your first order",
+            "link": "",
+            "opens_popup": true,
+            "needs_code": true
           }
         },
-        "msg2": {
+        "m1": {
           "type": "message",
           "settings": {
+            "icon": "diamond",
+            "text": "Premium 1:1 inspired, hand-checked",
+            "link": "/pages/why-choose-us",
+            "opens_popup": false,
+            "needs_code": false
+          }
+        },
+        "m2": {
+          "type": "message",
+          "settings": {
+            "icon": "truck",
             "text": "Tracked shipping to most countries",
-            "link": "/policies/shipping-policy"
+            "link": "/policies/shipping-policy",
+            "opens_popup": false,
+            "needs_code": false
           }
         },
-        "msg3": {
+        "m3": {
           "type": "message",
           "settings": {
-            "text": "Questions? support@luxedealers.com",
-            "link": "/pages/contact"
+            "icon": "lock",
+            "text": "Secure checkout: PayPal, Shop Pay, cards",
+            "link": "",
+            "opens_popup": false,
+            "needs_code": false
+          }
+        },
+        "m4": {
+          "type": "message",
+          "settings": {
+            "icon": "chat",
+            "text": "Real support: support@luxedealers.com",
+            "link": "/pages/contact",
+            "opens_popup": false,
+            "needs_code": false
           }
         }
       },
       "block_order": [
-        "msg1",
-        "msg2",
-        "msg3"
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4"
       ],
       "settings": {
-        "speed": 5,
-        "left_text": "",
-        "show_contact": false
+        "speed": 4,
+        "show_localization": true
       }
     },
     "header": {
@@ -43,12 +73,17 @@
       "settings": {
         "menu": "main-menu-2",
         "show_nav": true,
-        "highlight_item": "New Arrivals",
+        "highlight_item": "",
         "overlay_home": false,
         "hide_on_scroll": false,
-        "show_localization": true,
+        "show_localization": false,
         "contact_label": "Help",
-        "contact_page": "contact"
+        "contact_page": "contact",
+        "nav_hide": "Home, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
+        "help_menu": "support-menu",
+        "help_label": "Help",
+        "pill_label": "New in",
+        "pill_link": "/collections/new-arrivals"
       }
     }
   },

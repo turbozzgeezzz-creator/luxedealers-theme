@@ -72,7 +72,7 @@
       <svg viewBox="0 0 24 24" stroke-width="1.4" aria-hidden="true"><path d="M12 20.5s-7.5-4.6-7.5-10.4A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.8c0 5.8-7.5 10.4-7.5 10.4z"/></svg>
     </button>
   </div>
-  {%- if settings.card_quick_add and product.available -%}
+  {%- if settings.card_quick_add and product.available and settings.card_button == false -%}
     <div class="card__quick">
       {%- if product.has_only_default_variant -%}
         <button type="button" class="btn btn--sm" data-add-variant="{{ v.id }}">{{ 'products.add_to_bag' | t }}</button>
@@ -86,6 +86,9 @@
     {%- if settings.card_vendor and product.vendor != blank -%}<span class="card__vendor">{{ product.vendor }}</span>{%- endif -%}
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {% render 'price', product: product, show_from: true %}
+    {%- if settings.card_button -%}
+      {%- if product.available -%}<span class="card__stock"><span class="dot"></span>{{ 'products.in_stock_short' | t }}</span>{%- endif -%}
+    {%- endif -%}
     {%- capture rating -%}{% render 'rating', product: product %}{%- endcapture -%}
     {%- if rating != blank -%}<div class="card__rating">{{ rating }}</div>{%- endif -%}
     {%- if settings.card_swatches and color_index != nil and color_opt.values.size > 1 -%}
@@ -96,6 +99,17 @@
         {%- endfor -%}
         {%- if color_opt.values.size > 5 -%}<span class="swatch swatch--more">+{{ color_opt.values.size | minus: 5 }}</span>{%- endif -%}
       </div>
+    {%- endif -%}
+    {%- if settings.card_button -%}
+      {%- if product.available -%}
+        {%- if product.has_only_default_variant -%}
+          <button type="button" class="btn btn--sm btn--block card__btn" data-add-variant="{{ v.id }}">{{ 'products.add_to_bag' | t }}</button>
+        {%- else -%}
+          <button type="button" class="btn btn--sm btn--block card__btn" data-quick-view="{{ product.url }}">{{ 'products.choose_options' | t }}</button>
+        {%- endif -%}
+      {%- else -%}
+        <a class="btn btn--sm btn--block btn--outline card__btn" href="{{ product.url }}">{{ 'products.sold_out' | t }}</a>
+      {%- endif -%}
     {%- endif -%}
   </div>
 </div>

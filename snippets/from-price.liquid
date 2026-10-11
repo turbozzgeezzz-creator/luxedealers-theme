@@ -1,0 +1,14 @@
+{%- comment -%} Lowest current price in a collection (first 50 products). Param: collection {%- endcomment -%}
+{%- liquid
+  assign low = nil
+  for p in collection.products limit: 50
+    if p.available
+      if low == nil or p.price_min < low
+        assign low = p.price_min
+      endif
+    endif
+  endfor
+  if low != nil
+    echo low | money_without_trailing_zeros
+  endif
+-%}

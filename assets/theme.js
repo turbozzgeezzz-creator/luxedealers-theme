@@ -365,6 +365,8 @@
         el.textContent = count; el.hidden = count === 0;
         el.classList.remove('is-bump'); void el.offsetWidth; el.classList.add('is-bump');
       });
+      var tv = $('[data-cart-total-value]', c);
+      if (tv) $$('[data-cart-total]').forEach(function (el) { el.textContent = tv.textContent; });
     }
     var main = $('#main-cart');
     if (main && sections[main.dataset.sectionId]) {
@@ -983,13 +985,16 @@
       if (!p || !p.available) return;
       $$('[data-wb-link]', wb).forEach(function (a) { a.href = p.url; });
       $('[data-wb-title]', wb).textContent = p.title;
+      var price = $('[data-wb-price]', wb); if (price) price.textContent = formatMoney(p.price);
       var img = $('[data-wb-img]', wb);
-      if (p.featured_image) { img.src = p.featured_image + (p.featured_image.indexOf('?') > -1 ? '&' : '?') + 'width=200'; img.alt = ''; }
+      if (p.featured_image) { img.src = p.featured_image + (p.featured_image.indexOf('?') > -1 ? '&' : '?') + 'width=600'; img.alt = ''; }
       wb.hidden = false;
-      setTimeout(function () { wb.classList.add('is-visible'); }, 3500);
       try { sessionStorage.setItem('luxe:wb', '1'); } catch (e) {}
+      setTimeout(function () {
+        if ($('.drawer.is-open, .popup.is-open, .search-overlay.is-open, .menu-overlay.is-open')) return;
+        openDrawer('WelcomeBack');
+      }, 2500);
     }).catch(function () {});
-    on($('[data-wb-close]', wb), 'click', function () { wb.classList.remove('is-visible'); });
   })();
 
   /* ---------- Section editor support ---------- */
@@ -997,6 +1002,29 @@
   on(doc, 'shopify:block:select', function (e) {
     var slide = e.target.closest('.hero__slide');
     if (slide) { var hero = slide.closest('[data-slideshow]'); var dots = $$('.hero__dot', hero); var idx = $$('.hero__slide', hero).indexOf(slide); if (dots[idx]) dots[idx].click(); }
+  });
+
+  /* ---------- Promo slider ---------- */
+  $$('[data-promo-slider]').forEach(function (wrap) {
+    var slides = $$('.promo-slide', wrap), dots = $$('[data-promo-dot]', wrap);
+    if (slides.length < 2) return;
+    var i = 0, sec = wrap.closest('.shopify-section'), timer;
+    var delay = 6000;
+    function go(n) {
+      i = (n + slides.length) % slides.length;
+      slides.forEach(function (s, k) { s.classList.toggle('is-active', k === i); });
+      dots.forEach(function (d, k) { d.classList.toggle('is-active', k === i); });
+    }
+    function play() { clearInterval(timer); if (root.dataset.motion === 'off') return; timer = setInterval(function () { if (!doc.hidden) go(i + 1); }, delay); }
+    dots.forEach(function (d, k) { on(d, 'click', function () { go(k); play(); }); });
+    on($('[data-promo-prev]', wrap), 'click', function () { go(i - 1); play(); });
+    on($('[data-promo-next]', wrap), 'click', function () { go(i + 1); play(); });
+    on(wrap, 'mouseenter', function () { clearInterval(timer); });
+    on(wrap, 'mouseleave', play);
+    var x0 = null;
+    on(wrap, 'touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+    on(wrap, 'touchend', function (e) { if (x0 === null) return; var dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) { go(i + (dx < 0 ? 1 : -1)); play(); } x0 = null; });
+    play();
   });
 
   /* ---------- No repeated photos ----------

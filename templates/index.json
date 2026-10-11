@@ -1,145 +1,268 @@
 {
   "sections": {
     "hero": {
-      "type": "banner-grid",
+      "type": "promo-grid",
       "blocks": {
-        "a": {
-          "type": "banner",
+        "s1": {
+          "type": "slide",
           "settings": {
-            "product": "chan-luxury-handbags",
-            "photo": 1,
-            "collection": "handbags",
-            "badge": "Handbags",
-            "heading": "The bag edit",
-            "text": "Handbags, crossbody and shoulder bags, hand-checked before they ship.",
-            "button": "Shop bags",
-            "dark_text": false
+            "illustration": "lx-watch",
+            "theme": "noir",
+            "eyebrow": "Watches",
+            "heading": "Iced out.\nGold on gold.",
+            "text": "Diamond-set bezels, gold tones and steel bracelets.",
+            "collection": "watches",
+            "show_from": true,
+            "button": "Shop watches",
+            "link": "",
+            "button_2": "New arrivals",
+            "link_2": "/collections/new-arrivals"
           }
         },
-        "b": {
-          "type": "banner",
+        "s2": {
+          "type": "slide",
           "settings": {
-            "product": "dio-shoe-7",
-            "photo": 1,
-            "collection": "shoes",
-            "badge": "Shoes",
-            "heading": "Step into something new",
-            "text": "Sneakers, slides and boots for every day.",
-            "button": "Shop shoes",
-            "dark_text": false
+            "illustration": "lx-bag",
+            "theme": "onyx",
+            "eyebrow": "Handbags",
+            "heading": "The bag edit",
+            "text": "Quilted flaps, totes, crossbody and shoulder bags.",
+            "collection": "handbags",
+            "show_from": true,
+            "button": "Shop bags",
+            "link": "",
+            "button_2": "All bags",
+            "link_2": "/collections/bags-3"
           }
-        }
-      },
-      "block_order": [
-        "a",
-        "b"
-      ],
-      "settings": {
-        "heading": "",
-        "style": "hero",
-        "columns": 2,
-        "flush_top": false
-      }
-    },
-    "categories": {
-      "type": "banner-grid",
-      "blocks": {
-        "t0": {
-          "type": "banner",
+        },
+        "s3": {
+          "type": "slide",
           "settings": {
-            "product": "vl-clothing-summer-t-shirts",
-            "photo": 1,
-            "collection": "clothing",
-            "badge": "",
-            "heading": "Clothing",
-            "text": "",
-            "button": ""
+            "illustration": "lx-sneaker",
+            "theme": "noir",
+            "eyebrow": "Sneakers",
+            "heading": "Step up\nyour rotation",
+            "text": "Low tops, high tops and runners in every colourway.",
+            "collection": "sneakers-1",
+            "show_from": true,
+            "button": "Shop sneakers",
+            "link": "",
+            "button_2": "All shoes",
+            "link_2": "/collections/shoes"
+          }
+        },
+        "side": {
+          "type": "side",
+          "settings": {
+            "illustration": "lx-perfume",
+            "theme": "gold",
+            "eyebrow": "Fragrances",
+            "heading": "Signature scents",
+            "text": "Find the one they remember.",
+            "collection": "fragances",
+            "show_from": true,
+            "link": "",
+            "button": "Shop fragrances"
           }
         },
         "t1": {
-          "type": "banner",
+          "type": "tile",
           "settings": {
-            "product": "nik-air-force-shoes",
-            "photo": 1,
-            "collection": "sneakers-1",
-            "badge": "",
-            "heading": "Sneakers",
-            "text": "",
-            "button": ""
+            "illustration": "lx-ring",
+            "theme": "noir",
+            "eyebrow": "Jewellery",
+            "heading": "Rings, chains\nand bracelets",
+            "collection": "jewellery",
+            "show_from": true,
+            "link": "",
+            "opens_popup": false,
+            "button": "Shop"
           }
         },
         "t2": {
-          "type": "banner",
+          "type": "tile",
           "settings": {
-            "product": "goyrd-womens-large-handbag",
-            "photo": 1,
-            "collection": "bags-3",
-            "badge": "",
-            "heading": "Bags",
-            "text": "",
-            "button": ""
+            "illustration": "lx-hoodie",
+            "theme": "onyx",
+            "eyebrow": "Clothing",
+            "heading": "Hoodies, tees\nand jackets",
+            "collection": "clothing",
+            "show_from": true,
+            "link": "",
+            "opens_popup": false,
+            "button": "Shop"
           }
         },
         "t3": {
-          "type": "banner",
+          "type": "tile",
           "settings": {
-            "product": "vl-luxury-designer-sunglasses",
-            "photo": 1,
-            "collection": "accessories",
-            "badge": "",
-            "heading": "Accessories",
-            "text": "",
-            "button": ""
+            "illustration": "lx-gift",
+            "theme": "gold",
+            "eyebrow": "Gifting",
+            "heading": "Gifts under $50",
+            "collection": "",
+            "show_from": false,
+            "link": "/collections/shop-all?filter.v.price.gte=0&filter.v.price.lte=50",
+            "opens_popup": false,
+            "button": "Shop gifts"
           }
         },
         "t4": {
-          "type": "banner",
+          "type": "tile",
           "settings": {
-            "product": "vl-designer-fragrance-collection",
-            "photo": 1,
-            "collection": "fragances",
-            "badge": "",
-            "heading": "Fragrances",
-            "text": "",
-            "button": ""
-          }
-        },
-        "t5": {
-          "type": "banner",
-          "settings": {
-            "product": "van-che-womens-necklaces",
-            "photo": 1,
-            "collection": "jewellery",
-            "badge": "",
-            "heading": "Jewellery",
-            "text": "",
-            "button": ""
+            "illustration": "lx-parcel",
+            "theme": "noir",
+            "eyebrow": "Shipping",
+            "heading": "Tracked to\nmost countries",
+            "collection": "",
+            "show_from": false,
+            "link": "/policies/shipping-policy",
+            "opens_popup": false,
+            "button": "How it works"
           }
         }
       },
       "block_order": [
-        "t0",
+        "s1",
+        "s2",
+        "s3",
+        "side",
         "t1",
         "t2",
         "t3",
-        "t4",
-        "t5"
+        "t4"
       ],
       "settings": {
-        "heading": "Shop by category",
-        "style": "tiles",
-        "columns": 6,
-        "flush_top": true
+        "flush": true,
+        "speed": 6
       }
     },
-    "new": {
+    "usp": {
+      "type": "marquee",
+      "blocks": {
+        "m0": {
+          "type": "text",
+          "settings": {
+            "text": "Premium 1:1 inspired"
+          }
+        },
+        "m1": {
+          "type": "text",
+          "settings": {
+            "text": "Hand-checked before it ships"
+          }
+        },
+        "m2": {
+          "type": "text",
+          "settings": {
+            "text": "Tracked shipping to most countries"
+          }
+        },
+        "m3": {
+          "type": "text",
+          "settings": {
+            "text": "Secure checkout"
+          }
+        },
+        "m4": {
+          "type": "text",
+          "settings": {
+            "text": "Real people answer every email"
+          }
+        },
+        "m5": {
+          "type": "text",
+          "settings": {
+            "text": "Prices in your currency"
+          }
+        }
+      },
+      "block_order": [
+        "m0",
+        "m1",
+        "m2",
+        "m3",
+        "m4",
+        "m5"
+      ],
+      "settings": {
+        "label": "Why LuxeDealers",
+        "style": "label",
+        "ink": true,
+        "reverse": false,
+        "speed": 40
+      }
+    },
+    "depts": {
+      "type": "dept-cards",
+      "blocks": {
+        "d1": {
+          "type": "dept",
+          "settings": {
+            "illustration": "lx-tote",
+            "theme": "ivory",
+            "collection": "bags-3",
+            "eyebrow": "Carry",
+            "title": "Bags",
+            "text": "Totes, crossbody, shoulder and backpacks"
+          }
+        },
+        "d2": {
+          "type": "dept",
+          "settings": {
+            "illustration": "lx-heel",
+            "theme": "gold",
+            "collection": "shoes",
+            "eyebrow": "Walk",
+            "title": "Shoes",
+            "text": "Sneakers, heels, slides and boots"
+          }
+        },
+        "d3": {
+          "type": "dept",
+          "settings": {
+            "illustration": "lx-necklace",
+            "theme": "noir",
+            "collection": "jewellery",
+            "eyebrow": "Shine",
+            "title": "Jewellery",
+            "text": "Necklaces, bracelets, rings and earrings"
+          }
+        },
+        "d4": {
+          "type": "dept",
+          "settings": {
+            "illustration": "lx-sunglasses",
+            "theme": "onyx",
+            "collection": "accessories",
+            "eyebrow": "Finish",
+            "title": "Accessories",
+            "text": "Sunglasses, belts, wallets and hats"
+          }
+        }
+      },
+      "block_order": [
+        "d1",
+        "d2",
+        "d3",
+        "d4"
+      ],
+      "settings": {
+        "eyebrow": "Departments",
+        "heading": "Shop by department",
+        "text": "Every department, hand-checked before it ships.",
+        "link_label": "Shop all",
+        "link": "/collections/shop-all"
+      }
+    },
+    "latest": {
       "type": "featured-collection",
       "blocks": {
         "n": {
           "type": "collection",
           "settings": {
             "collection": "new-arrivals",
-            "title": "New Arrivals"
+            "title": "New arrivals"
           }
         }
       },
@@ -147,56 +270,87 @@
         "n"
       ],
       "settings": {
-        "eyebrow": "",
-        "heading": "New Arrivals",
+        "eyebrow": "Just landed",
+        "heading": "Shop the latest",
         "layout": "rail",
         "limit": 10,
         "view_all": false,
         "subtle": false
       }
     },
-    "men_women": {
-      "type": "banner-grid",
+    "deals": {
+      "type": "deals",
+      "settings": {
+        "eyebrow": "Offers",
+        "heading": "Deals, sets and new drops",
+        "offer_illustration": "lx-coupon",
+        "offer_eyebrow": "New here?",
+        "offer_text": "Join our email list and your code appears straight away.",
+        "offer_button": "Get my code",
+        "list_eyebrow": "The list",
+        "list_heading": "First look at new drops",
+        "list_text": "New arrivals and restocks by email. Unsubscribe any time.",
+        "list_button": "Join the list",
+        "bundle_eyebrow": "Better together",
+        "bundle_heading": "Bag and scent, one click",
+        "product_1": "prad-bags-2",
+        "product_2": "tom-lost-cherry-fragrance",
+        "new_collection": "collectibles",
+        "new_eyebrow": "For collectors",
+        "new_heading": "Collectibles",
+        "new_link": "See all collectibles"
+      }
+    },
+    "budget": {
+      "type": "budget-tiles",
       "blocks": {
-        "w": {
-          "type": "banner",
+        "a": {
+          "type": "tier",
           "settings": {
-            "product": "dio-womens-luxury-handbag-2",
-            "photo": 1,
-            "collection": "womens",
-            "badge": "Women",
-            "heading": "Shop Womens",
-            "text": "Handbags, shoes, clothing and accessories, all in one place.",
-            "button": "Shop now",
-            "dark_text": false
+            "theme": "ivory",
+            "eyebrow": "Easy gifts",
+            "title": "Under $50",
+            "text": "Fragrances, jewellery and accessories.",
+            "min": 0,
+            "max": 50
           }
         },
-        "m": {
-          "type": "banner",
+        "b": {
+          "type": "tier",
           "settings": {
-            "product": "guc-mens-luxury-belt",
-            "photo": 1,
-            "collection": "mens",
-            "badge": "Men",
-            "heading": "Shop Mens",
-            "text": "Clothing, sneakers, belts and bags to look sharp every day.",
-            "button": "Shop now",
-            "dark_text": false
+            "theme": "gold",
+            "eyebrow": "Everyday upgrades",
+            "title": "$50 to $100",
+            "text": "Clothing, shoes and small leather goods.",
+            "min": 50,
+            "max": 100
+          }
+        },
+        "c": {
+          "type": "tier",
+          "settings": {
+            "theme": "noir",
+            "eyebrow": "Statement pieces",
+            "title": "$100 and up",
+            "text": "Handbags, outerwear and watches.",
+            "min": 100,
+            "max": 0
           }
         }
       },
       "block_order": [
-        "w",
-        "m"
+        "a",
+        "b",
+        "c"
       ],
       "settings": {
-        "heading": "Shop Men's & Women's",
-        "style": "wide",
-        "columns": 2,
-        "flush_top": true
+        "eyebrow": "Shop by budget",
+        "heading": "Luxury at every price",
+        "text": "Pick a budget and see everything that fits it.",
+        "collection": "shop-all"
       }
     },
-    "departments": {
+    "wanted": {
       "type": "featured-collection",
       "blocks": {
         "c": {
@@ -220,89 +374,6 @@
             "title": "Bags"
           }
         },
-        "a": {
-          "type": "collection",
-          "settings": {
-            "collection": "accessories",
-            "title": "Accessories"
-          }
-        }
-      },
-      "block_order": [
-        "c",
-        "s",
-        "b",
-        "a"
-      ],
-      "settings": {
-        "eyebrow": "",
-        "heading": "Most wanted",
-        "layout": "rail",
-        "limit": 10,
-        "view_all": true,
-        "subtle": false
-      }
-    },
-    "trust": {
-      "type": "promises",
-      "blocks": {
-        "a": {
-          "type": "promise",
-          "settings": {
-            "icon": "truck",
-            "title": "Tracked shipping",
-            "text": "<p>Every order is sent with tracking to most countries. Shipping costs are shown at checkout.</p>",
-            "link": "/policies/shipping-policy",
-            "link_label": "View shipping info"
-          }
-        },
-        "b": {
-          "type": "promise",
-          "settings": {
-            "icon": "return",
-            "title": "Refund policy",
-            "text": "<p>Something not right with your order? Our refund policy explains how we help.</p>",
-            "link": "/policies/refund-policy",
-            "link_label": "View refund policy"
-          }
-        },
-        "c": {
-          "type": "promise",
-          "settings": {
-            "icon": "lock",
-            "title": "Secure payments",
-            "text": "<p>Encrypted checkout with PayPal, Shop Pay and major cards.</p>",
-            "link": "",
-            "link_label": ""
-          }
-        },
-        "d": {
-          "type": "promise",
-          "settings": {
-            "icon": "chat",
-            "title": "Real support",
-            "text": "<p>Questions about sizing, an order or tracking? Real people reply at support@luxedealers.com.</p>",
-            "link": "/pages/contact",
-            "link_label": "Ask support"
-          }
-        }
-      },
-      "block_order": [
-        "a",
-        "b",
-        "c",
-        "d"
-      ],
-      "settings": {
-        "eyebrow": "",
-        "heading": "Why shoppers trust us",
-        "subtle": false,
-        "cards": true
-      }
-    },
-    "fragrances": {
-      "type": "featured-collection",
-      "blocks": {
         "f": {
           "type": "collection",
           "settings": {
@@ -312,86 +383,128 @@
         }
       },
       "block_order": [
+        "c",
+        "s",
+        "b",
         "f"
       ],
       "settings": {
-        "eyebrow": "",
-        "heading": "Signature Fragrances",
+        "eyebrow": "Most wanted",
+        "heading": "Shop by category",
         "layout": "rail",
         "limit": 10,
-        "view_all": false,
+        "view_all": true,
         "subtle": false
+      }
+    },
+    "why": {
+      "type": "why-us",
+      "blocks": {
+        "a": {
+          "type": "point",
+          "settings": {
+            "title": "Hand-checked, every order",
+            "text": "Each piece is checked before it's packed, so what arrives matches what you picked."
+          }
+        },
+        "b": {
+          "type": "point",
+          "settings": {
+            "title": "Real people, real answers",
+            "text": "Questions about sizing, an order or tracking go to a person on our team at support@luxedealers.com."
+          }
+        },
+        "c": {
+          "type": "point",
+          "settings": {
+            "title": "Clear prices, secure checkout",
+            "text": "Prices show in your currency. Delivery costs and any duties are shown at checkout before you pay."
+          }
+        }
+      },
+      "block_order": [
+        "a",
+        "b",
+        "c"
+      ],
+      "settings": {
+        "eyebrow": "Why LuxeDealers",
+        "heading": "Luxury looks,\nhonest prices.",
+        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, sent with tracking to most countries.</p>",
+        "button": "Why choose us",
+        "link": "/pages/why-choose-us"
       }
     },
     "journal": {
       "type": "blog-posts",
       "settings": {
-        "eyebrow": "",
-        "heading": "Trends, tips & style inspiration",
+        "eyebrow": "The style desk",
+        "heading": "Guides and inspiration",
         "limit": 3,
         "blog": "news"
       }
     },
-    "faq": {
-      "type": "faq",
+    "help": {
+      "type": "help-cards",
       "blocks": {
-        "q1": {
-          "type": "question",
+        "a": {
+          "type": "q",
           "settings": {
-            "question": "How long does shipping take?",
-            "answer": "<p>Orders are processed within 5 to 10 business days, then sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks. <a href=\"/policies/shipping-policy\">Shipping policy</a></p>"
+            "question": "How long will my order take?",
+            "answer": "<p>Orders are processed within 5 to 10 business days, then sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks.</p>",
+            "link": "/policies/shipping-policy",
+            "link_label": "Shipping policy"
           }
         },
-        "q2": {
-          "type": "question",
+        "b": {
+          "type": "q",
           "settings": {
-            "question": "Do you ship internationally?",
-            "answer": "<p>Yes, we ship to most countries. Choose your country at the top of the page to see prices in your currency. Any customs duties or taxes are paid by the customer.</p>"
+            "question": "Do you ship to my country?",
+            "answer": "<p>We ship to most countries. Pick yours at the top of the page to see prices in your currency; options and costs show at checkout.</p>",
+            "link": "/pages/faqs",
+            "link_label": "Full answer"
           }
         },
-        "q3": {
-          "type": "question",
+        "c": {
+          "type": "q",
           "settings": {
-            "question": "My tracking number shows as invalid. Why?",
-            "answer": "<p>Tracking numbers can take up to 48 hours to become active after your shipping email. If it still doesn't work after that, email support@luxedealers.com.</p>"
-          }
-        },
-        "q4": {
-          "type": "question",
-          "settings": {
-            "question": "Are your items true to size?",
-            "answer": "<p>Check the size charts before ordering: each product page links to them. If you're between sizes, email us and we'll help.</p>"
+            "question": "Will it fit?",
+            "answer": "<p>Check the size charts before ordering. If you're between sizes, email us and we'll help you choose.</p>",
+            "link": "/pages/size-charts",
+            "link_label": "Size charts"
           }
         }
       },
       "block_order": [
-        "q1",
-        "q2",
-        "q3",
-        "q4"
+        "a",
+        "b",
+        "c"
       ],
       "settings": {
-        "eyebrow": "",
-        "heading": "Frequently asked questions",
-        "split": true,
-        "subheading": "Everything you need to know about sizing, shipping and orders, all in one place.",
-        "text": "<p>Can't find your answer? Our support team is happy to help.</p>",
-        "button": "Contact support",
-        "button_link": "/pages/contact",
-        "more_link": "/pages/faqs",
-        "schema": true,
-        "subtle": false
+        "eyebrow": "Help desk",
+        "heading": "Before you buy",
+        "link_label": "All FAQs",
+        "link": "/pages/faqs",
+        "cta_heading": "Still not sure?",
+        "cta_text": "Questions go to a real person on our team. Tell us what you're looking at and we'll help.",
+        "cta_button": "Ask us",
+        "cta_link": "/pages/contact"
       }
     },
-    "newsletter": {
-      "type": "newsletter",
+    "signup": {
+      "type": "signup-offer",
       "settings": {
-        "style": "panel",
-        "product": "guc-luxury-designer-hat",
-        "eyebrow": "Newsletter",
+        "illustration": "lx-envelope",
+        "illustration_offer": "lx-envelope",
+        "eyebrow": "The list",
+        "offer_eyebrow": "Welcome offer",
         "heading": "First look at new drops",
-        "text": "<p>New arrivals, exclusive deals and styling tips, straight to your inbox. Unsubscribe any time.</p>",
-        "show_offer": true
+        "text": "Join the list for new arrivals, restocks and subscriber-only deals.",
+        "tick_1": "Early access to new arrivals",
+        "tick_2": "Subscriber-only deals",
+        "tick_3": "No spam, unsubscribe any time",
+        "card_title": "Join the list",
+        "card_text": "Enter your email and tick the box to subscribe."
       }
     },
     "recent": {
@@ -404,15 +517,16 @@
   },
   "order": [
     "hero",
-    "categories",
-    "new",
-    "men_women",
-    "departments",
-    "trust",
-    "fragrances",
+    "usp",
+    "depts",
+    "latest",
+    "deals",
+    "budget",
+    "wanted",
+    "why",
     "journal",
-    "faq",
-    "newsletter",
+    "help",
+    "signup",
     "recent"
   ]
 }

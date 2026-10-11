@@ -25,7 +25,10 @@
     "contact": "Contact",
     "announcements": "Announcements",
     "shop_all": "Shop all {{ title }}",
-    "search_placeholder": "Search for products, brands and more"
+    "search_placeholder": "Search for products, brands and more",
+    "sign_in": "Sign in",
+    "signed_in": "Signed in",
+    "hello": "Hi {{ name }}"
   },
   "footer": {
     "all_products": "All products",
@@ -86,7 +89,8 @@
     "set_total": "Total",
     "add_selected": "Add selected",
     "choose_options": "Choose options",
-    "view": "View"
+    "view": "View",
+    "in_stock_short": "In stock"
   },
   "cart": {
     "title": "Your bag",
@@ -185,7 +189,13 @@
     "hotspot": "Point {{ n }}: {{ title }}",
     "shop_brand": "Shop the brand",
     "placeholder_brand": "Brand",
-    "placeholder_product": "Product"
+    "placeholder_product": "Product",
+    "from_price": "From",
+    "shop_now": "Shop now",
+    "together": "Together",
+    "add_both": "Add both",
+    "bundle_note": "Adds the first available option of each. Change sizes in your bag.",
+    "get_offer": "Get {{ offer }}"
   },
   "wishlist": {
     "note": "Your saved pieces are kept on this device.",
@@ -264,6 +274,9 @@
   "welcome": {
     "back": "Welcome back",
     "continue": "Pick up where you left off",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "heading": "Pick up where you left off",
+    "view": "View this piece",
+    "browse": "Browse everything"
   }
 }

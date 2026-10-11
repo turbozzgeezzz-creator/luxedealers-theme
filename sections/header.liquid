@@ -21,43 +21,79 @@
         </a>
       </div>
 
-      <button type="button" class="header__search" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false">
-        {% render 'icon', name: 'search' %}<span>{{ 'header.search_placeholder' | t }}</span>
-      </button>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="header__search" data-header-search>
+        <label class="visually-hidden" for="HeaderSearch">{{ 'header.search' | t }}</label>
+        <input id="HeaderSearch" type="search" name="q" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="header__search-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
+      </form>
 
       <div class="header__right">
         <button type="button" class="icon-btn header__search-icon" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
-        {%- if section.settings.show_localization -%}
-          <div class="header__loc">{% render 'localization', id: 'HeaderLocalization', direction: 'down', show_language: false, compact: true %}</div>
-        {%- endif -%}
-        {%- if contact_url != blank -%}
-          <a href="{{ contact_url }}" class="header__contact"{% if settings.advisor_whatsapp != blank %} target="_blank" rel="noopener"{% endif %}>{% render 'icon', name: 'chat', class: 'icon--sm' %}<span>{{ section.settings.contact_label }}</span></a>
-        {%- endif -%}
         {%- if section.settings.wishlist_page != blank -%}
-          <a href="{{ section.settings.wishlist_page.url }}" class="icon-btn" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></a>
+          <a href="{{ section.settings.wishlist_page.url }}" class="icon-btn header__wish" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></a>
         {%- endif -%}
         {%- if shop.customer_accounts_enabled -%}
-          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="icon-btn header__account" aria-label="{% if customer %}{{ 'header.account' | t }}{% else %}{{ 'header.login' | t }}{% endif %}">{% render 'icon', name: 'account' %}</a>
+          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__action header__account">
+            {% render 'icon', name: 'account' %}
+            <span class="header__action-text"><small>{% if customer and customer.first_name != blank %}{{ 'header.hello' | t: name: customer.first_name }}{% elsif customer %}{{ 'header.signed_in' | t }}{% else %}{{ 'header.sign_in' | t }}{% endif %}</small><strong>{{ 'header.account' | t }}</strong></span>
+          </a>
         {%- endif -%}
-        <a href="{{ routes.cart_url }}" class="icon-btn" {% if settings.cart_type == 'drawer' %}data-drawer-open="CartDrawer" aria-controls="CartDrawer" aria-expanded="false" role="button"{% endif %} aria-label="{{ 'header.cart' | t }}">
-          {% render 'icon', name: 'bag' %}
-          <span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+        <a href="{{ routes.cart_url }}" class="header__action header__cart" {% if settings.cart_type == 'drawer' %}data-drawer-open="CartDrawer" aria-controls="CartDrawer" aria-expanded="false" role="button"{% endif %} aria-label="{{ 'header.cart' | t }}">
+          <span class="header__cart-icon">{% render 'icon', name: 'bag' %}<span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span></span>
+          <span class="header__action-text"><small data-cart-total>{{ cart.total_price | money }}</small><strong>{{ 'header.cart' | t }}</strong></span>
         </a>
       </div>
     </div>
 
     {%- if menu != blank and section.settings.show_nav -%}
+      {%- liquid
+        assign hide_list = section.settings.nav_hide | downcase | split: ','
+      -%}
       <nav class="header__nav" aria-label="{{ 'header.main_menu' | t }}">
+        <div class="container header__nav-inner">
         <ul class="header__nav-list" role="list">
           {%- for link in menu.links -%}
             {%- liquid
+              assign lt = link.title | downcase | strip
+              assign skip = false
+              for h in hide_list
+                assign hh = h | strip
+                if hh == lt
+                  assign skip = true
+                endif
+              endfor
+              if skip
+                continue
+              endif
               assign has_mega = false
               if link.links.size > 0
                 assign has_mega = true
               endif
+              assign icon = 'sparkle'
+              if lt contains 'all'
+                assign icon = 'grid4'
+              elsif lt contains 'cloth'
+                assign icon = 'shirt'
+              elsif lt contains 'shoe' or lt contains 'sneaker'
+                assign icon = 'shoe'
+              elsif lt contains 'bag'
+                assign icon = 'bag'
+              elsif lt contains 'access' or lt contains 'watch'
+                assign icon = 'watch'
+              elsif lt contains 'jewel'
+                assign icon = 'diamond'
+              elsif lt contains 'brand'
+                assign icon = 'tag'
+              elsif lt contains 'women' or lt contains 'men'
+                assign icon = 'user'
+              elsif lt contains 'fragr'
+                assign icon = 'perfume'
+              elsif lt contains 'home'
+                assign icon = 'home'
+              endif
               assign highlight = false
               if section.settings.highlight_item != blank
-                assign lt = link.title | downcase | strip
                 assign hi = section.settings.highlight_item | downcase | strip
                 if lt == hi
                   assign highlight = true
@@ -65,7 +101,7 @@
               endif
             -%}
             <li class="nav-item"{% if has_mega %} data-has-mega{% endif %}>
-              <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{{ link.title }}</a>
+              <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{% render 'icon', name: icon, class: 'nav-link__icon' %}{{ link.title }}{% if has_mega %}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}{% endif %}</a>
               {%- if has_mega -%}
                 <div class="mega">
                   <div class="container mega__inner">
@@ -82,7 +118,7 @@
                       {%- else -%}
                         <div>
                           <a class="mega__title" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }}</a>
-                          <ul class="mega__links" role="list">{%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}</ul>
+                          <ul class="mega__links mega__links--cols" role="list">{%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}</ul>
                         </div>
                       {%- endif -%}
                     </div>
@@ -94,7 +130,17 @@
               {%- endif -%}
             </li>
           {%- endfor -%}
+          {%- if section.settings.help_menu != blank -%}
+            <li class="nav-item nav-item--help" data-has-mega>
+              <a href="{{ section.settings.help_menu.links.first.url | default: '#' }}" class="nav-link" aria-haspopup="true" aria-expanded="false">{% render 'icon', name: 'help', class: 'nav-link__icon' %}{{ section.settings.help_label }}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}</a>
+              <div class="dropdown"><ul role="list">{%- for l in section.settings.help_menu.links -%}<li><a href="{{ l.url }}">{{ l.title }}</a></li>{%- endfor -%}</ul></div>
+            </li>
+          {%- endif -%}
         </ul>
+        {%- if section.settings.pill_label != blank -%}
+          <a class="header__pill" href="{{ section.settings.pill_link | default: routes.all_products_collection_url }}">{% render 'icon', name: 'sparkle', class: 'icon--sm' %}{{ section.settings.pill_label }}</a>
+        {%- endif -%}
+        </div>
       </nav>
     {%- endif -%}
     <span class="scroll-progress" aria-hidden="true"></span>
@@ -175,6 +221,11 @@
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu", "info": "Second-level items become column titles, third level the links." },
     { "type": "checkbox", "id": "show_nav", "label": "Show menu row under the logo", "default": true, "info": "On phones the menu is always in the Menu button." },
     { "type": "text", "id": "highlight_item", "label": "Gold menu item", "info": "Exact title of a menu item to show in gold, e.g. New in." },
+    { "type": "text", "id": "nav_hide", "label": "Leave out of the menu row", "info": "Comma-separated titles, e.g. Home, FAQs. They stay in the phone menu." },
+    { "type": "link_list", "id": "help_menu", "label": "Help dropdown menu" },
+    { "type": "text", "id": "help_label", "label": "Help dropdown name", "default": "Help" },
+    { "type": "text", "id": "pill_label", "label": "Gold button text", "default": "New in" },
+    { "type": "url", "id": "pill_link", "label": "Gold button link" },
     { "type": "checkbox", "id": "overlay_home", "label": "Transparent over homepage hero", "default": false },
     { "type": "checkbox", "id": "hide_on_scroll", "label": "Hide when scrolling down", "default": false },
     { "type": "checkbox", "id": "show_localization", "label": "Show country selector", "default": true, "info": "Countries come from Settings > Markets." },

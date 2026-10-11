@@ -1,0 +1,9 @@
+{%- comment -%}
+  A gold illustration from assets (lx-*.svg), or the uploaded image when one
+  is set. Params: name, image, sizes, class, eager
+{%- endcomment -%}
+{%- if image != blank -%}
+  {{ image | image_url: width: 1400 | image_tag: widths: '360, 540, 720, 960, 1200, 1400', sizes: sizes, loading: 'lazy', alt: '', class: class }}
+{%- elsif name != blank and name != 'none' -%}
+  <img src="{{ name | append: '.svg' | asset_url }}" alt="" width="600" height="600" class="{{ class }}"{% unless eager %} loading="lazy"{% endunless %} decoding="async">
+{%- endif -%}
