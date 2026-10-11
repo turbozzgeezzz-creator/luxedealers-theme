@@ -71,19 +71,19 @@
     "header": {
       "type": "header",
       "settings": {
-        "menu": "main-menu-2",
-        "show_nav": true,
-        "highlight_item": "",
-        "overlay_home": false,
-        "hide_on_scroll": false,
-        "show_localization": false,
         "contact_label": "Help",
         "contact_page": "contact",
-        "nav_hide": "Home, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
-        "help_menu": "support-menu",
         "help_label": "Help",
+        "help_menu": "support-menu",
+        "hide_on_scroll": false,
+        "highlight_item": "",
+        "menu": "main-menu-2",
+        "nav_hide": "Home, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
+        "overlay_home": false,
         "pill_label": "New in",
-        "pill_link": "/collections/new-arrivals"
+        "pill_link": "/collections/new-arrivals",
+        "show_localization": false,
+        "show_nav": true
       }
     }
   },

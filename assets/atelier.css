@@ -524,3 +524,13 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .dept .tile__art { width: 74%; top: 2%; }
 @media (min-width: 1100px) { .dept { min-height: 540px; } }
 .nav-link { padding: 0 8px; font-size: 14.5px; }
+.header__search-btn .icon { color: var(--c-gold); width: 20px; height: 20px; }
+@media (max-width: 749px) {
+  .promo__hero { min-height: 700px; }
+  .promo-slide .tile__art { width: 64%; bottom: 56px; }
+  .promo__side { min-height: 460px; }
+  .promo__side .tile__art { width: 66%; top: 2%; }
+  .deal--offer { min-height: 420px; }
+  .deal--offer .tile__art { width: 70%; }
+  .dept .tile__art { width: 64%; }
+}
