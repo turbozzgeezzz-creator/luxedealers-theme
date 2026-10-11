@@ -94,7 +94,7 @@
     "continue": "Continue shopping",
     "view_bag": "View bag",
     "empty": "Your bag is empty",
-    "empty_sub": "Discover brand-new pieces, delivered worldwide.",
+    "empty_sub": "Discover new arrivals, sent with tracking.",
     "subtotal": "Subtotal",
     "summary": "Order summary",
     "quantity": "Quantity",
@@ -131,7 +131,7 @@
   "search": {
     "title": "Search",
     "label": "Search the store",
-    "placeholder": "Search watches, jewellery, brands…",
+    "placeholder": "Search clothing, shoes, bags…",
     "popular": "Popular searches",
     "departments": "Departments",
     "journal": "From the Journal",

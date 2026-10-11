@@ -148,7 +148,6 @@
                     <div class="accordion__content">
                       <table class="details-table">
                         {%- if product.vendor != blank -%}<tr><th scope="row">{{ 'products.brand' | t }}</th><td>{{ product.vendor }}</td></tr>{%- endif -%}
-                        <tr><th scope="row">{{ 'products.condition' | t }}</th><td>{{ 'products.brand_new' | t }}</td></tr>
                         {%- if current.sku != blank -%}<tr><th scope="row">{{ 'products.ref' | t }}</th><td>{{ current.sku }}</td></tr>{%- endif -%}
                         {%- assign meta = product.metafields.custom.details -%}
                         {%- if meta.type == 'json' -%}
@@ -272,9 +271,9 @@
       "limit": 1,
       "settings": [
         { "type": "select", "id": "icon_1", "label": "Icon 1", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "diamond" },
-        { "type": "text", "id": "text_1", "label": "Text 1", "default": "Brand new" },
+        { "type": "text", "id": "text_1", "label": "Text 1", "default": "Tracked shipping" },
         { "type": "select", "id": "icon_2", "label": "Icon 2", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "globe" },
-        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Ships worldwide" },
+        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Secure checkout" },
         { "type": "select", "id": "icon_3", "label": "Icon 3", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "lock" },
         { "type": "text", "id": "text_3", "label": "Text 3", "default": "Secure checkout" }
       ]

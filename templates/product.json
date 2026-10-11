@@ -25,10 +25,10 @@
         "trust": {
           "type": "trust",
           "settings": {
-            "icon_1": "diamond",
-            "text_1": "Brand new",
-            "icon_2": "globe",
-            "text_2": "Ships worldwide",
+            "icon_1": "truck",
+            "text_1": "Tracked shipping",
+            "icon_2": "return",
+            "text_2": "14-day returns",
             "icon_3": "lock",
             "text_3": "Secure checkout"
           }
@@ -36,7 +36,9 @@
         "tabs": {
           "type": "accordions",
           "settings": {
-            "open_first": true
+            "open_first": true,
+            "size_page": "size-charts",
+            "shipping_text": "<p>Orders are processed within 5 to 10 business days and sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks. Any customs duties or taxes charged by your country are paid by you.</p><p>You can request a return within 14 days of receiving your item. It must be unworn and unused, with tags and in its original packaging. Return postage is paid by the customer. <a href=\"/policies/refund-policy\">Full refund policy</a></p>"
           }
         },
         "share": {

@@ -1,7 +1,7 @@
 # LuxeDealers theme (luxedealers.com)
 
-A custom Shopify Online Store 2.0 theme for LuxeDealers: brand-new luxury watches, jewellery, bags,
-fashion and accessories, sold worldwide. It is a separate theme from tech.luxedealers.com.
+A custom Shopify Online Store 2.0 theme for LuxeDealers: clothing, shoes, bags and accessories,
+sold internationally. It is a separate theme from tech.luxedealers.com.
 
 ## Connect to Shopify
 
@@ -58,8 +58,7 @@ motion always get it off.
 - The header turns transparent over the homepage hero, frosts and shrinks on scroll, hides while you
   scroll down, and shows a thin gold reading-progress line.
 - The full-screen menu wipes in and its links cascade; hovering a department shows its photo. Product cards swap to their second photo on hover, and Quick add slides up.
-- The scrolling text band, a parallax lookbook and banner, pulsing hotspots, and a floating LD mark on the
-  newsletter. The wishlist heart pops when saved, and the bag count bounces when an item is added.
+- The scrolling text band, a parallax lookbook and banner, and pulsing hotspots. The wishlist heart pops when saved, and the bag count bounces when an item is added.
 - Pages fade into each other in browsers that support view transitions (turn off in Animation settings).
 
 ## Signature sections
@@ -77,22 +76,22 @@ motion always get it off.
 
 | Section | What it does |
 |---|---|
-| Hero slideshow | Full-screen image or video slides with phone-specific images. With no photo, the slide shows a white plate with the LD mark and dark text. |
+| Hero slideshow | Full-screen image or video slides with phone-specific images. With no photo, the slide shows a soft grey plate with dark text. |
 | Scrolling text | Department names or brand logos in a slow loop. |
 | Department tiles | One tile per collection, using the collection image or its first product photo. The first can be large. |
 | Product rail | A sliding row or grid, with up to five tabs (for example New in, Watches, Jewellery). |
 | Image with text | Editorial photo with an optional overlapping second photo, text and up to three facts. Only use facts that are true. |
 | Shop the look | One photo with up to six product points, plus the matching product list with quick add. |
 | Video banner | Full-width muted looping video or photo with parallax. |
-| Brands | Your brand names or logos. With no blocks, it lists the real vendors in your catalogue. |
-| Promises | Icon, title and text, for example Brand new, Delivered worldwide, Secure checkout. |
+| Brands | Brand names or logos you add. Not on the homepage by default, because every product's vendor is LuxeDealers. |
+| Promises | Icon, title and text, for example Hand-checked, Tracked shipping, 14-day returns. |
 | Journal posts | Latest blog posts. Hidden when the blog is empty. |
 | Newsletter | Sign-up with an unticked consent box. |
 | Recently viewed | The shopper's own browsing, stored on their device. Hidden until there's something to show. |
 
 ## Photos
 
-The theme ships no stock photos. Every image slot shows a white plate with the LD mark until you add a photo:
+The theme ships no stock photos. Every image slot shows a soft grey plate (no logo) until you add a photo:
 
 - **Hero, scroll story, mosaic, bento, banners, lookbook, popup:** pick or upload in the theme editor. The editor's image
   picker also offers Shopify's free stock photos.
@@ -117,7 +116,7 @@ The theme ships no stock photos. Every image slot shows a white plate with the L
 - **Stock line from real inventory:** *In stock*, *Only N left* (at or below **Theme settings > Product cards
   > Low stock**, default 3) or *Available to order* for continue-selling variants.
 - Express checkout buttons, a sticky Add to bag bar, wishlist, and share links.
-- **Details tab:** Brand, Condition (Brand new), Reference (SKU), plus your own rows from the product
+- **Details tab:** Brand, Reference (SKU), plus your own rows from the product
   metafield `custom.details`. That can be JSON (`{"Case": "41 mm", "Movement": "Automatic"}`), multi-line
   text (`Name: Value` per line) or rich text.
 - **Size guide, delivery and care tabs:** set in the theme editor under Product > Details tabs.
@@ -163,19 +162,26 @@ Check the FAQ answers match your real policies before publishing.
   titles) and third-level links to build its mega menu. Add a **Mega menu images** block in the header to
   show up to two photos in an item's dropdown.
 - **Search suggestions** (optional menu with the handle `search-suggestions`): shown as popular searches.
-- The homepage points to collections with the handles `watches`, `jewellery`, `bags`, `fashion` and
-  `accessories`. Create them, or pick other collections in the theme editor.
+- The homepage uses the store's real collections: `new-arrivals`, `clothing`, `shoes`, `handbags`,
+  `accessories`, `sneakers-1`, `watches`, `fragances` and `shop-all`. Pick others in the theme editor.
 - **Filters:** add them in the **Search & Discovery** app. The filter drawer shows only what's set up there.
 
 ## Extras
 
-- **Logo intro:** a short logo reveal on the first page of each visit (Theme settings > Animation).
+- **Logo intro:** a short logo reveal on the first page of each visit (Theme settings > Animation). Off by default; leave it off to keep the logo in the header only.
 - **View cursor:** on desktop, a round View label follows the pointer over product photos.
 - **Hover video:** if a product has a video, its card plays it on hover.
 - **Welcome back:** a returning visitor (after 30 minutes away) sees a small panel with the last piece
   they looked at. It uses only their own browsing, stored on their device.
 - **Header hides** while scrolling down and returns when scrolling up (Header section setting).
 - **Order tracking page:** create a page with the `track-order` template.
+
+## Store facts used in the default copy
+
+Taken from the store's own policies and pages (October 2026): orders processed in 5 to 10 business days,
+tracked post, delivery usually 2 to 4 weeks, ships to most countries, duties paid by the customer, 14-day
+returns (unworn, tags on, original packaging, customer pays return postage), hand-checked orders. If a
+policy changes, update the FAQ, product Delivery tab, promises and announcement bar to match.
 
 ## What the theme never does
 

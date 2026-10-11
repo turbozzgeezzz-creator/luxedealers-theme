@@ -4,7 +4,7 @@
       "type": "page-hero",
       "settings": {
         "eyebrow": "Our story",
-        "heading": "Brand-new luxury,\ndelivered worldwide"
+        "heading": "Considered style,\nsent to your door"
       }
     },
     "intro": {
@@ -29,9 +29,9 @@
       "type": "split-feature",
       "settings": {
         "reverse": false,
-        "eyebrow": "Brand new",
-        "heading": "Only brand new.\nNever pre-owned.",
-        "text": "<p>Describe how you source your stock and what comes in the box.</p>",
+        "eyebrow": "Quality",
+        "heading": "Checked by hand,\nbefore it ships",
+        "text": "<p>Describe how you choose and check each piece before it's packed.</p>",
         "button_1": "Shop new arrivals",
         "button_2": ""
       }
@@ -40,7 +40,7 @@
       "type": "split-feature",
       "settings": {
         "reverse": true,
-        "eyebrow": "Worldwide",
+        "eyebrow": "Delivery",
         "heading": "From us to you,\nwherever you are",
         "text": "<p>Describe your delivery: how orders are packed, sent and tracked.</p>",
         "button_1": "Delivery information",
@@ -54,16 +54,16 @@
           "type": "promise",
           "settings": {
             "icon": "diamond",
-            "title": "Brand new, every piece",
-            "text": "<p>Never worn, never pre-owned.</p>"
+            "title": "Hand-checked",
+            "text": "<p>Every order is checked before it ships.</p>"
           }
         },
         "b": {
           "type": "promise",
           "settings": {
             "icon": "globe",
-            "title": "Delivered worldwide",
-            "text": "<p>Tracked shipping, with prices in your currency.</p>"
+            "title": "Tracked shipping",
+            "text": "<p>Sent by tracked post to most countries, priced in your currency.</p>"
           }
         },
         "c": {

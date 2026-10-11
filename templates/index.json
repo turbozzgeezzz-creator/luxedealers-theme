@@ -7,14 +7,14 @@
           "type": "image",
           "settings": {
             "shade": 35,
-            "dot_label": "The new season",
-            "eyebrow": "The new season",
-            "heading": "The art of\n<em>brand new</em>",
-            "text": "<p>Watches, fine jewellery, leather goods and ready-to-wear from the houses you love. Delivered worldwide.</p>",
-            "button_1": "Discover",
-            "link_1": "",
-            "button_2": "",
-            "link_2": "",
+            "dot_label": "New arrivals",
+            "eyebrow": "New arrivals",
+            "heading": "The art of\n<em>the detail</em>",
+            "text": "<p>Clothing, shoes, bags and accessories, hand-checked and sent by tracked post to most countries.</p>",
+            "button_1": "Shop new arrivals",
+            "link_1": "/collections/new-arrivals",
+            "button_2": "Shop all",
+            "link_2": "/collections/shop-all",
             "align": "center",
             "dark_text": false
           }
@@ -23,12 +23,12 @@
           "type": "image",
           "settings": {
             "shade": 35,
-            "dot_label": "Ready-to-wear",
-            "eyebrow": "Ready-to-wear",
-            "heading": "Tailored for\nthe moment",
+            "dot_label": "Clothing",
+            "eyebrow": "Clothing",
+            "heading": "Made for\n<em>every day</em>",
             "text": "",
-            "button_1": "Shop fashion",
-            "link_1": "/collections/fashion",
+            "button_1": "Shop clothing",
+            "link_1": "/collections/clothing",
             "button_2": "",
             "link_2": "",
             "align": "center",
@@ -39,12 +39,12 @@
           "type": "image",
           "settings": {
             "shade": 35,
-            "dot_label": "Watches",
-            "eyebrow": "Watches",
-            "heading": "Time,\n<em>beautifully kept</em>",
+            "dot_label": "Bags",
+            "eyebrow": "Bags",
+            "heading": "Carried\n<em>beautifully</em>",
             "text": "",
-            "button_1": "Shop watches",
-            "link_1": "/collections/watches",
+            "button_1": "Shop bags",
+            "link_1": "/collections/handbags",
             "button_2": "",
             "link_2": "",
             "align": "center",
@@ -71,40 +71,40 @@
         "d1": {
           "type": "door",
           "settings": {
-            "collection": "fashion",
-            "title": "Ready-to-wear",
+            "collection": "clothing",
+            "title": "Clothing",
             "cta": "Discover"
           }
         },
         "d2": {
           "type": "door",
           "settings": {
-            "collection": "bags",
-            "title": "Bags",
+            "collection": "shoes",
+            "title": "Shoes",
             "cta": "Discover"
           }
         },
         "d3": {
           "type": "door",
           "settings": {
-            "collection": "watches",
-            "title": "Watches",
+            "collection": "handbags",
+            "title": "Bags",
             "cta": "Discover"
           }
         },
         "d4": {
           "type": "door",
           "settings": {
-            "collection": "jewellery",
-            "title": "Jewellery",
+            "collection": "accessories",
+            "title": "Accessories",
             "cta": "Discover"
           }
         },
         "d5": {
           "type": "door",
           "settings": {
-            "collection": "accessories",
-            "title": "Accessories",
+            "collection": "new-arrivals",
+            "title": "New arrivals",
             "cta": "Discover"
           }
         }
@@ -117,8 +117,8 @@
         "d5"
       ],
       "settings": {
-        "eyebrow": "The Maison",
-        "heading": "Explore the collections",
+        "eyebrow": "The collections",
+        "heading": "Shop by department",
         "link_label": "View all",
         "columns": 4,
         "feature_first": true,
@@ -129,9 +129,9 @@
     "story": {
       "type": "scroll-story",
       "settings": {
-        "eyebrow": "The LuxeDealers promise",
-        "text": "Every piece arrives <em>brand new</em>, exactly as it left the house. Chosen with care, sent with tracking, wherever you are in the world.",
-        "button": "Discover the collection",
+        "eyebrow": "The LuxeDealers way",
+        "text": "Every order is <em>hand-checked</em>, carefully packed and sent with tracking to most countries. Real people answer every email.",
+        "button": "Shop new arrivals",
         "start_size": 40,
         "shade": 45,
         "length": 300
@@ -140,10 +140,10 @@
     "runway": {
       "type": "runway",
       "settings": {
-        "collection": "all",
+        "collection": "new-arrivals",
         "limit": 10,
-        "eyebrow": "The runway",
-        "heading": "New this season",
+        "eyebrow": "Just in",
+        "heading": "New arrivals",
         "link_label": "Shop all new arrivals"
       }
     },
@@ -153,27 +153,27 @@
         "t1": {
           "type": "tile",
           "settings": {
-            "collection": "fashion",
-            "title": "Ready-to-wear",
-            "text": "Tailoring, knitwear and outerwear for the season ahead.",
+            "collection": "clothing",
+            "title": "Clothing",
+            "text": "Hoodies, shirts, jackets, jerseys and denim.",
             "cta": "Discover"
           }
         },
         "t2": {
           "type": "tile",
           "settings": {
-            "collection": "bags",
-            "title": "Leather goods",
-            "text": "Top-handles, totes and small leather goods.",
+            "collection": "handbags",
+            "title": "Bags",
+            "text": "Handbags, crossbody and shoulder bags.",
             "cta": "Discover"
           }
         },
         "t3": {
           "type": "tile",
           "settings": {
-            "collection": "jewellery",
-            "title": "Fine jewellery",
-            "text": "Pieces made to be worn every day, and kept for ever.",
+            "collection": "accessories",
+            "title": "Accessories",
+            "text": "Jewellery, watches, fragrances and collectibles.",
             "cta": "Discover"
           }
         }
@@ -185,7 +185,7 @@
       ],
       "settings": {
         "eyebrow": "The edit",
-        "heading": "Dressed for\n<em>every</em> occasion"
+        "heading": "Dressed for\n<em>every</em> day"
       }
     },
     "spotlight": {
@@ -194,13 +194,13 @@
         "p1": {
           "type": "point",
           "settings": {
-            "text": "Brand new, never worn"
+            "text": "Hand-checked before it ships"
           }
         },
         "p2": {
           "type": "point",
           "settings": {
-            "text": "Delivered worldwide with tracking"
+            "text": "Tracked shipping to most countries"
           }
         },
         "p3": {
@@ -224,44 +224,52 @@
     "icons": {
       "type": "featured-collection",
       "blocks": {
-        "w": {
+        "n": {
           "type": "collection",
           "settings": {
-            "collection": "watches",
-            "title": "Watches"
+            "collection": "new-arrivals",
+            "title": "New in"
           }
         },
-        "j": {
+        "c": {
           "type": "collection",
           "settings": {
-            "collection": "jewellery",
-            "title": "Jewellery"
+            "collection": "clothing",
+            "title": "Clothing"
+          }
+        },
+        "s": {
+          "type": "collection",
+          "settings": {
+            "collection": "shoes",
+            "title": "Shoes"
           }
         },
         "b": {
           "type": "collection",
           "settings": {
-            "collection": "bags",
+            "collection": "handbags",
             "title": "Bags"
           }
         },
-        "f": {
+        "a": {
           "type": "collection",
           "settings": {
-            "collection": "fashion",
-            "title": "Fashion"
+            "collection": "accessories",
+            "title": "Accessories"
           }
         }
       },
       "block_order": [
-        "w",
-        "j",
+        "n",
+        "c",
+        "s",
         "b",
-        "f"
+        "a"
       ],
       "settings": {
         "eyebrow": "Most wanted",
-        "heading": "The icons",
+        "heading": "Shop the edit",
         "layout": "grid",
         "limit": 8,
         "view_all": true,
@@ -276,16 +284,16 @@
           "settings": {
             "size": "lg",
             "eyebrow": "The edit",
-            "title": "Gifts that outlast the occasion",
-            "cta": "Shop gifts",
-            "link": ""
+            "title": "Sneakers for every day",
+            "cta": "Shop sneakers",
+            "link": "/collections/sneakers-1"
           }
         },
         "b2": {
           "type": "tile",
           "settings": {
             "size": "wide",
-            "eyebrow": "New in",
+            "eyebrow": "Accessories",
             "title": "The watch edit",
             "cta": "Discover",
             "link": "/collections/watches"
@@ -295,9 +303,9 @@
           "type": "tile",
           "settings": {
             "size": "sm",
-            "title": "Small leather goods",
+            "title": "Fragrances",
             "cta": "Shop",
-            "link": "/collections/accessories"
+            "link": "/collections/fragances"
           }
         },
         "b4": {
@@ -329,28 +337,28 @@
           "type": "tier",
           "settings": {
             "label": "Under",
-            "amount": 250
+            "amount": 50
           }
         },
         "b": {
           "type": "tier",
           "settings": {
             "label": "Under",
-            "amount": 500
+            "amount": 100
           }
         },
         "c": {
           "type": "tier",
           "settings": {
             "label": "Under",
-            "amount": 1000
+            "amount": 150
           }
         },
         "d": {
           "type": "tier",
           "settings": {
             "label": "Under",
-            "amount": 2500
+            "amount": 250
           }
         }
       },
@@ -361,9 +369,9 @@
         "d"
       ],
       "settings": {
-        "eyebrow": "Gifting",
-        "heading": "Gifts by budget",
-        "collection": "all",
+        "eyebrow": "Shop by price",
+        "heading": "Find your price",
+        "collection": "shop-all",
         "cta": "Shop"
       }
     },
@@ -410,37 +418,37 @@
         "m1": {
           "type": "text",
           "settings": {
-            "text": "Watches"
+            "text": "Clothing"
           }
         },
         "m2": {
           "type": "text",
           "settings": {
-            "text": "Fine jewellery"
+            "text": "Shoes"
           }
         },
         "m3": {
           "type": "text",
           "settings": {
-            "text": "Leather goods"
+            "text": "Bags"
           }
         },
         "m4": {
           "type": "text",
           "settings": {
-            "text": "Ready-to-wear"
+            "text": "Jewellery"
           }
         },
         "m5": {
           "type": "text",
           "settings": {
-            "text": "Accessories"
+            "text": "Watches"
           }
         },
         "m6": {
           "type": "text",
           "settings": {
-            "text": "Brand new, always"
+            "text": "Fragrances"
           }
         }
       },
@@ -460,16 +468,6 @@
         "speed": 50
       }
     },
-    "brands": {
-      "type": "brand-wall",
-      "settings": {
-        "eyebrow": "The houses",
-        "heading": "Brands we stock",
-        "columns": 6,
-        "auto_limit": 12,
-        "subtle": false
-      }
-    },
     "services": {
       "type": "promises",
       "blocks": {
@@ -477,32 +475,32 @@
           "type": "promise",
           "settings": {
             "icon": "diamond",
-            "title": "Brand new, every piece",
-            "text": "<p>Never worn, never pre-owned.</p>"
+            "title": "Hand-checked",
+            "text": "<p>Every order is checked before it ships.</p>"
           }
         },
         "b": {
           "type": "promise",
           "settings": {
             "icon": "globe",
-            "title": "Delivered worldwide",
-            "text": "<p>Tracked shipping, with prices in your currency.</p>"
+            "title": "Tracked shipping",
+            "text": "<p>Sent by tracked post to most countries, priced in your currency.</p>"
           }
         },
         "c": {
           "type": "promise",
           "settings": {
-            "icon": "lock",
-            "title": "Secure payment",
-            "text": "<p>Cards, wallets and local payment methods.</p>"
+            "icon": "return",
+            "title": "14-day returns",
+            "text": "<p>Request a return within 14 days of receiving your order.</p>"
           }
         },
         "d": {
           "type": "promise",
           "settings": {
-            "icon": "gift",
-            "title": "Gift message",
-            "text": "<p>Add a personal note to your order in the bag.</p>"
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "<p>Cards, wallets and local payment methods.</p>"
           }
         }
       },
@@ -514,7 +512,7 @@
       ],
       "settings": {
         "eyebrow": "Services",
-        "heading": "The LuxeDealers experience",
+        "heading": "Shopping with LuxeDealers",
         "subtle": false
       }
     },
@@ -531,7 +529,7 @@
       "settings": {
         "style": "subtle",
         "eyebrow": "The private list",
-        "heading": "First to know,\n<em>first to own</em>",
+        "heading": "First to know about\n<em>new arrivals</em>",
         "show_offer": true
       }
     },
@@ -555,7 +553,6 @@
     "budget",
     "look",
     "marquee",
-    "brands",
     "services",
     "journal",
     "newsletter",
