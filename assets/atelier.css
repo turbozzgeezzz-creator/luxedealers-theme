@@ -259,3 +259,6 @@ html, body { overflow-x: clip; }
 .menu-overlay__link:hover { color: var(--c-gold-text); }
 .drawer__title, .search-form input, .door__title, .mosaic__title, .bento__title, .budget__amount, .split__stat strong, .rich-text__quote, .story__text, .marquee__item { font-weight: 600; letter-spacing: -.02em; }
 .product__title, .main-product h1 { font-weight: 600; }
+.newsletter--panel .newsletter__wrap { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 990px) { .newsletter--panel .newsletter__wrap--image { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.newsletter--panel .newsletter__inner { width: 100%; }

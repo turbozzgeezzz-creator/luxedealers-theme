@@ -19,33 +19,25 @@ Every push to `main` updates the connected theme. Changes made in the theme edit
 Shopify's GitHub sync silently skips a file whose schema breaks its rules (for example a section or block
 name over 25 characters) and keeps the old version. After a push, check the theme editor shows the change.
 
-## Design: Maison
+## Design: Atelier
 
-A white, gallery-like house style: the store reads like a maison's boutique, and photography leads.
+The store's own look (gold LUXEDEALERS wordmark, bold type, dark photo banners with gold buttons, black
+footer), made calmer and more premium. `assets/atelier.css` is layered over `assets/theme.css`.
 
-- **All white and almost monochrome.** Pure white pages, a soft warm grey (`#F6F5F3`) behind product
-  photos, black type, pill-shaped buttons.
-- **Gold is jewellery.** Used sparingly: the shimmering LUXE in the name, diamond bullets, progress lines
-  and a gold glint that sweeps across buttons on hover. The deeper gold (`#8A6420`) is the readable text gold.
-- **Sapphire** from the diamond is only the keyboard focus ring and the New badge.
-- **Type.** Jost (a geometric sans) at light weights for big headlines, with Cormorant Garamond italic for
-  editorial accents: wrap a word in `<em>` in any heading. Both fonts are bundled (SIL Open Font
-  License). Switch to Shopify's font library in **Theme settings > Typography > Typeface**.
-- **Header.** Menu and Search on the left, the LD logo in the middle, contact, country, wishlist, account
-  and bag on the right. Menu opens a full-screen menu with large type, sub-links and a photo for each
-  department. Turn on the menu row under the logo in the Header section if you prefer it.
+- **Logo:** the gold LUXEDEALERS wordmark (Cinzel), in the header only. Upload an image logo in
+  **Theme settings > Logo** to replace it.
+- **Header:** logo on the left, a wide search bar, country, Help, account and bag, then the full menu row
+  (`main-menu-2`, "Main navigation"). Phones get the Menu button and a search icon.
+- **Type:** Poppins (bundled, SIL Open Font License). Switch in **Theme settings > Typography**.
+- **Colours:** white pages, black text, gold `#D4AF37` buttons and accents, black announcement bar and footer.
+- **Photo banners** (`sections/banner-grid.liquid`): large, wide or small-tile banners. Each one uses its own
+  uploaded image or the photo of a product you pick, so every banner shows a different real product.
+- **No repeated photos:** on any page, a product row skips products already shown in a banner or an earlier
+  row, and fills the gap with the next product.
 
-| Setting | Default | Used for |
-|---|---|---|
-| Page background | `#FFFFFF` | Pages, header, drawers |
-| Soft panels | `#F6F5F3` | Image backgrounds, quiet bands |
-| Text | `#111111` | Text, dark buttons, announcement bar |
-| Secondary text | `#666460` | Captions, descriptions |
-| Gold | `#B8892E` | Gold gradient, lines, accents |
-| Gold text | `#8A6420` | Gold text where needed |
-| Sapphire | `#0E60B6` | Focus ring, New badge |
-
-All colours are in **Theme settings > Colors**. Upload a different logo in **Theme settings > Logo**.
+The homepage, top to bottom: two large banners, Shop by category tiles, New Arrivals, Men's & Women's
+banners, Most wanted (tabs), Why shoppers trust us, Signature Fragrances, the journal, FAQ, the
+newsletter panel and recently viewed.
 
 ## Animation
 
