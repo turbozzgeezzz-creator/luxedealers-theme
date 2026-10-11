@@ -235,3 +235,21 @@ h4, .h4 { font-weight: 600; }
 .page-hero { padding-block: clamp(48px, 6vw, 96px) clamp(28px, 3vw, 48px); }
 .tabs { border-radius: 12px; }
 .tab { border-radius: 9px; font-weight: 500; }
+
+/* ---------- Fixes ---------- */
+html, body { overflow-x: clip; }
+.banners--tiles .banner__media { height: auto; inset: auto; }
+@media (min-width: 1100px) {
+  .header__nav-list { padding-inline: var(--gutter); justify-content: safe center; }
+}
+.template-index .main-content > .shopify-section:first-child .section { padding-top: clamp(16px, 2vw, 28px); }
+@media (min-width: 1100px) { .banners--hero .banner { height: min(66vh, 620px); } }
+@media (max-width: 749px) {
+  .banners--hero .banner { aspect-ratio: 1 / 1.08; }
+  .banners--wide .banner { aspect-ratio: 1 / .95; }
+  .banners--wide .banner::after { background: linear-gradient(to top, rgba(10,8,6,.85) 0%, rgba(10,8,6,.4) 45%, rgba(10,8,6,0) 75%); }
+  .banners--wide .banner__body { top: auto; right: 0; }
+  .section-products .tabs { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .section-products .tab { white-space: nowrap; }
+  .section-head { gap: 14px; }
+}
