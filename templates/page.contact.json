@@ -1,0 +1,17 @@
+{
+  "sections": {
+    "hero": { "type": "page-hero", "settings": { "eyebrow": "Client care", "heading": "We're here to help", "text": "Questions about a piece, an order or delivery to your country." } },
+    "main": { "type": "contact-form", "settings": {} },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": { "type": "question", "settings": { "question": "Is everything brand new?", "answer": "<p>Yes. Every item we sell is brand new and unworn.</p>" } },
+        "q2": { "type": "question", "settings": { "question": "Which countries do you deliver to?", "answer": "<p>Choose your country at the top of the page to see prices in your currency. Available delivery options and costs are shown at checkout.</p>" } },
+        "q3": { "type": "question", "settings": { "question": "Are duties and taxes included?", "answer": "<p>Any duties and taxes for your country are shown at checkout before you pay.</p>" } }
+      },
+      "block_order": ["q1", "q2", "q3"],
+      "settings": { "eyebrow": "Help", "heading": "Common questions", "schema": true, "subtle": true }
+    }
+  },
+  "order": ["hero", "main", "faq"]
+}

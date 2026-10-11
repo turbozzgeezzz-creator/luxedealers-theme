@@ -1,0 +1,12 @@
+{%- liquid
+  assign nets = 'instagram,tiktok,facebook,pinterest,youtube,x' | split: ','
+  assign labels = 'Instagram,TikTok,Facebook,Pinterest,YouTube,X' | split: ','
+-%}
+<ul class="social" role="list">
+  {%- for n in nets -%}
+    {%- assign key = 'social_' | append: n -%}
+    {%- if settings[key] != blank -%}
+      <li><a href="{{ settings[key] }}" target="_blank" rel="noopener" aria-label="{{ labels[forloop.index0] }}">{% render 'icon', name: n %}</a></li>
+    {%- endif -%}
+  {%- endfor -%}
+</ul>

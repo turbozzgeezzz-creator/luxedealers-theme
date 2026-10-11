@@ -1,0 +1,98 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion }}"{% if settings.gold_shimmer %} data-shimmer{% endif %}{% if settings.page_transitions %} data-transitions{% endif %}>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 64, height: 64 }}">
+    {%- else -%}
+      <link rel="icon" type="image/png" sizes="32x32" href="{{ 'favicon-32.png' | asset_url }}">
+    {%- endif -%}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ 'apple-touch-icon.png' | asset_url }}">
+
+    {%- liquid
+      assign seo_title = page_title
+      if request.page_type == 'index' and settings.seo_home_title != blank
+        assign seo_title = settings.seo_home_title
+      endif
+      assign seo_desc = page_description
+      if request.page_type == 'index' and settings.seo_home_description != blank
+        assign seo_desc = settings.seo_home_description
+      endif
+      if seo_desc == blank
+        assign seo_desc = settings.seo_home_description
+      endif
+    -%}
+    <title>
+      {{ seo_title }}
+      {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
+      {%- unless seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+    <meta name="description" content="{{ seo_desc | escape }}">
+    {%- if request.page_type == 'search' or request.page_type == 'cart' or template.suffix == 'wishlist' -%}
+      <meta name="robots" content="noindex, follow">
+    {%- endif -%}
+
+    {% render 'meta-tags', seo_title: seo_title, seo_desc: seo_desc, product: product %}
+    {% render 'structured-data', product: product, collection: collection %}
+    {% render 'css-variables' %}
+    {{ 'theme.css' | asset_url | stylesheet_tag }}
+    {%- if settings.page_transitions and settings.motion != 'off' -%}
+      <style>@view-transition { navigation: auto; } ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }</style>
+    {%- endif -%}
+
+    <script>
+      document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+      window.Luxe = {
+        routes: {
+          root: {{ routes.root_url | json }},
+          cart: {{ routes.cart_url | json }},
+          cartAdd: {{ routes.cart_add_url | json }},
+          cartChange: {{ routes.cart_change_url | json }},
+          cartUpdate: {{ routes.cart_update_url | json }},
+          predictiveSearch: {{ routes.predictive_search_url | json }},
+          recommendations: {{ routes.product_recommendations_url | json }}
+        },
+        cartType: {{ settings.cart_type | json }},
+        moneyFormat: {{ shop.money_format | json }},
+        welcome: {{ settings.welcome_code | json }},
+        mail: {% if settings.luxemail_endpoint != blank %}{ endpoint: {{ settings.luxemail_endpoint | json }}{% if customer and customer.accepts_marketing %}, email: {{ customer.email | json }}, firstName: {{ customer.first_name | json }}{% endif %} }{% else %}null{% endif %},
+        strings: {
+          added: {{ 'cart.added' | t | json }},
+          soldOut: {{ 'products.sold_out' | t | json }},
+          unavailable: {{ 'products.unavailable' | t | json }},
+          addToBag: {{ 'products.add_to_bag' | t | json }},
+          copied: {{ 'general.copied' | t | json }}
+        }
+      };
+    </script>
+    <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+
+    {{ content_for_header }}
+  </head>
+
+  <body class="template-{{ template.name | handle }}{% if template.suffix %} template-{{ template.suffix | handle }}{% endif %}">
+    <a class="skip-link" href="#MainContent">{{ 'general.skip' | t }}</a>
+
+    {% sections 'header-group' %}
+
+    <main id="MainContent" class="main-content" role="main" tabindex="-1">
+      {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ shop.name | escape }}: brand-new luxury watches, jewellery, bags, fashion and accessories</h1>{%- endif -%}
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    {% section 'cart-drawer' %}
+    {% section 'newsletter-popup' %}
+    {% render 'search-overlay' %}
+    {% render 'quick-view' %}
+
+    <div class="visually-hidden" aria-live="polite" role="status" id="A11yStatus"></div>
+  </body>
+</html>

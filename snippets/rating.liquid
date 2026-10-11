@@ -1,0 +1,15 @@
+{%- comment -%}
+  Stars only when a reviews app has written real ratings to the standard
+  reviews.rating / reviews.rating_count metafields. Nothing is shown otherwise.
+{%- endcomment -%}
+{%- if product.metafields.reviews.rating.value != blank and product.metafields.reviews.rating_count.value > 0 -%}
+  {%- liquid
+    assign r = product.metafields.reviews.rating.value
+    assign pct = r.rating | divided_by: r.scale_max | times: 100
+  -%}
+  <span class="rating">
+    <span class="rating__stars" aria-hidden="true"><span style="--pct: {{ pct }}%"></span></span>
+    <span class="visually-hidden">{{ 'products.rating' | t: rating: r.rating, max: r.scale_max }}</span>
+    <span>({{ product.metafields.reviews.rating_count.value }})</span>
+  </span>
+{%- endif -%}

@@ -1,0 +1,346 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "LuxeDealers",
+    "theme_version": "1.0.0",
+    "theme_author": "LuxeDealers",
+    "theme_documentation_url": "https://luxedealers.com",
+    "theme_support_url": "https://luxedealers.com/pages/contact"
+  },
+  {
+    "name": "Logo",
+    "settings": [
+      {
+        "type": "image_picker",
+        "id": "logo",
+        "label": "Logo",
+        "info": "Leave empty to use the bundled LD diamond mark."
+      },
+      {
+        "type": "range",
+        "id": "logo_height",
+        "label": "Logo height (desktop)",
+        "min": 32,
+        "max": 96,
+        "step": 2,
+        "unit": "px",
+        "default": 56
+      },
+      {
+        "type": "checkbox",
+        "id": "logo_wordmark",
+        "label": "Show LUXEDEALERS name next to the logo",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon",
+        "info": "Square, at least 64 x 64 px. Leave empty to use the LD mark."
+      }
+    ]
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "color_background",
+        "label": "Page background",
+        "default": "#FFFFFF"
+      },
+      {
+        "type": "color",
+        "id": "color_subtle",
+        "label": "Soft panels",
+        "info": "Image backgrounds and quiet bands.",
+        "default": "#F7F6F3"
+      },
+      {
+        "type": "color",
+        "id": "color_ink",
+        "label": "Text and dark buttons",
+        "default": "#111111"
+      },
+      {
+        "type": "color",
+        "id": "color_muted",
+        "label": "Secondary text",
+        "default": "#666460"
+      },
+      {
+        "type": "color",
+        "id": "color_border",
+        "label": "Lines and borders",
+        "default": "#E7E4DE"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold",
+        "info": "Taken from the logo. Used for accents, sale prices and highlights.",
+        "default": "#B8892E"
+      },
+      {
+        "type": "color",
+        "id": "color_gold_text",
+        "label": "Gold text",
+        "info": "A deeper gold that stays readable on white.",
+        "default": "#8A6420"
+      },
+      {
+        "type": "color",
+        "id": "color_sapphire",
+        "label": "Sapphire",
+        "info": "The diamond blue. Used sparingly: focus rings and New badges.",
+        "default": "#0E60B6"
+      },
+      {
+        "type": "color",
+        "id": "color_success",
+        "label": "In stock",
+        "default": "#1E7A3C"
+      },
+      {
+        "type": "color",
+        "id": "color_error",
+        "label": "Errors",
+        "default": "#B42318"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Headings",
+        "default": "playfair_display_n4"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body and labels",
+        "default": "montserrat_n4"
+      },
+      {
+        "type": "range",
+        "id": "heading_scale",
+        "label": "Heading size",
+        "min": 80,
+        "max": 130,
+        "step": 5,
+        "unit": "%",
+        "default": 100
+      }
+    ]
+  },
+  {
+    "name": "Animation",
+    "settings": [
+      {
+        "type": "select",
+        "id": "motion",
+        "label": "Animation level",
+        "options": [
+          { "value": "off", "label": "Off" },
+          { "value": "subtle", "label": "Subtle" },
+          { "value": "full", "label": "Full" }
+        ],
+        "default": "full",
+        "info": "Visitors whose device asks for reduced motion always get animations off."
+      },
+      {
+        "type": "checkbox",
+        "id": "gold_shimmer",
+        "label": "Gold shimmer on the logo name and highlights",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "page_transitions",
+        "label": "Fade between pages",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Product cards",
+    "settings": [
+      {
+        "type": "select",
+        "id": "card_ratio",
+        "label": "Image shape",
+        "options": [
+          { "value": "portrait", "label": "Portrait 4:5" },
+          { "value": "square", "label": "Square" },
+          { "value": "tall", "label": "Tall 2:3" }
+        ],
+        "default": "portrait"
+      },
+      {
+        "type": "checkbox",
+        "id": "card_hover_image",
+        "label": "Show second photo on hover",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_vendor",
+        "label": "Show brand",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_quick_add",
+        "label": "Quick add button",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "card_swatches",
+        "label": "Colour swatches",
+        "info": "Shown for an option named Color, Colour or Dial.",
+        "default": true
+      },
+      {
+        "type": "range",
+        "id": "badge_new_days",
+        "label": "New badge for products published within",
+        "min": 0,
+        "max": 90,
+        "step": 5,
+        "unit": "d",
+        "default": 30,
+        "info": "0 turns the New badge off."
+      },
+      {
+        "type": "range",
+        "id": "low_stock_threshold",
+        "label": "Low stock line at or below",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "default": 3,
+        "info": "Uses real tracked inventory only. 0 turns it off."
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "When something is added",
+        "options": [
+          { "value": "drawer", "label": "Open cart drawer" },
+          { "value": "page", "label": "Go to cart page" }
+        ],
+        "default": "drawer"
+      },
+      {
+        "type": "number",
+        "id": "free_shipping_threshold",
+        "label": "Free shipping from (store currency)",
+        "default": 0,
+        "info": "0 hides the progress bar. Create the matching free rate in Settings > Shipping and delivery first."
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_gift_note",
+        "label": "Gift message box",
+        "default": true
+      },
+      {
+        "type": "richtext",
+        "id": "cart_note_text",
+        "label": "Text under checkout button",
+        "default": "<p>Duties and taxes for your country are shown at checkout.</p>"
+      }
+    ]
+  },
+  {
+    "name": "Welcome offer",
+    "settings": [
+      {
+        "type": "text",
+        "id": "welcome_code",
+        "label": "Discount code",
+        "info": "Shown after someone subscribes. Create the same code in Discounts first. Leave empty to show no offer."
+      },
+      {
+        "type": "text",
+        "id": "welcome_offer",
+        "label": "Offer line",
+        "default": "10% off your first order"
+      },
+      {
+        "type": "text",
+        "id": "luxemail_endpoint",
+        "label": "LuxeMail address",
+        "info": "Filled in by the LuxeMail deploy. Leave empty if you don't use it."
+      }
+    ]
+  },
+  {
+    "name": "Store details",
+    "settings": [
+      {
+        "type": "text",
+        "id": "support_email",
+        "label": "Support email",
+        "default": "support@luxedealers.com"
+      },
+      {
+        "type": "text",
+        "id": "support_phone",
+        "label": "Phone"
+      },
+      {
+        "type": "text",
+        "id": "support_hours",
+        "label": "Opening hours"
+      },
+      {
+        "type": "textarea",
+        "id": "store_address",
+        "label": "Business address"
+      }
+    ]
+  },
+  {
+    "name": "Social media",
+    "settings": [
+      { "type": "text", "id": "social_instagram", "label": "Instagram" },
+      { "type": "text", "id": "social_tiktok", "label": "TikTok" },
+      { "type": "text", "id": "social_facebook", "label": "Facebook" },
+      { "type": "text", "id": "social_pinterest", "label": "Pinterest" },
+      { "type": "text", "id": "social_youtube", "label": "YouTube" },
+      { "type": "text", "id": "social_x", "label": "X" }
+    ]
+  },
+  {
+    "name": "Search engines",
+    "settings": [
+      {
+        "type": "text",
+        "id": "seo_home_title",
+        "label": "Homepage title",
+        "default": "LuxeDealers | Brand-new luxury watches, jewellery and bags"
+      },
+      {
+        "type": "textarea",
+        "id": "seo_home_description",
+        "label": "Homepage description",
+        "default": "Brand-new luxury watches, fine jewellery, designer bags, fashion and accessories, delivered worldwide with prices in your currency."
+      },
+      {
+        "type": "image_picker",
+        "id": "share_image",
+        "label": "Social sharing image"
+      }
+    ]
+  }
+]

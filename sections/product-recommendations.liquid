@@ -1,0 +1,51 @@
+{%- comment -%}
+  Shopify's own related products, rendered server-side via the
+  recommendations endpoint (section_id + product_id). Hidden when empty.
+{%- endcomment -%}
+{%- if recommendations.performed and recommendations.products_count > 0 -%}
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head">
+        <div class="section-head__text">
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+          <h2 class="h2">{{ section.settings.heading }}</h2>
+        </div>
+        <div class="rail__controls">
+          <button type="button" class="rail__btn" data-rail-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %}</button>
+          <button type="button" class="rail__btn" data-rail-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
+        </div>
+      </div>
+      <div class="rail" data-rail>
+        <div class="rail__track">
+          {%- for product in recommendations.products -%}{% render 'product-card', product: product %}{%- endfor -%}
+        </div>
+        <div class="rail__progress" aria-hidden="true"><span></span></div>
+      </div>
+    </div>
+  </section>
+{%- else -%}
+  <div data-recommendations data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&amp;product_id={{ product.id }}&amp;limit={{ section.settings.limit }}&amp;intent={{ section.settings.intent }}"></div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Recommendations",
+  "class": "section-recommendations",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "You may also like" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Pairs well with" },
+    {
+      "type": "select",
+      "id": "intent",
+      "label": "Type",
+      "options": [
+        { "value": "related", "label": "Related" },
+        { "value": "complementary", "label": "Complementary" }
+      ],
+      "default": "related",
+      "info": "Complementary uses products set in the Search & Discovery app."
+    },
+    { "type": "range", "id": "limit", "label": "Products", "min": 4, "max": 12, "step": 1, "default": 8 }
+  ]
+}
+{% endschema %}

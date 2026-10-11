@@ -1,0 +1,44 @@
+{%- comment -%}
+  Shopify customer newsletter form with an explicit, unticked consent box
+  (Spam Act / GDPR). Params: id (unique), source (tag), button_label
+  After a successful sign-up the welcome code (if set) is revealed.
+{%- endcomment -%}
+{%- liquid
+  assign tags = 'newsletter, ' | append: source
+  assign label = button_label
+  if label == blank
+    assign label = 'newsletter.subscribe' | t
+  endif
+-%}
+{%- form 'customer', id: id, class: 'newsletter__form', data-newsletter: source -%}
+  <input type="hidden" name="contact[tags]" value="{{ tags }}">
+  {%- if form.posted_successfully? -%}
+    <div class="offer-reveal" role="status" tabindex="-1" data-autofocus>
+      <strong class="h4">{{ 'newsletter.thanks' | t }}</strong>
+      {%- if settings.welcome_code != blank -%}
+        <span class="muted">{{ settings.welcome_offer }}. {{ 'newsletter.your_code' | t }}</span>
+        <span class="offer-reveal__code">{{ settings.welcome_code }}</span>
+        <div class="offer-reveal__actions">
+          <button type="button" class="btn btn--sm btn--outline" data-copy="{{ settings.welcome_code | escape }}">{{ 'newsletter.copy' | t }}</button>
+          <a class="btn btn--sm" href="/discount/{{ settings.welcome_code | url_encode }}?redirect={{ routes.all_products_collection_url | url_encode }}">{{ 'newsletter.apply' | t }}</a>
+        </div>
+      {%- else -%}
+        <span class="muted">{{ 'newsletter.thanks_sub' | t }}</span>
+      {%- endif -%}
+    </div>
+  {%- else -%}
+    <div class="newsletter__row">
+      <label class="visually-hidden" for="{{ id }}-email">{{ 'newsletter.email' | t }}</label>
+      <input id="{{ id }}-email" type="email" name="contact[email]" required autocomplete="email" placeholder="{{ 'newsletter.email' | t }}"{% if form.errors %} aria-invalid="true" aria-describedby="{{ id }}-error"{% endif %}>
+      <button type="submit">{{ label }} {% render 'icon', name: 'arrow-right' %}</button>
+    </div>
+    <label class="checkbox">
+      <input type="checkbox" name="contact[accepts_marketing]" value="true" data-consent required>
+      <span>{{ 'newsletter.consent' | t }}</span>
+    </label>
+    <p class="form-message form-message--error" data-consent-error hidden>{{ 'newsletter.consent_error' | t }}</p>
+    {%- if form.errors -%}
+      <p class="form-message form-message--error" id="{{ id }}-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
+    {%- endif -%}
+  {%- endif -%}
+{%- endform -%}

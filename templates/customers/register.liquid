@@ -1,0 +1,17 @@
+<div class="container section">
+  <div class="narrow-form" data-reveal>
+    <h1>{{ 'customer.create' | t }}</h1>
+    {%- form 'create_customer', class: 'form-grid', novalidate: 'novalidate' -%}
+      {%- if form.errors -%}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <div class="form-grid form-grid--2">
+        <div class="field"><label class="field__label" for="RegFirst">{{ 'customer.first_name' | t }}</label><input class="field__input" id="RegFirst" name="customer[first_name]" autocomplete="given-name"></div>
+        <div class="field"><label class="field__label" for="RegLast">{{ 'customer.last_name' | t }}</label><input class="field__input" id="RegLast" name="customer[last_name]" autocomplete="family-name"></div>
+      </div>
+      <div class="field"><label class="field__label" for="RegEmail">{{ 'customer.email' | t }}</label><input class="field__input" type="email" id="RegEmail" name="customer[email]" autocomplete="email" required></div>
+      <div class="field"><label class="field__label" for="RegPassword">{{ 'customer.password' | t }}</label><input class="field__input" type="password" id="RegPassword" name="customer[password]" autocomplete="new-password" required></div>
+      <label class="checkbox"><input type="checkbox" name="customer[accepts_marketing]" value="true"> <span>{{ 'newsletter.consent' | t }}</span></label>
+      <button type="submit" class="btn btn--block">{{ 'customer.create' | t }}</button>
+      <a href="{{ routes.account_login_url }}" class="link" style="justify-self: center">{{ 'customer.have_account' | t }}</a>
+    {%- endform -%}
+  </div>
+</div>

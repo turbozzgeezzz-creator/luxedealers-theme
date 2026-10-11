@@ -1,0 +1,1 @@
+{ "sections": { "main": { "type": "main-article", "settings": { "show_author": false } }, "newsletter": { "type": "newsletter", "settings": { "style": "subtle" } } }, "order": ["main", "newsletter"] }

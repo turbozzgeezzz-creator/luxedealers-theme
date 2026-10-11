@@ -1,0 +1,26 @@
+<article class="container" style="padding-block: clamp(48px, 7vw, 110px) var(--section-pad)">
+  <div class="article">
+    <div class="page-hero__inner" style="text-align: center">
+      <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
+      <h1 class="h1" data-split>{{ article.title }}</h1>
+      <div class="article__meta">{{ article.published_at | time_tag: format: 'date' }}{% if section.settings.show_author %}<span>{{ article.author }}</span>{% endif %}</div>
+    </div>
+  </div>
+  {%- if article.image -%}<div class="media article__hero" data-reveal="mask" style="max-width: 1200px; margin-inline: auto">{% render 'image', image: article.image, sizes: '(min-width: 1200px) 1200px, 100vw', loading: 'eager' %}</div>{%- endif -%}
+  <div class="article">
+    <div class="rte article__content" data-reveal>{{ article.content }}</div>
+    {%- if article.tags.size > 0 -%}
+      <div class="predictive__terms" style="margin-top: 40px">{%- for tag in article.tags -%}<a class="chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}</div>
+    {%- endif -%}
+    <p style="margin-top: 48px"><a class="link" href="{{ blog.url }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %} {{ 'blog.back' | t }}</a></p>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Article",
+  "settings": [
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": false }
+  ]
+}
+{% endschema %}

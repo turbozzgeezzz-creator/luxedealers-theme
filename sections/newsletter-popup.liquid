@@ -1,0 +1,59 @@
+{%- liquid
+  assign hide = false
+  if section.settings.enabled == false
+    assign hide = true
+  endif
+  if request.page_type == 'password' or template.name == 'customers/login' or template.name == 'customers/register' or request.page_type == 'cart'
+    assign hide = true
+  endif
+-%}
+{%- unless hide -%}
+<div class="popup" id="NewsletterPopup" aria-hidden="true"
+  data-delay="{{ section.settings.delay }}"
+  data-trigger="{{ section.settings.trigger }}"
+  data-repeat-days="{{ section.settings.repeat_days }}"
+  data-hide-for-marketing="{% if customer and customer.accepts_marketing %}true{% else %}false{% endif %}">
+  <div class="popup__overlay" data-drawer-close></div>
+  <div class="popup__card{% if section.settings.image != blank %} popup__card--image{% endif %}" role="dialog" aria-modal="true" aria-labelledby="PopupTitle" tabindex="-1">
+    <button type="button" class="icon-btn popup__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    {%- if section.settings.image != blank -%}
+      <div class="popup__media">{% render 'image', image: section.settings.image, sizes: '430px' %}</div>
+    {%- endif -%}
+    <div class="popup__body newsletter" style="text-align: left">
+      <img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" style="width: 56px" loading="lazy">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h2 class="h2" id="PopupTitle">{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}<div class="rte muted">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if settings.welcome_code != blank and settings.welcome_offer != blank -%}<p><strong class="gold-text" style="font-size: 18px">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
+      {% render 'newsletter-form', id: 'NewsletterPopupForm', source: 'popup' %}
+      <button type="button" class="link" data-drawer-close style="align-self: flex-start">{{ 'newsletter.no_thanks' | t }}</button>
+    </div>
+  </div>
+</div>
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "Email popup",
+  "settings": [
+    { "type": "checkbox", "id": "enabled", "label": "Show popup", "default": true },
+    {
+      "type": "select",
+      "id": "trigger",
+      "label": "When it opens",
+      "options": [
+        { "value": "delay", "label": "After a delay" },
+        { "value": "exit", "label": "On exit intent" }
+      ],
+      "default": "delay",
+      "info": "Exit intent works on desktop. Phones use the delay."
+    },
+    { "type": "range", "id": "delay", "label": "Delay", "min": 3, "max": 40, "step": 1, "unit": "s", "default": 12 },
+    { "type": "range", "id": "repeat_days", "label": "Show again after closing", "min": 0, "max": 60, "step": 1, "unit": "d", "default": 0, "info": "0 means never again." },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The private list" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "First to know, first to own" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New arrivals and members-only offers by email. Unsubscribe any time.</p>" }
+  ]
+}
+{% endschema %}

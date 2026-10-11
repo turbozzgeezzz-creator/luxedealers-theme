@@ -1,0 +1,8 @@
+{%- comment -%}
+  Shown in any image slot that has no photo yet: a soft white-to-gold plate with
+  the LD mark and a light sheen. Disappears as soon as a photo is chosen.
+{%- endcomment -%}
+<div class="ph{% if class %} {{ class }}{% endif %}" role="presentation">
+  <img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" loading="lazy">
+  {%- if label != blank -%}<span class="ph__text">{{ label }}</span>{%- endif -%}
+</div>

@@ -1,0 +1,12 @@
+<div class="container section">
+  <div class="narrow-form">
+    <h1>{{ 'customer.activate' | t }}</h1>
+    {%- form 'activate_customer_password', class: 'form-grid' -%}
+      {%- if form.errors -%}<div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>{%- endif -%}
+      <div class="field"><label class="field__label" for="ActPassword">{{ 'customer.password' | t }}</label><input class="field__input" type="password" id="ActPassword" name="customer[password]" autocomplete="new-password" required></div>
+      <div class="field"><label class="field__label" for="ActConfirm">{{ 'customer.password_confirm' | t }}</label><input class="field__input" type="password" id="ActConfirm" name="customer[password_confirmation]" autocomplete="new-password" required></div>
+      <button type="submit" class="btn btn--block">{{ 'customer.activate' | t }}</button>
+      <button type="submit" name="decline" class="btn btn--outline btn--block">{{ 'customer.decline' | t }}</button>
+    {%- endform -%}
+  </div>
+</div>

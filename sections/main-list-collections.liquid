@@ -1,0 +1,35 @@
+<section class="section section--flush-top">
+  <div class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+      <h1 class="h1" data-split>{{ section.settings.heading }}</h1>
+    </div>
+  </div>
+  <div class="container">
+    <div class="collection-tiles" data-stagger>
+      {%- for c in collections -%}
+        {%- if c.handle == 'frontpage' or c.products_count == 0 -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          assign img = c.featured_image
+          if img == blank and c.products.first.featured_media
+            assign img = c.products.first.featured_media.preview_image
+          endif
+        -%}
+        <a class="collection-tile" href="{{ c.url }}">
+          <div class="media collection-tile__media zoom-hover">{% render 'image', image: img, sizes: '(min-width: 990px) 25vw, 50vw', alt: c.title %}</div>
+          <span class="collection-tile__title">{{ c.title }}<span class="collection-tile__count">{{ c.products_count }}</span></span>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collections list",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Explore" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "All collections" }
+  ]
+}
+{% endschema %}

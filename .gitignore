@@ -1,0 +1,5 @@
+dist/
+.DS_Store
+node_modules/
+mailer/.wrangler/
+mailer/.dev.vars

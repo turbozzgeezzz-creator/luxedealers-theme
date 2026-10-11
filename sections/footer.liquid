@@ -1,0 +1,125 @@
+<footer class="site-footer">
+  {%- if section.settings.show_signoff -%}
+    <div class="footer__hero">
+      <div class="container" data-reveal>
+        <img class="footer__mark" src="{{ 'logo-mark.webp' | asset_url }}" alt="" width="458" height="480" loading="lazy">
+        {%- if section.settings.signoff != blank -%}<p class="eyebrow eyebrow--plain" style="justify-content: center; margin-bottom: 18px">{{ section.settings.signoff }}</p>{%- endif -%}
+        <div class="footer__big" aria-hidden="true"><span class="gold-text">LUXE</span>DEALERS</div>
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="container footer__main">
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'brand' -%}
+          <div class="footer__col" {{ block.shopify_attributes }}>
+            <span class="footer__title">{{ block.settings.title }}</span>
+            {%- if block.settings.text != blank -%}<div class="footer__about rte">{{ block.settings.text }}</div>{%- endif -%}
+            {%- if block.settings.show_newsletter -%}
+              <div class="newsletter" style="text-align: left">{% render 'newsletter-form', id: 'FooterNewsletter', source: 'footer' %}</div>
+            {%- endif -%}
+            {% render 'social-links' %}
+          </div>
+        {%- when 'menu' -%}
+          <details class="footer__col footer__accordion" open {{ block.shopify_attributes }}>
+            <summary class="footer__title">{{ block.settings.title | default: block.settings.menu.title }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
+            <ul class="footer__links" role="list">
+              {%- if block.settings.menu != blank -%}
+                {%- for link in block.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+              {%- elsif block.settings.fallback == 'help' -%}
+                {%- for policy in shop.policies -%}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{%- endfor -%}
+                {%- if pages.contact -%}<li><a href="{{ pages.contact.url }}">{{ 'footer.contact_us' | t }}</a></li>{%- endif -%}
+                {%- if pages.faq -%}<li><a href="{{ pages.faq.url }}">{{ pages.faq.title }}</a></li>{%- endif -%}
+              {%- else -%}
+                <li><a href="{{ routes.all_products_collection_url }}">{{ 'footer.all_products' | t }}</a></li>
+                <li><a href="{{ routes.collections_url }}">{{ 'footer.collections' | t }}</a></li>
+                {%- if blogs.news.articles_count > 0 -%}<li><a href="{{ blogs.news.url }}">{{ blogs.news.title }}</a></li>{%- endif -%}
+                <li><a href="{{ routes.search_url }}">{{ 'header.search' | t }}</a></li>
+              {%- endif -%}
+            </ul>
+          </details>
+        {%- when 'contact' -%}
+          <details class="footer__col footer__accordion" open {{ block.shopify_attributes }}>
+            <summary class="footer__title">{{ block.settings.title }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
+            <ul class="footer__links" role="list">
+              {%- if settings.support_email != blank -%}<li><a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a></li>{%- endif -%}
+              {%- if settings.support_phone != blank -%}<li><a href="tel:{{ settings.support_phone | remove: ' ' }}">{{ settings.support_phone }}</a></li>{%- endif -%}
+              {%- if settings.support_hours != blank -%}<li>{{ settings.support_hours }}</li>{%- endif -%}
+              {%- if settings.store_address != blank -%}<li>{{ settings.store_address | newline_to_br }}</li>{%- endif -%}
+              {%- if block.settings.page != blank -%}<li><a href="{{ block.settings.page.url }}" class="link" style="color: var(--c-ink)">{{ 'footer.contact_us' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></li>{%- endif -%}
+            </ul>
+          </details>
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+
+  <div class="container footer__bottom">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+      <nav class="footer__legal" aria-label="{{ 'footer.legal' | t }}">
+        {%- for policy in shop.policies -%}<a href="{{ policy.url }}">{{ policy.title }}</a>{%- endfor -%}
+      </nav>
+    </div>
+    {% render 'localization', id: 'FooterLocalization' %}
+    {%- if section.settings.show_payment -%}
+      <ul class="payment-icons" role="list" aria-label="{{ 'footer.payment' | t }}">
+        {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</footer>
+<button type="button" class="to-top" aria-label="{{ 'general.back_to_top' | t }}">
+  <svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="25"/></svg>
+  {% render 'icon', name: 'arrow-up', class: 'icon--sm' %}
+</button>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": [
+    { "type": "checkbox", "id": "show_signoff", "label": "Show large logo sign-off", "default": true },
+    { "type": "text", "id": "signoff", "label": "Sign-off line", "default": "Brand-new luxury, delivered worldwide" },
+    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "About and newsletter",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "LuxeDealers" },
+        { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Brand-new watches, jewellery, bags, fashion and accessories, sent with tracking to wherever you are.</p>" },
+        { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter sign-up", "default": true }
+      ]
+    },
+    {
+      "type": "menu",
+      "name": "Menu column",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading" },
+        { "type": "link_list", "id": "menu", "label": "Menu" },
+        {
+          "type": "select",
+          "id": "fallback",
+          "label": "Links when no menu is picked",
+          "options": [
+            { "value": "shop", "label": "Catalogue links" },
+            { "value": "help", "label": "Policies and help" }
+          ],
+          "default": "shop"
+        }
+      ]
+    },
+    {
+      "type": "contact",
+      "name": "Contact column",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Heading", "default": "Client care" },
+        { "type": "page", "id": "page", "label": "Contact page" }
+      ]
+    }
+  ]
+}
+{% endschema %}

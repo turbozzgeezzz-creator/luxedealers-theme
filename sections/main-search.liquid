@@ -1,0 +1,68 @@
+<div data-collection data-section-id="{{ section.id }}">
+  <div class="page-hero">
+    <div class="container page-hero__inner">
+      <span class="eyebrow">{{ 'search.title' | t }}</span>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form" style="width: min(720px, 100%)">
+        <label class="visually-hidden" for="SearchPageInput">{{ 'search.label' | t }}</label>
+        <input id="SearchPageInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="icon-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
+      </form>
+      {%- if search.performed -%}<p>{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</p>{%- endif -%}
+    </div>
+  </div>
+  <div class="container" style="padding-bottom: var(--section-pad)">
+    {%- if search.performed -%}
+      {%- paginate search.results by 24 -%}
+        {%- if search.filters.size > 0 -%}
+          <div class="toolbar">
+            <div class="toolbar__left">
+              <button type="button" class="toolbar__btn" data-drawer-open="FacetDrawer" aria-controls="FacetDrawer" aria-expanded="false">{% render 'icon', name: 'filter', class: 'icon--sm' %} {{ 'collections.filter' | t }}</button>
+              <span class="toolbar__count" data-product-count>{{ 'search.results_count_short' | t: count: search.results_count }}</span>
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="collection-grid" data-collection-grid>
+          {%- if search.results.size > 0 -%}
+            <div class="product-grid product-grid--4">
+              {%- for item in search.results -%}
+                {%- case item.object_type -%}
+                  {%- when 'product' -%}{% render 'product-card', product: item %}
+                  {%- when 'article' -%}{% render 'article-card', article: item %}
+                  {%- when 'page' -%}
+                    <a class="post-card" href="{{ item.url }}"><div class="media post-card__media">{% render 'placeholder' %}</div><span class="post-card__meta">{{ 'search.page' | t }}</span><h3 class="post-card__title">{{ item.title }}</h3></a>
+                {%- endcase -%}
+              {%- endfor -%}
+            </div>
+          {%- else -%}
+            <div class="empty-state"><p class="h3">{{ 'search.no_results' | t: terms: search.terms }}</p><a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a></div>
+          {%- endif -%}
+        </div>
+        <div data-load-more>
+          {%- if paginate.next -%}<div class="load-more"><a class="btn btn--outline" href="{{ paginate.next.url }}" data-next>{{ 'collections.load_more' | t }}</a></div>{%- endif -%}
+        </div>
+      {%- endpaginate -%}
+      {%- if search.filters.size > 0 -%}
+        <div class="drawer drawer--left" id="FacetDrawer" aria-hidden="true">
+          <div class="drawer__overlay" data-drawer-close></div>
+          <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="FacetTitle" tabindex="-1">
+            <div class="drawer__head">
+              <h2 class="drawer__title" id="FacetTitle">{{ 'collections.filter' | t }}</h2>
+              <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+            </div>
+            <div class="drawer__body" data-facets>{% render 'facets', results: search, id: 'SearchFacetForm' %}</div>
+            <div class="drawer__foot"><button type="button" class="btn btn--block" data-drawer-close>{{ 'collections.show_results' | t }}</button></div>
+          </div>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      <div class="predictive__terms" style="justify-content: center">
+        {%- for link in linklists['main-menu'].links -%}<a class="chip" href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Search results" }
+{% endschema %}

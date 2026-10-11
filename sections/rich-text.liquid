@@ -1,0 +1,56 @@
+{%- assign s = section.settings -%}
+<section class="section rich-text{% if s.align == 'left' %} rich-text--left{% endif %}{% if s.subtle %} section--subtle{% endif %}">
+  <div class="container">
+    <div class="rich-text__inner">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'eyebrow' -%}<span class="eyebrow" data-reveal {{ block.shopify_attributes }}>{{ block.settings.text }}</span>
+          {%- when 'heading' -%}<h2 class="h2" data-split {{ block.shopify_attributes }}>{{ block.settings.text | newline_to_br }}</h2>
+          {%- when 'quote' -%}<p class="rich-text__quote" data-split {{ block.shopify_attributes }}>{{ block.settings.text | newline_to_br }}</p>
+          {%- when 'text' -%}<div class="rte muted" data-reveal {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+          {%- when 'button' -%}<a class="btn{% if block.settings.outline %} btn--outline{% endif %}" href="{{ block.settings.link | default: routes.all_products_collection_url }}" data-reveal {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
+          {%- when 'logo' -%}<img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" style="width: 64px" data-reveal {{ block.shopify_attributes }}>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Rich text",
+  "class": "section-rich-text",
+  "settings": [
+    {
+      "type": "select",
+      "id": "align",
+      "label": "Alignment",
+      "options": [
+        { "value": "center", "label": "Centre" },
+        { "value": "left", "label": "Left" }
+      ],
+      "default": "center"
+    },
+    { "type": "checkbox", "id": "subtle", "label": "Soft background", "default": false }
+  ],
+  "blocks": [
+    { "type": "logo", "name": "LD mark", "limit": 1, "settings": [] },
+    { "type": "eyebrow", "name": "Small heading", "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Our story" }] },
+    { "type": "heading", "name": "Heading", "settings": [{ "type": "textarea", "id": "text", "label": "Text", "default": "Luxury, brand new" }] },
+    { "type": "quote", "name": "Large statement", "settings": [{ "type": "textarea", "id": "text", "label": "Text", "default": "Every piece arrives brand new, exactly as it left the maker." }] },
+    { "type": "text", "name": "Text", "settings": [{ "type": "richtext", "id": "text", "label": "Text", "default": "<p>Tell your story here.</p>" }] },
+    {
+      "type": "button",
+      "name": "Button",
+      "settings": [
+        { "type": "text", "id": "label", "label": "Label", "default": "Discover" },
+        { "type": "url", "id": "link", "label": "Link" },
+        { "type": "checkbox", "id": "outline", "label": "Outline style", "default": true }
+      ]
+    }
+  ],
+  "presets": [
+    { "name": "Rich text", "blocks": [{ "type": "logo" }, { "type": "quote" }, { "type": "button" }] }
+  ]
+}
+{% endschema %}

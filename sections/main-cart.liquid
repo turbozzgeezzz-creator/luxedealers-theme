@@ -1,0 +1,32 @@
+<div class="container section" id="main-cart" data-section-id="{{ section.id }}">
+  <h1 class="h2" style="margin-bottom: 40px">{{ 'cart.title' | t }} <span class="muted" style="font-size: .5em">({{ cart.item_count }})</span></h1>
+  {%- if cart.item_count > 0 -%}
+    <div class="cart-page">
+      <form action="{{ routes.cart_url }}" method="post" id="CartForm-page" novalidate>
+        {%- for item in cart.items -%}{% render 'cart-line', item: item, ctx: 'page' %}{%- endfor -%}
+        <noscript><button type="submit" class="btn btn--outline" name="update" style="margin-top: 20px">{{ 'cart.update' | t }}</button></noscript>
+      </form>
+      <aside class="cart-summary" aria-label="{{ 'cart.summary' | t }}">
+        {% render 'cart-summary', context: 'page' %}
+        {%- if additional_checkout_buttons and section.settings.express -%}<div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>{%- endif -%}
+        <a href="{{ routes.all_products_collection_url }}" class="link" style="align-self: center">{{ 'cart.continue' | t }}</a>
+      </aside>
+    </div>
+  {%- else -%}
+    <div class="cart-empty" style="min-height: 40vh">
+      <img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" loading="lazy">
+      <p class="h3">{{ 'cart.empty' | t }}</p>
+      <p class="muted">{{ 'cart.empty_sub' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="btn">{{ 'cart.continue' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Cart",
+  "settings": [
+    { "type": "checkbox", "id": "express", "label": "Express checkout buttons", "default": true }
+  ]
+}
+{% endschema %}

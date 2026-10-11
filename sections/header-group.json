@@ -1,0 +1,26 @@
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "announcement": {
+      "type": "announcement-bar",
+      "blocks": {
+        "msg1": { "type": "message", "settings": { "text": "Brand new, every piece", "link": "" } },
+        "msg2": { "type": "message", "settings": { "text": "Delivered worldwide, priced in your currency", "link": "" } },
+        "msg3": { "type": "message", "settings": { "text": "Secure checkout with a gift message option", "link": "" } }
+      },
+      "block_order": ["msg1", "msg2", "msg3"],
+      "settings": { "speed": 5, "left_text": "", "show_contact": true }
+    },
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "highlight_item": "New in",
+        "overlay_home": true,
+        "show_localization": true
+      }
+    }
+  },
+  "order": ["announcement", "header"]
+}

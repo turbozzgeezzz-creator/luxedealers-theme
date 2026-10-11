@@ -1,0 +1,18 @@
+{
+  "type": "footer",
+  "name": "Footer group",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "blocks": {
+        "brand": { "type": "brand", "settings": { "title": "Join the list", "show_newsletter": true } },
+        "shop": { "type": "menu", "settings": { "title": "Shop", "fallback": "shop" } },
+        "help": { "type": "menu", "settings": { "title": "Help", "fallback": "help" } },
+        "contact": { "type": "contact", "settings": { "title": "Client care" } }
+      },
+      "block_order": ["brand", "shop", "help", "contact"],
+      "settings": { "show_signoff": true, "show_payment": true }
+    }
+  },
+  "order": ["footer"]
+}

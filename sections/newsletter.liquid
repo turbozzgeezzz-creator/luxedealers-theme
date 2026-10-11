@@ -1,0 +1,38 @@
+{%- assign s = section.settings -%}
+<section class="section newsletter{% if s.style == 'ink' %} section--ink{% elsif s.style == 'subtle' %} section--subtle{% endif %}">
+  <div class="container">
+    <div class="newsletter__inner">
+      <img class="newsletter__mark" src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" loading="lazy" data-reveal>
+      {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
+      {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>{%- endif -%}
+      {%- if s.text != blank -%}<div class="rte{% unless s.style == 'ink' %} muted{% endunless %}" data-reveal>{{ s.text }}</div>{%- endif -%}
+      {%- if settings.welcome_code != blank and settings.welcome_offer != blank and s.show_offer -%}<p data-reveal><strong class="gold-text" style="font-size: 18px; letter-spacing: .06em">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
+      <div style="width: 100%" data-reveal>{% render 'newsletter-form', id: 'NewsletterSection', source: 'homepage' %}</div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Newsletter",
+  "class": "section-newsletter",
+  "settings": [
+    {
+      "type": "select",
+      "id": "style",
+      "label": "Background",
+      "options": [
+        { "value": "white", "label": "White" },
+        { "value": "subtle", "label": "Soft" },
+        { "value": "ink", "label": "Black" }
+      ],
+      "default": "subtle"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The private list" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "First to know,\nfirst to own" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New arrivals and members-only offers by email. Unsubscribe any time.</p>" },
+    { "type": "checkbox", "id": "show_offer", "label": "Show welcome offer line", "default": true, "info": "Only appears when a code is set in Theme settings > Welcome offer." }
+  ],
+  "presets": [{ "name": "Newsletter" }]
+}
+{% endschema %}

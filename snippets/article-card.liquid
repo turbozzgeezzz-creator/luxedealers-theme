@@ -1,0 +1,6 @@
+<article class="post-card">
+  <a class="media post-card__media zoom-hover" href="{{ article.url }}" tabindex="-1" aria-hidden="true">{% render 'image', image: article.image, sizes: '(min-width: 990px) 33vw, 100vw', alt: article.title %}</a>
+  <span class="post-card__meta">{{ article.published_at | time_tag: format: 'date' }}{% if article.tags.size > 0 %} · {{ article.tags.first }}{% endif %}</span>
+  <h3 class="post-card__title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+  {%- if article.excerpt != blank -%}<p class="muted">{{ article.excerpt | strip_html | truncate: 140 }}</p>{%- endif -%}
+</article>

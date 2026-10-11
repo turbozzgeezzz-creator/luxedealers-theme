@@ -1,0 +1,27 @@
+<div id="predictive-search-results">
+  {%- if predictive_search.performed -%}
+    {%- assign res = predictive_search.resources -%}
+    {%- if res.queries.size > 0 or res.collections.size > 0 -%}
+      <div class="predictive__terms">
+        {%- for q in res.queries -%}<a class="chip" href="{{ q.url }}">{{ q.styled_text }}</a>{%- endfor -%}
+        {%- for c in res.collections -%}<a class="chip chip--active" href="{{ c.url }}">{{ c.title }}</a>{%- endfor -%}
+      </div>
+    {%- endif -%}
+    {%- if res.products.size > 0 -%}
+      <div class="predictive__grid" data-stagger>
+        {%- for product in res.products -%}{% render 'product-card', product: product, sizes: '200px', reveal: false %}{%- endfor -%}
+      </div>
+      <p style="margin-top: 32px; text-align: center"><a class="btn btn--outline" href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&amp;options%5Bprefix%5D=last">{{ 'search.view_all' | t: terms: predictive_search.terms }}</a></p>
+    {%- elsif res.articles.size == 0 -%}
+      <p class="muted">{{ 'search.no_results' | t: terms: predictive_search.terms }}</p>
+    {%- endif -%}
+    {%- if res.articles.size > 0 -%}
+      <p class="label muted" style="margin: 32px 0 14px">{{ 'search.journal' | t }}</p>
+      <div class="predictive__terms">{%- for a in res.articles -%}<a class="chip" href="{{ a.url }}">{{ a.title }}</a>{%- endfor -%}</div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Predictive search" }
+{% endschema %}

@@ -1,0 +1,65 @@
+<div class="drawer" id="CartDrawer" aria-hidden="true">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="CartDrawerTitle" tabindex="-1">
+    <div data-cart-drawer-inner style="display: contents">
+      <div class="drawer__head">
+        <h2 class="drawer__title" id="CartDrawerTitle">{{ 'cart.title' | t }} <span class="muted" style="font-size: 16px">({{ cart.item_count }})</span></h2>
+        <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+      </div>
+      {%- if cart.item_count > 0 -%}
+        <div class="drawer__body">
+          <form action="{{ routes.cart_url }}" method="post" id="CartForm-drawer" novalidate>
+            {%- for item in cart.items -%}{% render 'cart-line', item: item, ctx: 'drawer' %}{%- endfor -%}
+          </form>
+          {%- if section.settings.upsell_collection != blank -%}
+            {%- liquid
+              assign in_cart = cart.items | map: 'product_id'
+              assign shown = 0
+            -%}
+            <div class="cart-upsell">
+              <p class="cart-upsell__title">{{ section.settings.upsell_title }}</p>
+              {%- for p in section.settings.upsell_collection.products -%}
+                {%- if in_cart contains p.id or p.available == false -%}{%- continue -%}{%- endif -%}
+                {%- if shown >= 3 -%}{%- break -%}{%- endif -%}
+                {%- assign shown = shown | plus: 1 -%}
+                <div class="mini-card">
+                  <a class="mini-card__media" href="{{ p.url }}">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: p.title }}{%- else -%}{% render 'placeholder' %}{%- endif -%}</a>
+                  <div><a class="mini-card__title" href="{{ p.url }}">{{ p.title }}</a>{% render 'price', product: p %}</div>
+                  {%- if p.has_only_default_variant -%}
+                    <button type="button" class="icon-btn" data-add-variant="{{ p.selected_or_first_available_variant.id }}" aria-label="{{ 'products.add_title' | t: title: p.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+                  {%- else -%}
+                    <button type="button" class="icon-btn" data-quick-view="{{ p.url }}" aria-label="{{ 'products.quick_view' | t }}: {{ p.title | escape }}">{% render 'icon', name: 'plus' %}</button>
+                  {%- endif -%}
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="drawer__foot">
+          {% render 'cart-summary', context: 'drawer' %}
+          <a href="{{ routes.cart_url }}" class="link" style="align-self: center">{{ 'cart.view_bag' | t }}</a>
+        </div>
+      {%- else -%}
+        <div class="drawer__body">
+          <div class="cart-empty">
+            <img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" loading="lazy">
+            <p class="h3">{{ 'cart.empty' | t }}</p>
+            <p class="muted">{{ 'cart.empty_sub' | t }}</p>
+            <a href="{{ section.settings.empty_link | default: routes.all_products_collection_url }}" class="btn">{{ 'cart.continue' | t }}</a>
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": [
+    { "type": "collection", "id": "upsell_collection", "label": "Suggestions collection", "info": "Up to three products not already in the bag." },
+    { "type": "text", "id": "upsell_title", "label": "Suggestions heading", "default": "Complete the look" },
+    { "type": "url", "id": "empty_link", "label": "Empty bag button link" }
+  ]
+}
+{% endschema %}

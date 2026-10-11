@@ -1,0 +1,225 @@
+{%- liquid
+  assign menu = section.settings.menu
+  assign overlay = false
+  if section.settings.overlay_home and request.page_type == 'index'
+    assign overlay = true
+  endif
+-%}
+<div class="header-wrapper{% if overlay %} header-wrapper--overlay{% endif %}" data-header>
+  <header class="site-header">
+    <div class="container header__inner">
+      <div class="header__left">
+        <button type="button" class="icon-btn header__menu-btn" data-drawer-open="MenuDrawer" aria-controls="MenuDrawer" aria-expanded="false" aria-label="{{ 'header.menu' | t }}">{% render 'icon', name: 'menu' %}</button>
+        <button type="button" class="icon-btn" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
+        {%- if section.settings.show_localization -%}
+          <div class="header__loc">{% render 'localization', id: 'HeaderLocalization', direction: 'down', show_language: false %}</div>
+        {%- endif -%}
+      </div>
+
+      <a href="{{ routes.root_url }}" class="header__logo" aria-label="{{ shop.name | escape }}">
+        {% render 'logo' %}
+      </a>
+
+      <div class="header__right">
+        {%- if shop.customer_accounts_enabled -%}
+          <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="icon-btn header__account" aria-label="{% if customer %}{{ 'header.account' | t }}{% else %}{{ 'header.login' | t }}{% endif %}">{% render 'icon', name: 'account' %}</a>
+        {%- endif -%}
+        {%- if section.settings.wishlist_page != blank -%}
+          <a href="{{ section.settings.wishlist_page.url }}" class="icon-btn" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></a>
+        {%- endif -%}
+        <a href="{{ routes.cart_url }}" class="icon-btn" {% if settings.cart_type == 'drawer' %}data-drawer-open="CartDrawer" aria-controls="CartDrawer" aria-expanded="false" role="button"{% endif %} aria-label="{{ 'header.cart' | t }}">
+          {% render 'icon', name: 'bag' %}
+          <span class="cart-count" data-cart-count{% if cart.item_count == 0 %} hidden{% endif %}>{{ cart.item_count }}</span>
+        </a>
+      </div>
+    </div>
+
+    {%- if menu != blank -%}
+      <nav class="header__nav" aria-label="{{ 'header.main_menu' | t }}">
+        <ul class="header__nav-list" role="list">
+          {%- for link in menu.links -%}
+            {%- liquid
+              assign feature = nil
+              for block in section.blocks
+                assign bt = block.settings.menu_item | strip | downcase
+                assign lt = link.title | strip | downcase
+                if bt == lt
+                  assign feature = block
+                endif
+              endfor
+              assign has_mega = false
+              if link.links.size > 0 or feature
+                assign has_mega = true
+              endif
+              assign highlight = false
+              assign lt = link.title | downcase
+              if section.settings.highlight_item != blank
+                assign hi = section.settings.highlight_item | downcase | strip
+                if lt == hi
+                  assign highlight = true
+                endif
+              endif
+            -%}
+            <li class="nav-item"{% if has_mega %} data-has-mega{% endif %}>
+              <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{{ link.title }}</a>
+              {%- if has_mega -%}
+                <div class="mega">
+                  <div class="container mega__inner">
+                    <div class="mega__cols">
+                      {%- assign has_grand = false -%}
+                      {%- for child in link.links -%}{%- if child.links.size > 0 -%}{%- assign has_grand = true -%}{%- endif -%}{%- endfor -%}
+                      {%- if has_grand -%}
+                        {%- for child in link.links -%}
+                          <div>
+                            <a class="mega__title" href="{{ child.url }}">{{ child.title }}</a>
+                            <ul class="mega__links" role="list">
+                              {%- for g in child.links -%}<li><a href="{{ g.url }}">{{ g.title }}</a></li>{%- endfor -%}
+                            </ul>
+                          </div>
+                        {%- endfor -%}
+                      {%- elsif link.links.size > 0 -%}
+                        <div>
+                          <a class="mega__title" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }}</a>
+                          <ul class="mega__links" role="list">
+                            {%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}
+                          </ul>
+                        </div>
+                      {%- endif -%}
+                    </div>
+                    {%- if feature -%}
+                      <div class="mega__features">
+                        {%- for i in (1..2) -%}
+                          {%- liquid
+                            assign ik = 'image_' | append: i
+                            assign tk = 'title_' | append: i
+                            assign uk = 'link_' | append: i
+                          -%}
+                          {%- if feature.settings[ik] != blank or feature.settings[tk] != blank -%}
+                            <a class="mega__feature zoom-hover" href="{{ feature.settings[uk] | default: link.url }}" {{ feature.shopify_attributes }}>
+                              <div class="media">{% render 'image', image: feature.settings[ik], sizes: '20vw', alt: feature.settings[tk] %}</div>
+                              <span class="mega__feature-title">{{ feature.settings[tk] }}</span>
+                              <span class="link">{{ 'general.discover' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</span>
+                            </a>
+                          {%- endif -%}
+                        {%- endfor -%}
+                      </div>
+                    {%- endif -%}
+                  </div>
+                </div>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    {%- endif -%}
+    <span class="scroll-progress" aria-hidden="true"></span>
+  </header>
+</div>
+{%- unless overlay -%}<div class="header-spacer"></div>{%- endunless -%}
+
+{%- comment -%} Mobile menu drawer {%- endcomment -%}
+<div class="drawer drawer--left menu-drawer" id="MenuDrawer" aria-hidden="true">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'header.menu' | t }}" tabindex="-1">
+    <div class="drawer__head">
+      <a href="{{ routes.root_url }}" class="header__logo" style="--logo-h: 40px">{% render 'logo', wordmark: false %}</a>
+      <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <div class="drawer__body">
+      {%- if menu != blank -%}
+        <ul class="menu-drawer__list" role="list">
+          {%- for link in menu.links -%}
+            <li>
+              {%- if link.links.size > 0 -%}
+                <details>
+                  <summary class="menu-drawer__link">{{ link.title }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
+                  <div class="menu-drawer__sub">
+                    <a href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }}</a>
+                    {%- for child in link.links -%}
+                      <a href="{{ child.url }}">{{ child.title }}</a>
+                      {%- for g in child.links -%}<a href="{{ g.url }}" style="padding-left: 14px">{{ g.title }}</a>{%- endfor -%}
+                    {%- endfor -%}
+                  </div>
+                </details>
+              {%- else -%}
+                <a class="menu-drawer__link" href="{{ link.url }}">{{ link.title }}</a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+      <div class="menu-drawer__extra">
+        {%- if shop.customer_accounts_enabled -%}
+          <a class="link" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% render 'icon', name: 'account', class: 'icon--sm' %} {% if customer %}{{ 'header.account' | t }}{% else %}{{ 'header.login' | t }}{% endif %}</a>
+        {%- endif -%}
+        {%- if section.settings.wishlist_page != blank -%}
+          <a class="link" href="{{ section.settings.wishlist_page.url }}">{% render 'icon', name: 'heart', class: 'icon--sm' %} {{ 'header.wishlist' | t }}</a>
+        {%- endif -%}
+        {% render 'localization', id: 'DrawerLocalization', direction: 'down' %}
+        {%- if settings.support_email != blank -%}<a href="mailto:{{ settings.support_email }}" class="muted">{{ settings.support_email }}</a>{%- endif -%}
+        {% render 'social-links' %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Header",
+  "class": "section-header",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu",
+      "info": "Nested menu items build the mega menu: second level becomes column titles, third level the links."
+    },
+    {
+      "type": "text",
+      "id": "highlight_item",
+      "label": "Gold menu item",
+      "info": "Exact title of a menu item to show in gold, e.g. New in."
+    },
+    {
+      "type": "checkbox",
+      "id": "overlay_home",
+      "label": "Transparent over homepage hero",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_localization",
+      "label": "Show country selector",
+      "default": true,
+      "info": "Countries come from Settings > Markets."
+    },
+    {
+      "type": "page",
+      "id": "wishlist_page",
+      "label": "Wishlist page",
+      "info": "Create a page using the wishlist template, then pick it here to show the heart icon."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "mega",
+      "name": "Mega menu images",
+      "settings": [
+        {
+          "type": "text",
+          "id": "menu_item",
+          "label": "Menu item title",
+          "info": "Exact title of the top-level item, e.g. Watches."
+        },
+        { "type": "image_picker", "id": "image_1", "label": "Image 1" },
+        { "type": "text", "id": "title_1", "label": "Title 1" },
+        { "type": "url", "id": "link_1", "label": "Link 1" },
+        { "type": "image_picker", "id": "image_2", "label": "Image 2" },
+        { "type": "text", "id": "title_2", "label": "Title 2" },
+        { "type": "url", "id": "link_2", "label": "Link 2" }
+      ]
+    }
+  ]
+}
+{% endschema %}

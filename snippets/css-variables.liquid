@@ -1,0 +1,51 @@
+{%- comment -%}
+  Design tokens and fonts. Every colour in theme.css reads from these
+  variables, so Theme settings > Colors and Typography apply everywhere.
+{%- endcomment -%}
+{%- liquid
+  assign fh = settings.font_heading
+  assign fb = settings.font_body
+  assign fh_italic = fh | font_modify: 'style', 'italic'
+  assign fb_medium = fb | font_modify: 'weight', '500'
+  assign fb_semi = fb | font_modify: 'weight', '600'
+  assign fb_bold = fb | font_modify: 'weight', 'bold'
+  assign fb_italic = fb | font_modify: 'style', 'italic'
+  assign scale = settings.heading_scale | divided_by: 100.0
+-%}
+{{ fh | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+{{ fb | font_url | preload_tag: as: 'font', type: 'font/woff2', crossorigin: 'anonymous' }}
+<style>
+  {{ fh | font_face: font_display: 'swap' }}
+  {{ fh_italic | font_face: font_display: 'swap' }}
+  {{ fb | font_face: font_display: 'swap' }}
+  {{ fb_medium | font_face: font_display: 'swap' }}
+  {{ fb_semi | font_face: font_display: 'swap' }}
+  {{ fb_bold | font_face: font_display: 'swap' }}
+  {{ fb_italic | font_face: font_display: 'swap' }}
+
+  :root {
+    --c-bg: {{ settings.color_background }};
+    --c-subtle: {{ settings.color_subtle }};
+    --c-ink: {{ settings.color_ink }};
+    --c-ink-rgb: {{ settings.color_ink.red }}, {{ settings.color_ink.green }}, {{ settings.color_ink.blue }};
+    --c-muted: {{ settings.color_muted }};
+    --c-border: {{ settings.color_border }};
+    --c-gold: {{ settings.color_gold }};
+    --c-gold-rgb: {{ settings.color_gold.red }}, {{ settings.color_gold.green }}, {{ settings.color_gold.blue }};
+    --c-gold-text: {{ settings.color_gold_text }};
+    --c-gold-light: {{ settings.color_gold | color_mix: '#FFFFFF', 55 }};
+    --c-gold-pale: {{ settings.color_gold | color_mix: '#FFFFFF', 12 }};
+    --c-sapphire: {{ settings.color_sapphire }};
+    --c-success: {{ settings.color_success }};
+    --c-error: {{ settings.color_error }};
+    --c-error-soft: {{ settings.color_error | color_modify: 'alpha', 0.08 }};
+    --gold-metal: linear-gradient(115deg, {{ settings.color_gold | color_darken: 14 }} 0%, {{ settings.color_gold | color_lighten: 22 }} 22%, {{ settings.color_gold }} 42%, {{ settings.color_gold | color_lighten: 30 }} 58%, {{ settings.color_gold | color_darken: 8 }} 78%, {{ settings.color_gold | color_lighten: 14 }} 100%);
+
+    --font-heading: {{ fh.family }}, {{ fh.fallback_families }};
+    --font-heading-weight: {{ fh.weight }};
+    --font-body: {{ fb.family }}, {{ fb.fallback_families }};
+    --font-body-weight: {{ fb.weight }};
+    --heading-scale: {{ scale }};
+    --logo-h: {{ settings.logo_height }}px;
+  }
+</style>

@@ -1,0 +1,63 @@
+{%- if section.blocks.size > 0 -%}
+<div class="announcement" role="region" aria-label="{{ 'header.announcements' | t }}">
+  <div class="container announcement__inner">
+    <div class="announcement__side">{%- if section.settings.left_text != blank -%}<span>{{ section.settings.left_text }}</span>{%- endif -%}</div>
+    <div class="announcement__messages" data-rotator="{{ section.settings.speed }}">
+      {%- for block in section.blocks -%}
+        <p class="announcement__msg" {{ block.shopify_attributes }}>
+          {%- if block.settings.link != blank -%}
+            <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+          {%- else -%}
+            <span>{{ block.settings.text }}</span>
+          {%- endif -%}
+        </p>
+      {%- endfor -%}
+    </div>
+    <div class="announcement__side">
+      {%- if section.settings.show_contact and settings.support_email != blank -%}
+        <a href="mailto:{{ settings.support_email }}" class="localization__btn">{% render 'icon', name: 'mail', class: 'icon--sm' %} {{ 'header.contact' | t }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Announcement bar",
+  "class": "section-announcement",
+  "settings": [
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Seconds per message",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "text",
+      "id": "left_text",
+      "label": "Left text (desktop)"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact",
+      "label": "Show contact link",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Brand new, every piece" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}
