@@ -2,7 +2,6 @@
   {%- if section.settings.show_signoff -%}
     <div class="footer__hero">
       <div class="container" data-reveal>
-        <img class="footer__mark" src="{{ 'logo-mark.webp' | asset_url }}" alt="" width="458" height="480" loading="lazy">
         {%- if section.settings.signoff != blank -%}<p class="eyebrow eyebrow--plain" style="justify-content: center; margin-bottom: 18px">{{ section.settings.signoff }}</p>{%- endif -%}
         <div class="footer__big" aria-hidden="true"><span class="gold-text">LUXE</span>DEALERS</div>
       </div>

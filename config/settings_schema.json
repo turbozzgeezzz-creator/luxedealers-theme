@@ -194,7 +194,7 @@
         "type": "checkbox",
         "id": "intro_splash",
         "label": "Logo intro on first visit",
-        "default": true,
+        "default": false,
         "info": "A short logo reveal, once per visit. Skipped for reduced motion."
       },
       {

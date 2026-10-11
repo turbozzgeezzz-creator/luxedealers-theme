@@ -9,7 +9,7 @@
           {%- when 'quote' -%}<p class="rich-text__quote" data-split {{ block.shopify_attributes }}>{{ block.settings.text | newline_to_br }}</p>
           {%- when 'text' -%}<div class="rte muted" data-reveal {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
           {%- when 'button' -%}<a class="btn{% if block.settings.outline %} btn--outline{% endif %}" href="{{ block.settings.link | default: routes.all_products_collection_url }}" data-reveal {{ block.shopify_attributes }}>{{ block.settings.label }}</a>
-          {%- when 'logo' -%}<img src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" style="width: 64px" data-reveal {{ block.shopify_attributes }}>
+          {%- when 'logo' -%}<span class="eyebrow eyebrow--plain" aria-hidden="true" {{ block.shopify_attributes }}></span>
         {%- endcase -%}
       {%- endfor -%}
     </div>
@@ -34,7 +34,7 @@
     { "type": "checkbox", "id": "subtle", "label": "Soft background", "default": false }
   ],
   "blocks": [
-    { "type": "logo", "name": "LD mark", "limit": 1, "settings": [] },
+    { "type": "logo", "name": "Spacer", "limit": 1, "settings": [] },
     { "type": "eyebrow", "name": "Small heading", "settings": [{ "type": "text", "id": "text", "label": "Text", "default": "Our story" }] },
     { "type": "heading", "name": "Heading", "settings": [{ "type": "textarea", "id": "text", "label": "Text", "default": "Luxury, brand new" }] },
     { "type": "quote", "name": "Large statement", "settings": [{ "type": "textarea", "id": "text", "label": "Text", "default": "Every piece arrives brand new, exactly as it left the maker." }] },
@@ -50,7 +50,7 @@
     }
   ],
   "presets": [
-    { "name": "Rich text", "blocks": [{ "type": "logo" }, { "type": "quote" }, { "type": "button" }] }
+    { "name": "Rich text", "blocks": [{ "type": "quote" }, { "type": "button" }] }
   ]
 }
 {% endschema %}

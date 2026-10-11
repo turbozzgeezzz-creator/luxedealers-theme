@@ -1,19 +1,95 @@
 {
   "sections": {
-    "hero": { "type": "page-hero", "settings": { "eyebrow": "Our story", "heading": "Brand-new luxury,\ndelivered worldwide" } },
-    "intro": { "type": "rich-text", "blocks": { "l": { "type": "logo", "settings": {} }, "q": { "type": "quote", "settings": { "text": "Tell your story here: why LuxeDealers exists, and what you promise every customer." } } }, "block_order": ["l", "q"], "settings": { "align": "center", "subtle": false } },
-    "split1": { "type": "split-feature", "settings": { "reverse": false, "eyebrow": "Brand new", "heading": "Only brand new.\nNever pre-owned.", "text": "<p>Describe how you source your stock and what comes in the box.</p>", "button_1": "Shop new arrivals", "button_2": "" } },
-    "split2": { "type": "split-feature", "settings": { "reverse": true, "eyebrow": "Worldwide", "heading": "From us to you,\nwherever you are", "text": "<p>Describe your delivery: how orders are packed, sent and tracked.</p>", "button_1": "Delivery information", "button_2": "" } },
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "eyebrow": "Our story",
+        "heading": "Brand-new luxury,\ndelivered worldwide"
+      }
+    },
+    "intro": {
+      "type": "rich-text",
+      "blocks": {
+        "q": {
+          "type": "quote",
+          "settings": {
+            "text": "Tell your story here: why LuxeDealers exists, and what you promise every customer."
+          }
+        }
+      },
+      "block_order": [
+        "q"
+      ],
+      "settings": {
+        "align": "center",
+        "subtle": false
+      }
+    },
+    "split1": {
+      "type": "split-feature",
+      "settings": {
+        "reverse": false,
+        "eyebrow": "Brand new",
+        "heading": "Only brand new.\nNever pre-owned.",
+        "text": "<p>Describe how you source your stock and what comes in the box.</p>",
+        "button_1": "Shop new arrivals",
+        "button_2": ""
+      }
+    },
+    "split2": {
+      "type": "split-feature",
+      "settings": {
+        "reverse": true,
+        "eyebrow": "Worldwide",
+        "heading": "From us to you,\nwherever you are",
+        "text": "<p>Describe your delivery: how orders are packed, sent and tracked.</p>",
+        "button_1": "Delivery information",
+        "button_2": ""
+      }
+    },
     "promises": {
       "type": "promises",
       "blocks": {
-        "a": { "type": "promise", "settings": { "icon": "diamond", "title": "Brand new, every piece", "text": "<p>Never worn, never pre-owned.</p>" } },
-        "b": { "type": "promise", "settings": { "icon": "globe", "title": "Delivered worldwide", "text": "<p>Tracked shipping, with prices in your currency.</p>" } },
-        "c": { "type": "promise", "settings": { "icon": "lock", "title": "Secure checkout", "text": "<p>Cards, wallets and local payment methods.</p>" } }
+        "a": {
+          "type": "promise",
+          "settings": {
+            "icon": "diamond",
+            "title": "Brand new, every piece",
+            "text": "<p>Never worn, never pre-owned.</p>"
+          }
+        },
+        "b": {
+          "type": "promise",
+          "settings": {
+            "icon": "globe",
+            "title": "Delivered worldwide",
+            "text": "<p>Tracked shipping, with prices in your currency.</p>"
+          }
+        },
+        "c": {
+          "type": "promise",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure checkout",
+            "text": "<p>Cards, wallets and local payment methods.</p>"
+          }
+        }
       },
-      "block_order": ["a", "b", "c"],
-      "settings": { "subtle": true }
+      "block_order": [
+        "a",
+        "b",
+        "c"
+      ],
+      "settings": {
+        "subtle": true
+      }
     }
   },
-  "order": ["hero", "intro", "split1", "split2", "promises"]
+  "order": [
+    "hero",
+    "intro",
+    "split1",
+    "split2",
+    "promises"
+  ]
 }

@@ -2,7 +2,6 @@
 <section class="section newsletter{% if s.style == 'ink' %} section--ink{% elsif s.style == 'subtle' %} section--subtle{% endif %}">
   <div class="container">
     <div class="newsletter__inner">
-      <img class="newsletter__mark" src="{{ 'logo-mark-sm.webp' | asset_url }}" alt="" width="229" height="240" loading="lazy" data-reveal>
       {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
       {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>{%- endif -%}
       {%- if s.text != blank -%}<div class="rte{% unless s.style == 'ink' %} muted{% endunless %}" data-reveal>{{ s.text }}</div>{%- endif -%}
