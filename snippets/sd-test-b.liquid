@@ -1,30 +1,3 @@
-{%- comment -%}
-  Schema.org data from real store data only. Ratings are included only when a
-  reviews app has written the standard reviews metafields.
-{%- endcomment -%}
-{%- if request.page_type == 'index' -%}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }}
-    }
-  </script>
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }},
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {{ request.origin | append: routes.search_url | append: '?q={search_term_string}' | json }},
-        "query-input": "required name=search_term_string"
-      }
-    }
-  </script>
-{%- endif -%}
 {%- if request.page_type == 'product' -%}
   {%- assign v = product.selected_or_first_available_variant -%}
   <script type="application/ld+json">
@@ -58,23 +31,6 @@
           {%- if variant.sku != blank -%},"sku": {{ variant.sku | json }}{%- endif %}
         }{% unless forloop.last %},{% endunless %}
         {%- endfor -%}
-      ]
-    }
-  </script>
-{%- endif -%}
-{%- if request.page_type == 'collection' or request.page_type == 'product' -%}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": {{ 'general.home' | t | json }}, "item": {{ request.origin | append: routes.root_url | json }} }
-        {%- if collection -%},
-        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
-        {%- endif -%}
-        {%- if product -%},
-        { "@type": "ListItem", "position": {% if collection %}3{% else %}2{% endif %}, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
-        {%- endif %}
       ]
     }
   </script>

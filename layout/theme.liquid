@@ -39,7 +39,6 @@
     {%- endif -%}
 
     {% render 'meta-tags', seo_title: seo_title, seo_desc: seo_desc, product: product %}
-    {% render 'schema-org', product: product, collection: collection %}
     {% render 'css-variables' %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
     {{ 'atelier.css' | asset_url | stylesheet_tag }}
