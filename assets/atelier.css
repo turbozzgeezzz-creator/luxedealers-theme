@@ -1502,3 +1502,6 @@ body:has(.drawer.is-open) #shopify-chat, body:has(.drawer.is-open) #ShopifyChat,
 .faqc__a a { color: var(--c-gold-text); text-decoration: underline; text-underline-offset: 3px; }
 .faqc__empty { padding: 24px; border-radius: 16px; background: #FBF8F2; text-align: center; }
 .faqc__empty a { color: var(--c-gold-text); font-weight: 600; text-decoration: underline; }
+body:has(.drawer.is-open) shopify-chat, body:has(.menu-overlay.is-open) shopify-chat, body:has(.popup.is-open) shopify-chat { display: none !important; }
+.mnav__depts { scroll-padding-inline: 16px; }
+.mnav__dept { flex-basis: 96px; }
