@@ -1517,3 +1517,48 @@ body:has(.drawer.is-open) shopify-chat, body:has(.menu-overlay.is-open) shopify-
 @media (max-width: 749px) { .brandmark__mark { width: 36px; height: 36px; } }
 .mnav__logo .brandmark__mark { width: 34px; height: 34px; }
 @media (max-width: 989px) { .header__logo .brandmark__gem.brandmark__mark { width: 34px; height: 34px; } }
+
+/* Cookie banner */
+.cookies { position: fixed; left: 16px; bottom: 16px; z-index: 90; width: min(420px, calc(100vw - 32px)); opacity: 0; transform: translateY(16px); transition: opacity .3s, transform .3s var(--ease-out); }
+.cookies.is-on { opacity: 1; transform: none; }
+.cookies__card { padding: 20px; border-radius: 20px; background: #fff; border: 1px solid #ECE5D6; box-shadow: 0 30px 70px -30px rgba(0,0,0,.45); }
+.cookies__head { display: flex; align-items: center; gap: 10px; }
+.cookies__head h2 { font-size: 17px; font-weight: 700; }
+.cookies__ico { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 12px; background: #111; color: #E6C463; flex: none; }
+.cookies__text { margin-top: 10px; font-size: 13.5px; line-height: 1.55; color: var(--c-muted); }
+.cookies__text a { color: var(--c-gold-text); text-decoration: underline; }
+.cookies__prefs { display: grid; gap: 8px; margin-top: 14px; }
+.cookies__opt { position: relative; display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: #FBF8F2; cursor: pointer; }
+.cookies__opt > span:first-child { flex: 1; display: flex; flex-direction: column; font-size: 13.5px; }
+.cookies__opt small { font-size: 12px; color: var(--c-muted); }
+.cookies__opt input { position: absolute; opacity: 0; }
+.cookies__sw { position: relative; width: 38px; height: 22px; flex: none; border-radius: 999px; background: #D9D3C6; transition: background .2s; }
+.cookies__sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; transition: transform .2s; box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+.cookies__opt input:checked + .cookies__sw { background: var(--c-gold); }
+.cookies__opt input:checked + .cookies__sw::after { transform: translateX(16px); }
+.cookies__opt input:focus-visible + .cookies__sw { outline: 2px solid var(--c-gold); outline-offset: 2px; }
+.cookies__opt.is-locked { cursor: default; opacity: .8; }
+.cookies__btns { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }
+.cookies__btns .btn { flex: 1; min-width: 130px; }
+.cookies__more { font-size: 13px; font-weight: 600; }
+@media (max-width: 749px) { .cookies { left: 8px; right: 8px; bottom: 8px; width: auto; } }
+.footer__cookie { font: inherit; color: inherit; opacity: inherit; text-decoration: none; cursor: pointer; }
+.footer__cookie:hover { text-decoration: underline; }
+
+/* Email popup: two panels */
+.popup__card--lux { display: grid; grid-template-columns: 1fr; width: min(820px, calc(100vw - 24px)); padding: 0; overflow: hidden; border-radius: 24px; }
+@media (min-width: 750px) { .popup__card--lux { grid-template-columns: .9fr 1.1fr; } }
+.popup__side { position: relative; display: flex; flex-direction: column; justify-content: flex-end; gap: 14px; padding: 26px; color: #fff; background: radial-gradient(120% 90% at 50% 20%, #3A2B12 0%, #17110A 50%, #070605 100%); }
+.popup__side img { width: min(240px, 70%); margin: 0 auto auto; filter: drop-shadow(0 20px 30px rgba(0,0,0,.5)); }
+.popup__perks { display: grid; gap: 8px; font-size: 13.5px; color: rgba(255,255,255,.88); }
+.popup__perks li { display: flex; align-items: center; gap: 8px; }
+.popup__perks .icon { color: #E6C463; }
+@media (max-width: 749px) { .popup__side { flex-direction: row; align-items: center; padding: 16px 18px; } .popup__side img { width: 74px; margin: 0; } .popup__perks { font-size: 12.5px; gap: 4px; } }
+.popup__card--lux .popup__body { display: flex; flex-direction: column; gap: 12px; padding: clamp(22px, 3vw, 36px); text-align: left; }
+.popup__card--lux .h2 { font-size: clamp(26px, 2vw + 14px, 36px); }
+.popup__card--lux .popup__close { z-index: 2; background: rgba(255,255,255,.9); }
+.popup__skip { align-self: flex-start; font-size: 13px; }
+.popup__code { display: grid; gap: 10px; padding: 16px; border-radius: 16px; background: #FBF6E8; border: 1px dashed var(--c-gold); }
+.popup__code-label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--c-gold-text); }
+.popup__code-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 12px; background: #fff; font-family: ui-monospace, Menlo, monospace; font-size: 20px; letter-spacing: .08em; }
+.popup__code-note { font-size: 12.5px; }

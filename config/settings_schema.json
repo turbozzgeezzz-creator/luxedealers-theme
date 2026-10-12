@@ -342,6 +342,17 @@
       },
       {
         "type": "header",
+        "content": "Cookie banner"
+      },
+      {
+        "type": "checkbox",
+        "id": "cookie_banner",
+        "label": "Show our cookie banner",
+        "info": "Shown only where the law requires consent (Shopify decides, e.g. EU and UK). Stays hidden while another cookie app is active.",
+        "default": true
+      },
+      {
+        "type": "header",
         "content": "Buy more, save more"
       },
       {

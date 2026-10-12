@@ -77,6 +77,7 @@
           unavailable: {{ 'products.unavailable' | t | json }},
           addToBag: {{ 'products.add_to_bag' | t | json }},
           copied: {{ 'general.copied' | t | json }},
+          codeNote: {{ 'newsletter.code_note' | t: date: '[date]' | json }},
           view: {{ 'wishlist.view' | t | json }},
           remove: {{ 'wishlist.remove' | t | json }}
         }
@@ -112,5 +113,6 @@
     {%- if settings.view_cursor and settings.motion != 'off' -%}<div class="view-cursor" aria-hidden="true">{{ 'products.view' | t }}</div>{%- endif -%}
 
     <div class="visually-hidden" aria-live="polite" role="status" id="A11yStatus"></div>
+    {% render 'cookie-banner' %}
   </body>
 </html>

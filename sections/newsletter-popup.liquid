@@ -12,18 +12,28 @@
   data-repeat-days="{{ section.settings.repeat_days }}"
   data-hide-for-marketing="{% if customer and customer.accepts_marketing %}true{% else %}false{% endif %}">
   <div class="popup__overlay" data-drawer-close></div>
-  <div class="popup__card{% if section.settings.image != blank %} popup__card--image{% endif %}" role="dialog" aria-modal="true" aria-labelledby="PopupTitle" tabindex="-1">
+  <div class="popup__card popup__card--lux" role="dialog" aria-modal="true" aria-labelledby="PopupTitle" tabindex="-1">
     <button type="button" class="icon-btn popup__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
-    {%- if section.settings.image != blank -%}
-      <div class="popup__media">{% render 'image', image: section.settings.image, sizes: '430px' %}</div>
-    {%- endif -%}
-    <div class="popup__body newsletter" style="text-align: left">
+    <div class="popup__side tile--noir">
+      <img src="{{ section.settings.art | default: 'gift' | prepend: 'lx-' | append: '.svg' | asset_url }}" alt="" width="300" height="300" loading="lazy">
+      <ul class="popup__perks" role="list">
+        <li>{% render 'icon', name: 'sparkle', class: 'icon--sm' %} {{ 'newsletter.perk_1' | t }}</li>
+        <li>{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ 'newsletter.perk_2' | t }}</li>
+        <li>{% render 'icon', name: 'heart', class: 'icon--sm' %} {{ 'newsletter.perk_3' | t }}</li>
+      </ul>
+    </div>
+    <div class="popup__body newsletter" data-popup-body>
       <span class="eyebrow">{{ section.settings.eyebrow }}</span>
-      <h2 class="h2" id="PopupTitle">{{ section.settings.heading }}</h2>
+      <h2 class="h2" id="PopupTitle">{%- if section.settings.show_offer and section.settings.offer != blank -%}{{ section.settings.offer }}{%- else -%}{{ section.settings.heading }}{%- endif -%}</h2>
       {%- if section.settings.text != blank -%}<div class="rte muted">{{ section.settings.text }}</div>{%- endif -%}
-      {%- if settings.welcome_code != blank and settings.welcome_offer != blank -%}<p><strong class="gold-text" style="font-size: 18px">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
       {% render 'newsletter-form', id: 'NewsletterPopupForm', source: 'popup' %}
-      <button type="button" class="link" data-drawer-close style="align-self: flex-start">{{ 'newsletter.no_thanks' | t }}</button>
+      <div class="popup__code" data-popup-code hidden>
+        <p class="popup__code-label">{{ 'newsletter.your_code' | t }}</p>
+        <button type="button" class="popup__code-box" data-copy=""><strong data-popup-code-value></strong> {% render 'icon', name: 'tag', class: 'icon--sm' %}</button>
+        <p class="muted popup__code-note" data-popup-code-note></p>
+        <a class="btn btn--gold btn--block" href="{{ routes.all_products_collection_url }}" data-popup-code-shop>{{ 'newsletter.start_shopping' | t }}</a>
+      </div>
+      <button type="button" class="link popup__skip" data-drawer-close>{{ 'newsletter.no_thanks' | t }}</button>
     </div>
   </div>
 </div>
@@ -33,7 +43,7 @@
 {
   "name": "Email popup",
   "settings": [
-    { "type": "checkbox", "id": "enabled", "label": "Open by itself", "default": false, "info": "Off by default because the SendWILL app shows your 10% popup. Buttons marked 'Opens the email popup' still open it." },
+    { "type": "checkbox", "id": "enabled", "label": "Open by itself", "default": true, "info": "Stays hidden while another email popup app (SendWILL) is active, so visitors never see two." },
     {
       "type": "select",
       "id": "trigger",
@@ -47,10 +57,12 @@
     },
     { "type": "range", "id": "delay", "label": "Delay", "min": 3, "max": 40, "step": 1, "unit": "s", "default": 12 },
     { "type": "range", "id": "repeat_days", "label": "Show again after closing", "min": 0, "max": 60, "step": 1, "unit": "d", "default": 0, "info": "0 means never again." },
-    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "select", "id": "art", "label": "Illustration", "default": "gift", "options": [ { "value": "gift", "label": "Gift" }, { "value": "envelope", "label": "Envelope" }, { "value": "diamond", "label": "Diamond" }, { "value": "bag", "label": "Bag" } ] },
+    { "type": "checkbox", "id": "show_offer", "label": "Show the welcome offer", "default": false, "info": "Turn on once LuxeMail sends welcome codes." },
+    { "type": "text", "id": "offer", "label": "Offer heading", "default": "10% off your first order" },
     { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The private list" },
     { "type": "text", "id": "heading", "label": "Heading", "default": "First to know, first to own" },
-    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>New arrivals and members-only offers by email. Unsubscribe any time.</p>" }
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Join the list for new arrivals, restocks and subscriber-only offers. Unsubscribe any time.</p>" }
   ]
 }
 {% endschema %}

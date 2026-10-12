@@ -22,6 +22,21 @@
   })();
 </script>
 
+<template id="CookiePolicyView">
+  {%- assign cpt = 'cookies.policy_title' | t -%}{%- assign cpx = 'cookies.policy_intro' | t -%}
+  {% render 'page-banner', title: cpt, eyebrow: 'Legal', text: cpx, art: 'diamond' %}
+  <div class="container page-body"><div class="page-body__card rte">{% render 'cookie-policy-content' %}</div></div>
+</template>
+<script>
+  (function () {
+    if (!/\/pages\/cookie-policy\/?$/.test(location.pathname)) return;
+    var t = document.getElementById('CookiePolicyView'), nf = document.querySelector('.not-found');
+    if (!t || !nf) return;
+    nf.replaceWith(t.content.cloneNode(true));
+    document.title = {{ 'cookies.policy_title' | t | json }} + ' – ' + {{ shop.name | json }};
+  })();
+</script>
+
 {% schema %}
 { "name": "404" }
 {% endschema %}

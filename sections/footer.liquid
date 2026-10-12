@@ -58,7 +58,7 @@
     <div class="footer__legal-row">
       <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'footer.rights' | t }}</span>
       <nav class="footer__legal" aria-label="{{ 'footer.legal' | t }}">
-        {%- for policy in shop.policies -%}<a href="{{ policy.url }}">{{ policy.title }}</a>{%- endfor -%}
+        {%- for policy in shop.policies -%}<a href="{{ policy.url }}">{{ policy.title }}</a>{%- endfor -%}<a href="/pages/cookie-policy">{{ 'cookies.policy_title' | t }}</a><button type="button" class="footer__cookie" data-cookie-prefs>{{ 'cookies.prefs_link' | t }}</button>
       </nav>
     </div>
     <div class="footer__bottom-right">

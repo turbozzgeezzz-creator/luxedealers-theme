@@ -911,6 +911,49 @@
     });
   });
 
+  /* ---------- Cookie banner (Shopify Customer Privacy API) ---------- */
+  (function () {
+    var box = $('[data-cookie-banner]');
+    if (!box) return;
+    var panel = $('[data-cookie-panel]', box), more = $('[data-cookie-more]', box), cp = null;
+    function otherApp() { return !!(window.Pandectes || doc.querySelector('#pandectes-banner, [id^="pandectes"], .pd-cookie-banner-window')); }
+    function show(withPrefs) {
+      if (otherApp()) return;
+      box.hidden = false; requestAnimationFrame(function () { box.classList.add('is-on'); });
+      if (cp && cp.currentVisitorConsent) {
+        var c = cp.currentVisitorConsent() || {};
+        $$('[data-cookie-cat]', box).forEach(function (i) { var v = c[i.dataset.cookieCat]; i.checked = v === 'yes'; });
+      }
+      if (withPrefs) openPrefs();
+    }
+    function hide() { box.classList.remove('is-on'); setTimeout(function () { box.hidden = true; }, 300); }
+    function openPrefs() { panel.hidden = false; more.textContent = more.dataset.save; more.dataset.mode = 'save'; }
+    function decide(c) {
+      var payload = { analytics: !!c.analytics, marketing: !!c.marketing, preferences: !!c.preferences, sale_of_data: !!c.marketing };
+      if (cp && cp.setTrackingConsent) cp.setTrackingConsent(payload, function () {});
+      storeSet('luxe:consent', payload);
+      hide();
+    }
+    on(box, 'click', function (e) {
+      if (e.target.closest('[data-cookie-accept]')) return decide({ analytics: 1, marketing: 1, preferences: 1 });
+      if (e.target.closest('[data-cookie-reject]')) return decide({});
+      if (e.target.closest('[data-cookie-more]')) {
+        if (more.dataset.mode !== 'save') return openPrefs();
+        var c = {}; $$('[data-cookie-cat]', box).forEach(function (i) { c[i.dataset.cookieCat] = i.checked; });
+        decide(c);
+      }
+    });
+    on(doc, 'click', function (e) { if (e.target.closest('[data-cookie-prefs]')) { e.preventDefault(); show(true); } });
+    function init() {
+      cp = window.Shopify && window.Shopify.customerPrivacy;
+      if (!cp) return;
+      if (cp.shouldShowBanner && cp.shouldShowBanner()) setTimeout(function () { show(false); }, 900);
+    }
+    if (window.Shopify && window.Shopify.loadFeatures) {
+      window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }], function (err) { if (!err) init(); });
+    }
+  })();
+
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {
     var b = e.target.closest('[data-option-more]');
@@ -959,6 +1002,7 @@
     }
     storeSet('luxe:popup', { done: true, at: Date.now() });
     var email = $('input[type="email"]', f);
+    if (email && email.value) storeSet('luxe:signup-email', email.value.trim());
     var fname = $('input[name="contact[first_name]"]', f);
     if (email && email.value) beacon({ e: email.value.trim(), fn: fname ? fname.value.trim() : null, c: 1, src: f.dataset.newsletter || 'newsletter' });
   });
@@ -975,15 +1019,17 @@
   (function () {
     var popup = doc.getElementById('NewsletterPopup');
     if (!popup) return;
-    if (window.location.search.indexOf('customer_posted=true') > -1 && window.location.hash.indexOf('PopupForm') > -1) { openDrawer('NewsletterPopup'); return; }
+    if (window.location.search.indexOf('customer_posted=true') > -1 && window.location.hash.indexOf('PopupForm') > -1) { openDrawer('NewsletterPopup'); showWelcomeCode(); return; }
     var state = storeGet('luxe:popup', null);
     var days = parseInt(popup.dataset.repeatDays, 10) || 0;
     if (state && (state.done || !days || Date.now() - state.at < days * 864e5)) return;
     if (popup.dataset.hideForMarketing === 'true') return;
     if (popup.dataset.auto === 'false') return;
+    // Another email popup app (e.g. SendWILL) is still on the site: don't show two.
+    function otherPopup() { return !!doc.querySelector('[id*="ecomsend" i], [class*="ecomsend" i], [id*="sendwill" i], [class*="sendwill" i]'); }
     var shown = false;
     function show() {
-      if (shown || $('.drawer.is-open, .popup.is-open, .search-overlay.is-open, .menu-overlay.is-open')) return;
+      if (shown || otherPopup() || $('.drawer.is-open, .popup.is-open, .search-overlay.is-open, .menu-overlay.is-open')) return;
       shown = true; openDrawer('NewsletterPopup');
       storeSet('luxe:popup', { done: false, at: Date.now() });
     }
@@ -996,6 +1042,28 @@
     $$('[data-drawer-close]', popup).forEach(function (b) { on(b, 'click', function () { if (!days) storeSet('luxe:popup', { done: true, at: Date.now() }); }); });
   })();
   on(doc, 'click', function (e) { var b = e.target.closest('[data-open-popup]'); if (b) { e.preventDefault(); openDrawer('NewsletterPopup', b); } });
+  // After signing up in the popup: show the subscriber's own welcome code from LuxeMail, when it's sending.
+  function showWelcomeCode() {
+    var box = $('[data-popup-code]'), email = storeGet('luxe:signup-email', null);
+    if (!box || !email || !L.mail || !L.mail.endpoint) return;
+    var url = L.mail.endpoint.replace(/\/t\/?$/, '') + '/welcome-code';
+    var tries = 0;
+    (function ask() {
+      fetch(url, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ e: email }) })
+        .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+        .then(function (d) {
+          if (!d || !d.code) return;
+          $('[data-popup-code-value]', box).textContent = d.code;
+          $('.popup__code-box', box).dataset.copy = d.code;
+          var note = $('[data-popup-code-note]', box);
+          var when = d.endsAt ? new Date(d.endsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : '';
+          note.textContent = (L.strings.codeNote || '').replace('[date]', when);
+          var shop = $('[data-popup-code-shop]', box); shop.href = L.routes.root.replace(/\/$/, '') + '/discount/' + encodeURIComponent(d.code) + '?redirect=/collections/all';
+          box.hidden = false;
+        })
+        .catch(function (s) { if (s === 404 && ++tries < 3) setTimeout(ask, 1500); });
+    })();
+  }
 
   /* ---------- Localization dropdowns ---------- */
   $$('[data-localization]').forEach(function (wrap) {
