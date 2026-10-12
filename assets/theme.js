@@ -1144,6 +1144,9 @@
     window.LuxeWatchFx = watch;
   })();
 
+  /* ---------- Footer menus start collapsed on phones ---------- */
+  if (window.matchMedia('(max-width: 989px)').matches) $$('.footer__accordion[open]').forEach(function (d) { d.open = false; });
+
   /* ---------- Promo slider ---------- */
   $$('[data-promo-slider]').forEach(function (wrap) {
     var slides = $$('.promo-slide', wrap), dots = $$('[data-promo-dot]', wrap);
