@@ -18,22 +18,22 @@
         "q1": {
           "type": "question",
           "settings": {
-            "question": "How long does delivery take?",
-            "answer": "<p>Orders are processed within 5 to 10 business days, then sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks.</p>"
+            "question": "How long does shipping take?",
+            "answer": "<p>Most orders arrive within 2–3 weeks. Delivery can take a little longer for larger or heavier orders. You'll get a tracking number by email when your order ships.</p>"
           }
         },
         "q2": {
           "type": "question",
           "settings": {
-            "question": "Which countries do you deliver to?",
-            "answer": "<p>We ship to most countries. Choose your country at the top of the page to see prices in your currency; delivery options and costs are shown at checkout.</p>"
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes. Shipping is free on every order and tracked. Choose your country at the top of the page to see prices in your currency. Any customs duties or taxes charged by your country are paid by the customer.</p>"
           }
         },
         "q3": {
           "type": "question",
           "settings": {
-            "question": "Are duties and taxes included?",
-            "answer": "<p>No. Any customs duties or taxes charged by your country are paid by you.</p>"
+            "question": "My tracking number shows as invalid. Why?",
+            "answer": "<p>Tracking numbers can take up to 48 hours to become active. If it still doesn't work after that, email support@luxedealers.com with your order number.</p>"
           }
         }
       },

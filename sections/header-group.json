@@ -29,7 +29,7 @@
           "type": "message",
           "settings": {
             "icon": "truck",
-            "text": "Tracked shipping to most countries",
+            "text": "Free shipping on every order",
             "link": "/policies/shipping-policy",
             "opens_popup": false,
             "needs_code": false
@@ -48,9 +48,9 @@
         "m4": {
           "type": "message",
           "settings": {
-            "icon": "chat",
-            "text": "Real support: support@luxedealers.com",
-            "link": "/pages/contact",
+            "icon": "return",
+            "text": "Refund or reship guarantee",
+            "link": "/policies/refund-policy",
             "opens_popup": false,
             "needs_code": false
           }

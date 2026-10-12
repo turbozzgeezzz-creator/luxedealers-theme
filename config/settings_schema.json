@@ -483,7 +483,7 @@
         "type": "textarea",
         "id": "seo_home_description",
         "label": "Homepage description",
-        "default": "Shop premium 1:1 inspired clothing, handbags, shoes and accessories at LuxeDealers. Hand-checked, sent with tracking to most countries and priced in your currency."
+        "default": "Shop premium 1:1 inspired clothing, handbags, shoes and accessories at LuxeDealers. Hand-checked, free tracked shipping and prices in your currency."
       },
       {
         "type": "image_picker",

@@ -113,7 +113,7 @@
             "illustration": "lx-parcel",
             "theme": "noir",
             "eyebrow": "Shipping",
-            "heading": "Tracked to\nmost countries",
+            "heading": "Free shipping\non every order",
             "collection": "",
             "show_from": false,
             "link": "/policies/shipping-policy",
@@ -155,7 +155,7 @@
         "m2": {
           "type": "text",
           "settings": {
-            "text": "Tracked shipping to most countries"
+            "text": "Free shipping on every order"
           }
         },
         "m3": {
@@ -167,7 +167,7 @@
         "m4": {
           "type": "text",
           "settings": {
-            "text": "Real people answer every email"
+            "text": "Refund or reship guarantee"
           }
         },
         "m5": {
@@ -250,7 +250,7 @@
       "settings": {
         "eyebrow": "Departments",
         "heading": "Shop by department",
-        "text": "Every department, hand-checked before it ships.",
+        "text": "Every department, hand-checked and shipped free.",
         "link_label": "Shop all",
         "link": "/collections/shop-all"
       }
@@ -417,8 +417,8 @@
         "c": {
           "type": "point",
           "settings": {
-            "title": "Clear prices, secure checkout",
-            "text": "Prices show in your currency. Delivery costs and any duties are shown at checkout before you pay."
+            "title": "Free shipping, no surprises",
+            "text": "Shipping is free on every order and tracked. If anything isn't right, we'll refund or reship it, with no need to send it back."
           }
         }
       },
@@ -430,7 +430,7 @@
       "settings": {
         "eyebrow": "Why LuxeDealers",
         "heading": "Luxury looks,\nhonest prices.",
-        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, sent with tracking to most countries.</p>",
+        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, with free tracked shipping on every order.</p>",
         "button": "Why choose us",
         "link": "/pages/why-choose-us"
       }
@@ -451,7 +451,7 @@
           "type": "q",
           "settings": {
             "question": "How long will my order take?",
-            "answer": "<p>Orders are processed within 5 to 10 business days, then sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks.</p>",
+            "answer": "<p>Most orders arrive within 2–3 weeks. Shipping is free and tracked, and you'll get your tracking number by email.</p>",
             "link": "/policies/shipping-policy",
             "link_label": "Shipping policy"
           }
@@ -459,10 +459,10 @@
         "b": {
           "type": "q",
           "settings": {
-            "question": "Do you ship to my country?",
-            "answer": "<p>We ship to most countries. Pick yours at the top of the page to see prices in your currency; options and costs show at checkout.</p>",
-            "link": "/pages/faqs",
-            "link_label": "Full answer"
+            "question": "What if something's wrong?",
+            "answer": "<p>Email us your order number and a photo. We'll make it right with a refund or a free replacement, with no need to send anything back.</p>",
+            "link": "/policies/refund-policy",
+            "link_label": "Refund policy"
           }
         },
         "c": {
@@ -513,6 +513,18 @@
         "heading": "Recently viewed",
         "limit": 8
       }
+    },
+    "reviews": {
+      "type": "reviews-strip",
+      "settings": {
+        "eyebrow": "Reviews",
+        "heading": "Loved by our customers",
+        "collection": "shop-all",
+        "limit": 8,
+        "min_rating": 1,
+        "link_label": "All reviews",
+        "link": "/pages/reviews"
+      }
     }
   },
   "order": [
@@ -524,6 +536,7 @@
     "budget",
     "wanted",
     "why",
+    "reviews",
     "journal",
     "help",
     "signup",
