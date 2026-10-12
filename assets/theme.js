@@ -1178,6 +1178,8 @@
       var r = post.getBoundingClientRect(), total = r.height - window.innerHeight;
       bar.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / Math.max(total, 1))) + ')';
     }, { passive: true });
+    // Drop cap on the first real paragraph (not a short "Published by" line).
+    if (content) { var lead = $$(':scope > p', content).filter(function (p) { return p.textContent.trim().length > 120 && !/^(published|by |written)/i.test(p.textContent.trim()); })[0]; if (lead) lead.classList.add('is-lead'); }
     var hs = content ? $$('h2', content) : [];
     var toc = $('[data-toc]'), list = $('[data-toc-list]');
     if (!toc || hs.length < 3) return;

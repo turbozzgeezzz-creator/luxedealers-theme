@@ -5,20 +5,21 @@
   assign author_page = pages[ah]
   assign t = article.title | append: ' ' | append: article.tags | downcase
   assign shop_handle = section.settings.shop_collection.handle | default: 'new-arrivals'
-  if t contains 'sneaker' or t contains 'shoe'
-    assign shop_handle = 'sneakers-1'
-  elsif t contains 'bag' or t contains 'leather'
-    assign shop_handle = 'handbags'
-  elsif t contains 'jewel' or t contains 'ring' or t contains 'necklace' or t contains 'bracelet'
-    assign shop_handle = 'jewellery'
-  elsif t contains 'watch' or t contains 'strap'
+  if t contains 'watch' or t contains 'strap'
     assign shop_handle = 'watches'
+  elsif t contains 'jewel' or t contains 'necklace' or t contains 'bracelet' or t contains ' rings' or t contains 'earring'
+    assign shop_handle = 'jewellery'
+  elsif t contains 'sneaker' or t contains 'shoe'
+    assign shop_handle = 'sneakers-1'
+  elsif t contains 'bag' or t contains 'tote' or t contains 'wallet'
+    assign shop_handle = 'handbags'
   elsif t contains 'fragrance' or t contains 'perfume' or t contains 'scent'
     assign shop_handle = 'fragances'
   elsif t contains 'hoodie' or t contains 'jacket' or t contains 'clothing' or t contains 'tee'
     assign shop_handle = 'clothing'
   endif
   assign shop_col = collections[shop_handle]
+  assign shop_name = shop_col.title | downcase | capitalize
 -%}
 <div class="read-progress" aria-hidden="true"><span data-read-progress></span></div>
 <article class="post" data-post>
@@ -48,7 +49,7 @@
 
       {%- if shop_col != blank and shop_col.products_count > 0 -%}
         <section class="post-shop">
-          <div class="post-shop__head"><span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span><h2>{{ 'blog.shop_story' | t: title: shop_col.title }}</h2><a class="pill-link" href="{{ shop_col.url }}">{{ 'sections.view_all' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></div>
+          <div class="post-shop__head"><span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span><h2>{{ 'blog.shop_story' | t: title: shop_name }}</h2><a class="pill-link" href="{{ shop_col.url }}">{{ 'sections.view_all' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></div>
           <div class="post-shop__grid">{%- for p in shop_col.products limit: 4 -%}{% render 'product-card', product: p, reveal: false %}{%- endfor -%}</div>
         </section>
       {%- endif -%}
@@ -77,7 +78,7 @@
         <span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span>
         <p class="post__card-title">{{ 'blog.shop_title' | t }}</p>
         <p class="post__card-text">{{ 'blog.shop_text' | t }}</p>
-        {%- if shop_col != blank -%}<a class="btn btn--gold btn--sm" href="{{ shop_col.url }}">{{ 'blog.shop_cta_col' | t: title: shop_col.title }}</a>{%- else -%}<a class="btn btn--gold btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'blog.shop_cta' | t }}</a>{%- endif -%}
+        {%- if shop_col != blank -%}<a class="btn btn--gold btn--sm" href="{{ shop_col.url }}">{{ 'blog.shop_cta_col' | t: title: shop_name }}</a>{%- else -%}<a class="btn btn--gold btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'blog.shop_cta' | t }}</a>{%- endif -%}
       </div>
     </aside>
   </div>
