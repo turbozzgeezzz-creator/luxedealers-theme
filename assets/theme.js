@@ -947,7 +947,10 @@
     function init() {
       cp = window.Shopify && window.Shopify.customerPrivacy;
       if (!cp) return;
-      if (cp.shouldShowBanner && cp.shouldShowBanner()) setTimeout(function () { show(false); }, 900);
+      // Ask once. A saved choice (on this device or in Shopify) means we never pop up again by ourselves.
+      if (storeGet('luxe:consent', null)) return;
+      try { if (sessionStorage.getItem('luxe:cookie-seen')) return; sessionStorage.setItem('luxe:cookie-seen', '1'); } catch (e) {}
+      if (cp.shouldShowBanner && cp.shouldShowBanner()) setTimeout(function () { if (!$('.popup.is-open, .drawer.is-open')) show(false); }, 1500);
     }
     if (window.Shopify && window.Shopify.loadFeatures) {
       window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }], function (err) { if (!err) init(); });
@@ -961,15 +964,33 @@
     on(doc, 'click', function (e) {
       if (!e.target.closest('[data-theme-toggle]')) return;
       var dark = root.getAttribute('data-theme') !== 'dark';
-      root.classList.add('theme-switching');
-      if (dark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+      var swap = function () { if (dark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme'); };
+      if (doc.startViewTransition && !reduceMotion) doc.startViewTransition(swap); else swap();
       storeSet('luxe:theme', dark ? 'dark' : 'light');
       var m = doc.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0C0B09' : '#ffffff');
-      setTimeout(function () { root.classList.remove('theme-switching'); }, 400);
       sync();
     });
     sync();
   })();
+
+  /* ---------- Search buttons open the header search bar (the old full-screen search is retired) ---------- */
+  doc.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-drawer-open="SearchOverlay"]');
+    var form = $('[data-header-search]');
+    if (!b || !form) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    var wrap = $('[data-header]'), input = $('input[type="search"]', form);
+    $$('.menu-overlay.is-open, .drawer.is-open').forEach(closeDrawer);
+    if (wrap) wrap.classList.add('is-search-open');
+    if (wrap && wrap.classList.contains('is-hidden')) wrap.classList.remove('is-hidden');
+    if (window.innerWidth >= 990 && wrap && wrap.getBoundingClientRect().top < -10) window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(function () { input.focus(); }, 60);
+  }, true);
+  on(doc, 'focusout', function (e) {
+    var form = e.target.closest && e.target.closest('[data-header-search]');
+    if (!form) return;
+    setTimeout(function () { var wrap = $('[data-header]'); if (wrap && !form.contains(doc.activeElement) && !$('input[type="search"]', form).value) wrap.classList.remove('is-search-open'); }, 200);
+  });
 
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {

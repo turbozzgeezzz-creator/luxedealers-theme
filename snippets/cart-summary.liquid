@@ -54,6 +54,14 @@
 {%- endfor -%}
 {%- assign saved = cart.original_total_price | minus: cart.total_price -%}
 {%- if saved > 0 -%}<div class="cart-totals cart-totals--save"><span>{{ 'cart.you_save' | t }}</span><strong>{{ saved | money }}</strong></div>{%- endif -%}
-<div class="cart-totals"><span>{{ 'cart.subtotal' | t }}</span><strong>{{ cart.total_price | money_with_currency }}</strong></div>
-<button type="submit" name="checkout" form="CartForm-{{ context }}" class="btn btn--block">{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'cart.checkout' | t }}</button>
+<div class="bag-totals">
+  <div class="cart-totals"><span>{{ 'cart.shipping' | t }}</span><span class="bag-totals__free">{{ 'cart.free' | t }}</span></div>
+  <div class="cart-totals cart-totals--total"><span>{{ 'cart.total' | t }}</span><strong>{{ cart.total_price | money_with_currency }}</strong></div>
+</div>
+{%- assign tot = cart.total_price | money -%}
+<button type="submit" name="checkout" form="CartForm-{{ context }}" class="btn btn--gold btn--block bag-checkout">{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'cart.checkout_total' | t: total: tot }}</button>
+<div class="bag-trust">
+  <span>{% render 'icon', name: 'return', class: 'icon--sm' %} {{ 'cart.guarantee' | t }}</span>
+  <ul class="bag-trust__pay" role="list">{%- for type in shop.enabled_payment_types limit: 6 -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+</div>
 {%- assign cnt = settings.cart_note_text | strip_html | strip -%}{%- if cnt != blank and cnt != 'Duties and taxes for your country are shown at checkout.' -%}<div class="cart-note rte">{{ settings.cart_note_text }}</div>{%- endif -%}

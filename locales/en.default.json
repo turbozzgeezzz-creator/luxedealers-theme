@@ -140,6 +140,14 @@
     "help_cta": "Ask us"
   },
   "cart": {
+    "free_shipping_on": "Free tracked shipping on this order",
+    "add": "Add",
+    "choose": "Choose",
+    "shipping": "Shipping",
+    "free": "Free",
+    "total": "Total",
+    "checkout_total": "Checkout · {{ total }}",
+    "guarantee": "Refund or reship guarantee",
     "qty_need": "Add {{ count }} more and save {{ percent }}%",
     "qty_next": "You're saving {{ current }}%. Add {{ count }} more to save {{ percent }}%",
     "qty_done": "You're saving {{ percent }}% on this order",
