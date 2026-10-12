@@ -1752,3 +1752,4 @@ input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; a
 .pdp__help-text span { display: none; }
 .pdp__help-text strong { font-weight: 500; color: var(--c-muted); }
 .pdp__help-cta { font-weight: 600; color: var(--c-gold-text); }
+@media (max-width: 989px) { .header-wrapper.is-scrolled .header__inner, .header__inner { height: auto !important; } }
