@@ -769,6 +769,24 @@
     }).catch(function () {});
   });
 
+  /* ---------- Long option lists: two rows, then "Show all" ---------- */
+  on(doc, 'click', function (e) {
+    var b = e.target.closest('[data-option-more]');
+    if (!b) return;
+    var f = b.closest('[data-option-many]'), open = !f.classList.contains('is-open');
+    f.classList.toggle('is-open', open);
+    b.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (!b.dataset.more) b.dataset.more = b.firstChild.textContent;
+    b.firstChild.textContent = open ? b.dataset.less + ' ' : b.dataset.more;
+  });
+  // Keep the chosen value in view when the list is collapsed.
+  $$('[data-option-many]').forEach(function (f) {
+    var vals = $('.option__values', f), c = $('input:checked', f);
+    if (!c) return;
+    var lab = c.nextElementSibling;
+    if (lab && lab.offsetTop - vals.offsetTop > vals.clientHeight - 20) { vals.insertBefore(lab, vals.firstChild); vals.insertBefore(c, lab); }
+  });
+
   /* ---------- LuxeMail beacon (only when an endpoint is configured) ---------- */
   // Body: { cid, t?, h?, p?, ti?, e?, fn?, c?, src?, pg }. An email is only sent with c = 1: a sign-up,
   // or a signed-in customer who already accepts marketing emails.

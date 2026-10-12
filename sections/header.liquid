@@ -189,66 +189,120 @@
 {%- unless overlay -%}<div class="header-spacer"></div>{%- endunless -%}
 
 {%- comment -%} Full-screen menu {%- endcomment -%}
-<div class="menu-overlay" id="MenuOverlay" aria-hidden="true" data-menu-overlay>
-  <div class="menu-overlay__panel" role="dialog" aria-modal="true" aria-label="{{ 'header.menu' | t }}" tabindex="-1">
-    <div class="menu-overlay__col">
-      <div class="menu-overlay__top">
-        <button type="button" class="text-btn" data-drawer-close>{% render 'icon', name: 'close' %}<span>{{ 'general.close' | t }}</span></button>
-      </div>
+<div class="menu-overlay mnav" id="MenuOverlay" aria-hidden="true" data-menu-overlay>
+  <div class="mnav__backdrop" data-drawer-close></div>
+  <div class="menu-overlay__panel mnav__panel" role="dialog" aria-modal="true" aria-label="{{ 'header.menu' | t }}" tabindex="-1">
+    <div class="mnav__top">
+      <a href="{{ routes.root_url }}" class="mnav__logo" aria-label="{{ shop.name | escape }}">{% render 'logo' %}</a>
+      <button type="button" class="mnav__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <div class="mnav__body">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="mnav__search">
+        <label class="visually-hidden" for="MenuSearch">{{ 'header.search' | t }}</label>
+        {% render 'icon', name: 'search', class: 'icon--sm' %}
+        <input id="MenuSearch" type="search" name="q" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off">
+        <input type="hidden" name="type" value="product">
+      </form>
       {%- if menu != blank -%}
-        <ul class="menu-overlay__list" role="list">
+        <p class="mnav__label">{{ 'header.shop' | t }}</p>
+        <ul class="mnav__list" role="list">
           {%- for link in menu.links -%}
-            <li style="--i: {{ forloop.index0 }}">
-              {%- if link.links.size > 0 -%}
-                <button type="button" class="menu-overlay__link" data-menu-group="{{ forloop.index }}" aria-expanded="false" aria-controls="MenuGroup-{{ forloop.index }}">{{ link.title }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
-                <div class="menu-overlay__mobile-sub" hidden data-mobile-sub="{{ forloop.index }}">
-                  <a href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }}</a>
-                  {%- for child in link.links -%}
-                    <a href="{{ child.url }}">{{ child.title }}</a>
-                    {%- for g in child.links -%}<a href="{{ g.url }}" style="padding-left: 14px; font-size: 14px">{{ g.title }}</a>{%- endfor -%}
-                  {%- endfor -%}
-                </div>
-              {%- else -%}
-                <a class="menu-overlay__link" href="{{ link.url }}" data-menu-hover="{{ forloop.index }}">{{ link.title }}</a>
-              {%- endif -%}
-            </li>
+            {%- liquid
+              assign lt = link.title | downcase | strip
+              assign is_page = false
+              if link.type == 'page_link' or link.type == 'frontpage_link' or link.type == 'blog_link' or link.type == 'http_link' or link.type == 'policy_link'
+                assign is_page = true
+              endif
+              if link.links.size > 0
+                assign is_page = false
+              endif
+              assign icon = 'sparkle'
+              if lt contains 'all'
+                assign icon = 'grid4'
+              elsif lt contains 'cloth'
+                assign icon = 'shirt'
+              elsif lt contains 'shoe' or lt contains 'sneaker'
+                assign icon = 'shoe'
+              elsif lt contains 'bag'
+                assign icon = 'bag'
+              elsif lt contains 'access' or lt contains 'watch'
+                assign icon = 'watch'
+              elsif lt contains 'jewel'
+                assign icon = 'diamond'
+              elsif lt contains 'brand'
+                assign icon = 'tag'
+              elsif lt contains 'women' or lt contains 'men'
+                assign icon = 'user'
+              elsif lt contains 'fragr'
+                assign icon = 'perfume'
+              endif
+            -%}
+            {%- unless is_page -%}
+              <li style="--i: {{ forloop.index0 }}">
+                {%- if link.links.size > 0 -%}
+                  <details class="mnav__group">
+                    <summary class="mnav__row"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title }}</span>{% render 'icon', name: 'chevron-down', class: 'mnav__chev' %}</summary>
+                    <div class="mnav__sub">
+                      <a class="mnav__all" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
+                      <div class="mnav__chips">
+                        {%- for child in link.links -%}
+                          <a class="mnav__chip" href="{{ child.url }}">{{ child.title }}</a>
+                          {%- for g in child.links -%}<a class="mnav__chip mnav__chip--sub" href="{{ g.url }}">{{ g.title }}</a>{%- endfor -%}
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  </details>
+                {%- else -%}
+                  <a class="mnav__row" href="{{ link.url }}"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title }}</span>{% render 'icon', name: 'arrow-right', class: 'mnav__chev icon--sm' %}</a>
+                {%- endif -%}
+              </li>
+            {%- endunless -%}
           {%- endfor -%}
         </ul>
-      {%- endif -%}
-      <div class="menu-overlay__extra">
-        {%- if shop.customer_accounts_enabled -%}
-          <a class="link" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% render 'icon', name: 'account', class: 'icon--sm' %} {% if customer %}{{ 'header.account' | t }}{% else %}{{ 'header.login' | t }}{% endif %}</a>
-        {%- endif -%}
-        {%- if section.settings.wishlist_page != blank -%}<a class="link" href="{{ section.settings.wishlist_page.url }}">{% render 'icon', name: 'heart', class: 'icon--sm' %} {{ 'header.wishlist' | t }}</a>{%- endif -%}
-        {%- if contact_url != blank -%}<a class="link" href="{{ contact_url }}">{% render 'icon', name: 'chat', class: 'icon--sm' %} {{ section.settings.contact_label }}</a>{%- endif -%}
-        {% render 'localization', id: 'MenuLocalization' %}
-        {% render 'social-links' %}
-      </div>
-    </div>
-    <div class="menu-overlay__col menu-overlay__sub">
-      {%- for link in menu.links -%}
-        {%- if link.links.size > 0 -%}
-          <div class="menu-overlay__group" id="MenuGroup-{{ forloop.index }}" data-group="{{ forloop.index }}">
-            <a class="link" href="{{ link.url }}" style="align-self: flex-start; margin-bottom: 10px">{{ 'header.shop_all' | t: title: link.title }}</a>
-            {%- for child in link.links -%}
-              {%- if child.links.size > 0 -%}
-                <a class="mega__title" href="{{ child.url }}">{{ child.title }}</a>
-                {%- for g in child.links -%}<a href="{{ g.url }}">{{ g.title }}</a>{%- endfor -%}
-              {%- else -%}
-                <a href="{{ child.url }}">{{ child.title }}</a>
-              {%- endif -%}
-            {%- endfor -%}
-          </div>
-        {%- endif -%}
-      {%- endfor -%}
-    </div>
-    <div class="menu-overlay__visual" aria-hidden="true">
-      {%- for link in menu.links -%}
-        <div class="menu-overlay__img{% if forloop.first %} is-active{% endif %}" data-visual="{{ forloop.index }}">
-          {%- render 'menu-visual', link: link, blocks: section.blocks, mode: 'overlay' -%}
-          <span class="menu-overlay__caption">{{ link.title }}</span>
+        <div class="mnav__promo">
+          <span class="mnav__promo-ico">{% render 'icon', name: 'truck' %}</span>
+          <div><strong>{{ 'products.free_shipping' | t }}</strong><span>{{ 'products.refund_reship' | t }}</span></div>
         </div>
-      {%- endfor -%}
+        <p class="mnav__label">{{ 'header.help' | t }}</p>
+        <div class="mnav__quick">
+          {%- for link in menu.links -%}
+            {%- liquid
+              assign lt = link.title | downcase | strip
+              assign is_page = false
+              if link.type == 'page_link' or link.type == 'blog_link' or link.type == 'http_link' or link.type == 'policy_link'
+                assign is_page = true
+              endif
+              if link.links.size > 0 or link.type == 'frontpage_link'
+                assign is_page = false
+              endif
+              assign qi = 'chat'
+              if lt contains 'track'
+                assign qi = 'truck'
+              elsif lt contains 'faq' or lt contains 'help'
+                assign qi = 'help'
+              elsif lt contains 'review'
+                assign qi = 'star'
+              elsif lt contains 'why' or lt contains 'about'
+                assign qi = 'diamond'
+              elsif lt contains 'size'
+                assign qi = 'ruler'
+              elsif lt contains 'news' or lt contains 'blog' or lt contains 'journal'
+                assign qi = 'sparkle'
+              endif
+            -%}
+            {%- if is_page -%}<a class="mnav__tile" href="{{ link.url }}">{% render 'icon', name: qi %}<span>{{ link.title }}</span></a>{%- endif -%}
+          {%- endfor -%}
+          {%- if contact_url != blank -%}<a class="mnav__tile" href="{{ contact_url }}">{% render 'icon', name: 'chat' %}<span>{{ section.settings.contact_label }}</span></a>{%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+    <div class="mnav__foot">
+      {%- if shop.customer_accounts_enabled -%}
+        <a class="mnav__acct" href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}">{% render 'icon', name: 'account', class: 'icon--sm' %} {% if customer %}{{ 'header.account' | t }}{% else %}{{ 'header.login' | t }}{% endif %}</a>
+      {%- endif -%}
+      <button type="button" class="mnav__acct" data-drawer-open="WishlistDrawer" aria-controls="WishlistDrawer">{% render 'icon', name: 'heart', class: 'icon--sm' %} {{ 'header.wishlist' | t }}</button>
+      <div class="mnav__loc">{% render 'localization', id: 'MenuLocalization' %}</div>
+      {% render 'social-links' %}
     </div>
   </div>
 </div>

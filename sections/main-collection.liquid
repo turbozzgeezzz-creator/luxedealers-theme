@@ -21,7 +21,10 @@
     </div>
     {%- if s.chips_menu != blank -%}
       <nav class="coll-chips" aria-label="{{ 'collections.browse' | t }}">
-        {%- for l in s.chips_menu.links -%}<a class="search-chip{% if l.url == collection.url %} is-active{% endif %}" href="{{ l.url }}">{{ l.title }}</a>{%- endfor -%}
+        {%- for l in s.chips_menu.links -%}
+          {%- if l.type == 'frontpage_link' -%}{%- continue -%}{%- endif -%}
+          <a class="search-chip{% if l.url == collection.url or l.object.handle == collection.handle %} is-active{% endif %}" href="{{ l.url }}"{% if l.url == collection.url or l.object.handle == collection.handle %} aria-current="page"{% endif %}>{{ l.title }}</a>
+        {%- endfor -%}
       </nav>
     {%- endif -%}
   </div>

@@ -1,6 +1,6 @@
 {%- assign s = section.settings -%}
 <footer class="site-footer">
-  {%- if s.show_promises -%}
+  {%- if s.show_promises and template.name != 'product' -%}
     <div class="footer__promises">
       <div class="container footer__promises-grid">
         {%- for i in (1..4) -%}

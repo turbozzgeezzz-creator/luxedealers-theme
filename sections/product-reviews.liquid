@@ -6,27 +6,73 @@
 {%- liquid
   assign jd = product.metafields.judgeme.review_widget_data.value
   assign count = jd.number_of_reviews | default: 0
+  assign store_avg = shop.metafields.judgeme.all_reviews_rating.value | default: shop.metafields.judgeme.all_reviews_rating
+  assign store_total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count | default: 0
+  assign need = 4 | minus: count
+  if count == 0
+    assign need = 4
+  endif
+  assign shown = 0
 -%}
+{%- comment -%} Few reviews on this piece: top up with real reviews of other pieces, clearly labelled with the product they're for. {%- endcomment -%}
+{%- capture extra -%}
+  {%- if need > 0 -%}
+    {%- for pass in (1..2) -%}
+      {%- for p in collections.all.products limit: 80 -%}
+        {%- if shown >= need -%}{%- break -%}{%- endif -%}
+        {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
+        {%- assign pj = p.metafields.judgeme.review_widget_data.value -%}
+        {%- if pj.number_of_reviews > 0 -%}
+          {%- for review in pj.reviews limit: 1 -%}
+            {%- assign has_pic = false -%}{%- if review.pictures_urls.size > 0 -%}{%- assign has_pic = true -%}{%- endif -%}
+            {%- if review.rating >= 4 and review.body != blank -%}
+              {%- assign take = false -%}
+              {%- if pass == 1 -%}{%- if has_pic -%}{%- assign take = true -%}{%- endif -%}{%- elsif has_pic == false -%}{%- assign take = true -%}{%- endif -%}
+              {%- if take -%}
+                {% render 'review-card', review: review, product_title: p.title, product_url: p.url %}
+                {%- assign shown = shown | plus: 1 -%}
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
 <section class="section reviews" id="reviews">
   <div class="container">
-    {%- if count > 0 -%}
+    {%- if count > 0 or shown > 0 -%}
       <div class="reviews__grid">
         <div class="reviews__summary">
           <span class="eyebrow">{{ section.settings.eyebrow }}</span>
           <h2 class="h2">{{ section.settings.heading }}</h2>
-          <div class="reviews__score">
-            <strong>{{ jd.average_rating | times: 1 | round: 1 }}</strong>
-            <div><span class="rating__stars rating__stars--gold rating__stars--lg" aria-hidden="true"><span style="--pct: {{ jd.average_rating | times: 20 }}%"></span></span><span class="muted">{{ jd.review_summary_text }}</span></div>
-          </div>
-          <ul class="reviews__bars" role="list">
-            {%- for h in jd.histogram -%}
-              <li><span>{{ h.rating }} ★</span><span class="reviews__bar"><span style="width: {{ h.percentage }}%"></span></span><span class="muted">{{ h.frequency }}</span></li>
-            {%- endfor -%}
-          </ul>
+          {%- if count > 0 -%}
+            <div class="reviews__score">
+              <strong>{{ jd.average_rating | times: 1 | round: 1 }}</strong>
+              <div><span class="rating__stars rating__stars--gold rating__stars--lg" aria-hidden="true"><span style="--pct: {{ jd.average_rating | times: 20 }}%"></span></span><span class="muted">{{ jd.review_summary_text }}</span></div>
+            </div>
+            <ul class="reviews__bars" role="list">
+              {%- for h in jd.histogram -%}
+                <li><span>{{ h.rating }} ★</span><span class="reviews__bar"><span style="width: {{ h.percentage }}%"></span></span><span class="muted">{{ h.frequency }}</span></li>
+              {%- endfor -%}
+            </ul>
+          {%- else -%}
+            <p class="muted">{{ 'products.no_reviews_yet' | t }}</p>
+          {%- endif -%}
+          {%- if store_total > 0 -%}
+            <div class="reviews__store">
+              <span class="rating__stars rating__stars--gold" aria-hidden="true"><span style="--pct: {{ store_avg | times: 20 }}%"></span></span>
+              <span>{{ 'products.store_rating' | t: rating: store_avg, count: store_total }}</span>
+            </div>
+          {%- endif -%}
           {%- if section.settings.all_link != blank -%}<a class="pill-link" href="{{ section.settings.all_link }}">{{ section.settings.all_label }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>{%- endif -%}
         </div>
         <div class="reviews__list">
           {%- for review in jd.reviews limit: 6 -%}{% render 'review-card', review: review %}{%- endfor -%}
+          {%- if shown > 0 -%}
+            <p class="reviews__more-label">{{ 'products.more_reviews' | t }}</p>
+            {{ extra }}
+          {%- endif -%}
         </div>
       </div>
     {%- endif -%}

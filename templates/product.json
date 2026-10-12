@@ -67,7 +67,7 @@
       ],
       "settings": {
         "gallery": "slider",
-        "hover_zoom": true,
+        "hover_zoom": false,
         "sticky_bar": true
       }
     },

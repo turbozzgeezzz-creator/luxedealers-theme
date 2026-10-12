@@ -25,10 +25,12 @@
     "contact": "Contact",
     "announcements": "Announcements",
     "shop_all": "Shop all {{ title }}",
-    "search_placeholder": "Search for products, brands and more",
+    "search_placeholder": "Search products and brands",
     "sign_in": "Sign in",
     "signed_in": "Signed in",
-    "hello": "Hi {{ name }}"
+    "hello": "Hi {{ name }}",
+    "shop": "Shop",
+    "help": "Help and info"
   },
   "footer": {
     "all_products": "All products",
@@ -52,6 +54,11 @@
     "scroll": "Scroll"
   },
   "products": {
+    "show_all_options": "Show all {{ count }}",
+    "show_fewer": "Show fewer",
+    "no_reviews_yet": "No reviews for this piece yet. Here's what customers say about others.",
+    "store_rating": "{{ rating }} / 5 store rating from {{ count }} reviews",
+    "more_reviews": "Recent reviews of other pieces",
     "add_to_bag": "Add to bag",
     "add_title": "Add {{ title }} to bag",
     "quick_view": "Quick view",
