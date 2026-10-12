@@ -50,9 +50,10 @@
           {%- assign oid = form_id | append: '-' | append: option.position | append: '-' | append: forloop.index0 -%}
           <input type="radio" id="{{ oid }}" name="{{ form_id }}-option-{{ option.position }}" value="{{ val | escape }}"{% if option.selected_value == val %} checked{% endif %}>
           {%- assign vimg = nil -%}
-          {%- if product.options.size == 1 -%}
-            {%- for v in product.variants -%}{%- if v.option1 == val and v.featured_media -%}{%- assign vimg = v.featured_media -%}{%- break -%}{%- endif -%}{%- endfor -%}
-          {%- endif -%}
+          {%- unless oname contains 'size' -%}
+            {%- assign oi = option.position | minus: 1 -%}
+            {%- for v in product.variants -%}{%- if v.options[oi] == val and v.featured_media -%}{%- assign vimg = v.featured_media -%}{%- break -%}{%- endif -%}{%- endfor -%}
+          {%- endunless -%}
           {%- if vimg -%}
             <label class="img-pill" for="{{ oid }}" title="{{ option.name | escape }} {{ val | escape }}">{{ vimg | image_url: width: 160 | image_tag: width: 72, height: 72, loading: 'lazy', alt: '' }}<span class="img-pill__label">{{ val }}</span></label>
           {%- elsif is_color -%}
