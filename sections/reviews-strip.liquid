@@ -9,33 +9,52 @@
   assign total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count
   assign shown = 0
 -%}
-{%- capture photo_cards -%}
-  {%- for p in c.products limit: 40 -%}
-    {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
-    {%- if jd.number_of_reviews > 0 -%}
-      {%- for review in jd.reviews limit: 1 -%}
-        {%- if review.pictures_urls.size > 0 and review.rating >= s.min_rating -%}
-          {% render 'review-card', review: review, product_title: p.title, product_url: p.url, hero: true %}
-          {%- assign shown = shown | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}
-    {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
-  {%- endfor -%}
-{%- endcapture -%}
+{%- comment -%} Order: photo reviews from verified buyers, other photo reviews, verified text reviews, then the rest. One per product. {%- endcomment -%}
+{%- assign used = ',' -%}
 {%- capture cards -%}
-  {%- for p in c.products limit: 40 -%}
-    {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
-    {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
-    {%- if jd.number_of_reviews > 0 -%}
-      {%- for review in jd.reviews limit: 1 -%}
-        {%- if review.body != blank and review.rating >= s.min_rating and review.pictures_urls.size == 0 -%}
-          {% render 'review-card', review: review, product_title: p.title, product_url: p.url, hero: true %}
-          {%- assign shown = shown | plus: 1 -%}
-        {%- endif -%}
-      {%- endfor -%}
-    {%- endif -%}
-    {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
+  {%- for pass in (1..4) -%}
+    {%- for p in c.products limit: 40 -%}
+      {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
+      {%- assign key = ',' | append: p.id | append: ',' -%}
+      {%- if used contains key -%}{%- continue -%}{%- endif -%}
+      {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
+      {%- if jd.number_of_reviews > 0 -%}
+        {%- for review in jd.reviews limit: 1 -%}
+          {%- liquid
+            assign pic = false
+            if review.pictures_urls.size > 0
+              assign pic = true
+            endif
+            assign ok = false
+            if review.rating >= s.min_rating
+              case pass
+                when 1
+                  if pic and review.verified_buyer
+                    assign ok = true
+                  endif
+                when 2
+                  if pic
+                    assign ok = true
+                  endif
+                when 3
+                  if pic == false and review.body != blank and review.verified_buyer
+                    assign ok = true
+                  endif
+                else
+                  if pic == false and review.body != blank
+                    assign ok = true
+                  endif
+              endcase
+            endif
+          -%}
+          {%- if ok -%}
+            {% render 'review-card', review: review, product_title: p.title, product_url: p.url, hero: true %}
+            {%- assign shown = shown | plus: 1 -%}
+            {%- assign used = used | append: p.id | append: ',' -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endfor -%}
   {%- endfor -%}
 {%- endcapture -%}
 {%- if shown > 0 -%}
@@ -54,7 +73,7 @@
         <div class="rail__controls"><button type="button" class="rail__btn" data-rail-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %}</button><button type="button" class="rail__btn" data-rail-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button></div>
       </div>
     </div>
-    <div class="rail" data-rail><div class="rail__track reviews-strip__track">{{ photo_cards }}{{ cards }}</div></div>
+    <div class="rail" data-rail><div class="rail__track reviews-strip__track">{{ cards }}</div></div>
   </div>
 </section>
 {%- endif -%}

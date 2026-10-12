@@ -799,6 +799,21 @@
     renderHandles(g, storeGet(RV, []).filter(function (x) { return x !== exclude; }).slice(0, limit), null);
   });
 
+  /* No product appears in two rows: "You might also like" wins, "More from" fills with others. */
+  function dedupeRows() {
+    var seen = {}, cur = $('[data-product-handle]');
+    if (cur) seen[cur.dataset.productHandle] = 1;
+    $$('[data-product-recs] .card, [data-product-more] .card, .bset__item').forEach(function (card) {
+      var w = $('[data-wish]', card), a = $('a[href*="/products/"]', card);
+      var h = w ? w.dataset.wish : (a ? (a.getAttribute('href').split('/products/')[1] || '').split(/[?#]/)[0] : '');
+      if (!h) return;
+      if (seen[h] && !card.classList.contains('bset__item')) { card.remove(); return; }
+      seen[h] = 1;
+    });
+    $$('[data-product-more], [data-product-recs]').forEach(function (s) { if (!$('.card', s)) s.hidden = true; });
+  }
+  dedupeRows();
+
   /* ---------- Product recommendations ---------- */
   $$('[data-recommendations]').forEach(function (el) {
     fetch(el.dataset.url).then(function (r) { return r.text(); }).then(function (html) {
@@ -807,6 +822,7 @@
       if (!sec) return;
       el.replaceWith(sec);
       initReveals(sec); initRails(sec); initWishButtons(sec);
+      dedupeRows();
     }).catch(function () {});
   });
 
@@ -1454,7 +1470,13 @@
   })();
 
   /* ---------- Footer menus start collapsed on phones ---------- */
-  if (window.matchMedia('(max-width: 989px)').matches) $$('.footer__accordion[open]').forEach(function (d) { d.open = false; });
+  // Footer menus: folded on phones, always open on larger screens (also after resizing or rotating).
+  (function () {
+    var mq = window.matchMedia('(max-width: 989px)');
+    function sync() { $$('.footer__accordion').forEach(function (d) { d.open = !mq.matches; }); }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync); else if (mq.addListener) mq.addListener(sync);
+  })();
 
   /* ---------- Blog post: reading progress and table of contents ---------- */
   (function () {

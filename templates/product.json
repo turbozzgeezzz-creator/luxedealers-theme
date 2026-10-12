@@ -16,7 +16,7 @@
             "icon_1": "truck",
             "text_1": "Free shipping",
             "icon_2": "return",
-            "text_2": "Refund or reship guarantee",
+            "text_2": "Refund or reship",
             "icon_3": "lock",
             "text_3": "Secure checkout"
           }
@@ -87,7 +87,7 @@
       "type": "product-more",
       "settings": {
         "eyebrow": "Keep browsing",
-        "limit": 12
+        "limit": 16
       }
     }
   },
