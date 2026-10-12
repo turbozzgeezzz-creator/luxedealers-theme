@@ -884,6 +884,33 @@
     if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-cart-code-input]')) { e.preventDefault(); var b = $('[data-cart-code-apply]', e.target.closest('[data-cart-code]')); if (b) b.click(); }
   });
 
+  /* ---------- Help centre: search + topics ---------- */
+  $$('[data-faqc]').forEach(function (fc) {
+    var input = $('[data-faqc-search]', fc), empty = $('[data-faqc-empty]', fc), topic = 'all';
+    function apply() {
+      var q = (input.value || '').trim().toLowerCase(), any = false;
+      $$('[data-faqc-group]', fc).forEach(function (g) {
+        var groupOn = topic === 'all' || g.dataset.faqcGroup === topic, shown = 0;
+        $$('[data-faqc-q]', g).forEach(function (d) {
+          var hit = groupOn && (!q || d.textContent.toLowerCase().indexOf(q) > -1);
+          d.hidden = !hit; if (hit) shown++;
+          if (q && hit) d.open = true;
+        });
+        g.hidden = shown === 0; if (shown) any = true;
+      });
+      empty.hidden = any;
+    }
+    on(input, 'input', debounce(apply, 120));
+    on(fc, 'click', function (e) {
+      var b = e.target.closest('[data-faqc-topic]');
+      if (!b) return;
+      topic = b.dataset.faqcTopic;
+      $$('[data-faqc-topic]', fc).forEach(function (x) { x.classList.toggle('is-active', x === b); });
+      apply();
+      if (window.innerWidth < 990) $('.faqc__main', fc).scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {
     var b = e.target.closest('[data-option-more]');

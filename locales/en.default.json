@@ -234,6 +234,16 @@
     "notice": "By signing up you agree to receive our marketing emails. Unsubscribe any time.",
     "privacy": "Privacy policy"
   },
+  "faq": {
+    "search": "Search questions",
+    "topics": "Topics",
+    "all": "All questions",
+    "topic_shipping": "Shipping and delivery",
+    "topic_orders": "Orders and payment",
+    "topic_products": "Products and sizing",
+    "topic_refunds": "Refunds and reships",
+    "no_results": "No matching questions."
+  },
   "contact": {
     "ways": "Ways to reach us",
     "email_title": "Email us",

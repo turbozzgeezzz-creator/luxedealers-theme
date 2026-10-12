@@ -1462,3 +1462,43 @@ main > .shopify-section:first-child .section { padding-top: calc(var(--section-p
 
 /* Keep the chat bubble out of the way while a drawer is open */
 body:has(.drawer.is-open) #shopify-chat, body:has(.drawer.is-open) #ShopifyChat, body:has(.menu-overlay.is-open) #shopify-chat { display: none !important; }
+
+/* Help centre (FAQs) */
+.faqc__grid { display: grid; gap: 22px; }
+@media (min-width: 990px) { .faqc__grid { grid-template-columns: 300px minmax(0, 1fr); gap: 48px; align-items: start; } .faqc__side { position: sticky; top: calc(var(--header-h) + 70px); } }
+.faqc__side { display: flex; flex-direction: column; gap: 14px; }
+.faqc__search { display: flex; align-items: center; gap: 10px; height: 50px; padding: 0 16px; border-radius: 14px; background: #F6F3EC; border: 1px solid transparent; transition: border-color .2s, background .2s; }
+.faqc__search:focus-within { background: #fff; border-color: var(--c-gold); box-shadow: 0 0 0 4px rgba(212,175,55,.14); }
+.faqc__search input { flex: 1; min-width: 0; border: 0; background: none; font-size: 15px; outline: none; }
+.faqc__tabs { display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 989px) { .faqc__tabs { flex-direction: row; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); } .faqc__tabs::-webkit-scrollbar { display: none; } }
+.faqc__tab { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 12px; font-size: 14.5px; font-weight: 600; text-align: left; white-space: nowrap; transition: background .2s; }
+.faqc__tab span { flex: 1; }
+.faqc__tab small { min-width: 24px; padding: 2px 7px; border-radius: 999px; background: #F1ECE1; font-size: 11.5px; text-align: center; }
+.faqc__tab .icon { color: var(--c-gold-text); }
+.faqc__tab:hover { background: #F8F5EE; }
+.faqc__tab.is-active { background: #111; color: #fff; }
+.faqc__tab.is-active .icon { color: #E6C463; }
+.faqc__tab.is-active small { background: rgba(255,255,255,.14); }
+@media (max-width: 989px) { .faqc__tab { border: 1px solid var(--c-border); border-radius: 999px; padding: 9px 14px; } }
+.faqc__help { display: none; padding: 20px; border-radius: 18px; background: radial-gradient(120% 100% at 100% 0%, #3A2B12, #0B0907 65%); color: #fff; }
+@media (min-width: 990px) { .faqc__help { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; } }
+.faqc__help p { font-size: 13.5px; color: rgba(255,255,255,.72); }
+.faqc__help-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: #E6C463; }
+.faqc__main { display: flex; flex-direction: column; gap: 28px; min-width: 0; }
+.faqc__h { margin-bottom: 12px; font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--c-gold-text); }
+.faqc__list { display: flex; flex-direction: column; gap: 10px; }
+.faqc__q { border: 1px solid var(--c-border); border-radius: 16px; background: #fff; transition: border-color .2s, box-shadow .2s; }
+.faqc__q[open] { border-color: #E2D7BC; box-shadow: 0 18px 40px -32px rgba(0,0,0,.45); }
+.faqc__q summary { display: flex; align-items: center; gap: 16px; padding: 18px 20px; cursor: pointer; list-style: none; font-size: 15.5px; font-weight: 600; }
+.faqc__q summary::-webkit-details-marker { display: none; }
+.faqc__q summary span:first-child { flex: 1; }
+.faqc__plus { position: relative; width: 30px; height: 30px; flex: none; border-radius: 50%; background: #F6F3EC; transition: background .2s, transform .3s; }
+.faqc__plus::before, .faqc__plus::after { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 1.6px; background: currentColor; transform: translate(-50%, -50%); }
+.faqc__plus::after { transform: translate(-50%, -50%) rotate(90deg); transition: transform .3s; }
+.faqc__q[open] .faqc__plus { background: #111; color: #E6C463; }
+.faqc__q[open] .faqc__plus::after { transform: translate(-50%, -50%) rotate(0); }
+.faqc__a { padding: 0 20px 20px; font-size: 15px; line-height: 1.7; color: #3C3932; }
+.faqc__a a { color: var(--c-gold-text); text-decoration: underline; text-underline-offset: 3px; }
+.faqc__empty { padding: 24px; border-radius: 16px; background: #FBF8F2; text-align: center; }
+.faqc__empty a { color: var(--c-gold-text); font-weight: 600; text-decoration: underline; }
