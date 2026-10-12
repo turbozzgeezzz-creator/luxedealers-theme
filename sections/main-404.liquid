@@ -1,6 +1,3 @@
-{%- if request.path contains 'track-your-order' or request.path contains 'track-order' -%}
-{% render 'track-order' %}
-{%- else -%}
 <section class="container not-found">
   <div class="page-hero__inner">
     <p class="not-found__num gold-text" aria-hidden="true">404</p>
@@ -13,7 +10,17 @@
   </div>
 </section>
 
-{%- endif -%}
+
+<template id="TrackOrderView">{% render 'track-order' %}</template>
+<script>
+  (function () {
+    if (!/track-(your-)?order/.test(location.pathname)) return;
+    var t = document.getElementById('TrackOrderView'), nf = document.querySelector('.not-found');
+    if (!t || !nf) return;
+    nf.replaceWith(t.content.cloneNode(true));
+    document.title = {{ 'track.title' | t | json }} + ' – ' + {{ shop.name | json }};
+  })();
+</script>
 
 {% schema %}
 { "name": "404" }
