@@ -3,174 +3,172 @@
     "hero": {
       "type": "page-hero",
       "settings": {
-        "eyebrow": "Help",
-        "heading": "Frequently asked questions",
-        "text": "Everything about shipping, orders and sizing."
+        "eyebrow": "Help centre",
+        "heading": "How can we help?",
+        "text": "Search our most common questions, or browse by topic.",
+        "art": "gift"
       }
     },
-    "shipping": {
-      "type": "faq",
+    "help": {
+      "type": "faq-center",
       "blocks": {
-        "q0": {
-          "type": "question",
-          "settings": {
-            "question": "How long does shipping take?",
-            "answer": "<p>Most orders arrive within 2–3 weeks. Larger or heavier orders can take a little longer.</p>"
-          }
-        },
         "q1": {
           "type": "question",
           "settings": {
-            "question": "Is shipping free?",
-            "answer": "<p>Yes. Shipping is free on every order, with no minimum spend, and every order is tracked.</p>"
+            "topic": "shipping",
+            "question": "How long does shipping take?",
+            "answer": "<p>Most orders arrive within 2–3 weeks. Larger or heavier orders can take a little longer.</p>"
           }
         },
         "q2": {
           "type": "question",
           "settings": {
-            "question": "Do you ship internationally?",
-            "answer": "<p>Yes. Choose your country at the top of the page to see prices in your currency.</p>"
+            "topic": "shipping",
+            "question": "Is shipping free?",
+            "answer": "<p>Yes. Shipping is free on every order, with no minimum spend, and every order is tracked.</p>"
           }
         },
         "q3": {
           "type": "question",
           "settings": {
-            "question": "When will I get my tracking number?",
-            "answer": "<p>When your order ships we email your tracking number. It can take up to 48 hours to show updates. <a href=\"/pages/track-your-order\">Track your order</a></p>"
+            "topic": "shipping",
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes. Choose your country at the top of the page to see prices in your currency.</p>"
           }
         },
         "q4": {
           "type": "question",
           "settings": {
+            "topic": "shipping",
+            "question": "When will I get my tracking number?",
+            "answer": "<p>When your order ships we email your tracking number. It can take up to 48 hours to show updates. <a href=\"/pages/track-your-order\">Track your order</a></p>"
+          }
+        },
+        "q5": {
+          "type": "question",
+          "settings": {
+            "topic": "shipping",
             "question": "Do I pay customs or import tax?",
             "answer": "<p>Any customs duties or taxes charged by your country are paid by the customer.</p>"
           }
-        }
-      },
-      "block_order": [
-        "q0",
-        "q1",
-        "q2",
-        "q3",
-        "q4"
-      ],
-      "settings": {
-        "eyebrow": "Shipping",
-        "heading": "Shipping and delivery",
-        "split": false,
-        "schema": true,
-        "subtle": false
-      }
-    },
-    "orders": {
-      "type": "faq",
-      "blocks": {
-        "q0": {
+        },
+        "q6": {
           "type": "question",
           "settings": {
+            "topic": "orders",
             "question": "Which payment methods do you accept?",
             "answer": "<p>PayPal, Shop Pay, Apple Pay, Google Pay and major cards. Checkout is encrypted.</p>"
           }
         },
-        "q1": {
+        "q7": {
           "type": "question",
           "settings": {
+            "topic": "orders",
             "question": "Can I change or cancel my order?",
             "answer": "<p>Email support@luxedealers.com as soon as possible with your order number and we'll do our best to help.</p>"
           }
         },
-        "q2": {
+        "q8": {
           "type": "question",
           "settings": {
+            "topic": "orders",
             "question": "Can I add a gift message?",
             "answer": "<p>Yes. Add a gift message in your bag before checkout.</p>"
           }
-        }
-      },
-      "block_order": [
-        "q0",
-        "q1",
-        "q2"
-      ],
-      "settings": {
-        "eyebrow": "Orders",
-        "heading": "Orders and payment",
-        "split": false,
-        "schema": true,
-        "subtle": false
-      }
-    },
-    "products": {
-      "type": "faq",
-      "blocks": {
-        "q0": {
+        },
+        "q9": {
           "type": "question",
           "settings": {
+            "topic": "products",
             "question": "Are your items true to size?",
             "answer": "<p>Most clothing and shoes follow Asian sizing, so we recommend sizing up. See the <a href=\"/pages/size-charts\">size charts</a>, or email us and we'll help.</p>"
           }
         },
-        "q1": {
+        "q10": {
           "type": "question",
           "settings": {
+            "topic": "products",
             "question": "Are items checked before they ship?",
             "answer": "<p>Yes. Every order is hand-checked before it's packed.</p>"
           }
         },
-        "q2": {
+        "q11": {
           "type": "question",
           "settings": {
-            "question": "What if something is wrong with my order?",
-            "answer": "<p>No returns needed. Email support@luxedealers.com with your order number and a photo, and we'll make it right with a refund or a free replacement. <a href=\"/policies/refund-policy\">Refund policy</a></p>"
-          }
-        }
-      },
-      "block_order": [
-        "q0",
-        "q1",
-        "q2"
-      ],
-      "settings": {
-        "eyebrow": "Products",
-        "heading": "Products and sizing",
-        "split": false,
-        "schema": true,
-        "subtle": false
-      }
-    },
-    "cta": {
-      "type": "rich-text",
-      "blocks": {
-        "h": {
-          "type": "heading",
-          "settings": {
-            "text": "Still have a question?"
+            "topic": "orders",
+            "question": "Is checkout secure?",
+            "answer": "<p>Yes. Checkout runs on Shopify's encrypted checkout, and you can pay with PayPal, Shop Pay, Apple Pay, Google Pay or a card.</p>"
           }
         },
-        "b": {
-          "type": "button",
+        "q12": {
+          "type": "question",
           "settings": {
-            "label": "Contact us",
-            "link": "/pages/contact",
-            "outline": false
+            "topic": "products",
+            "question": "Where can I find the size guide?",
+            "answer": "<p>Every product with sizes has a Size guide link next to the size options. You can also see all our <a href=\"/pages/size-charts\">size charts</a> in one place.</p>"
+          }
+        },
+        "q13": {
+          "type": "question",
+          "settings": {
+            "topic": "refunds",
+            "question": "What if something is wrong with my order?",
+            "answer": "<p>We'll make it right with a refund or a free replacement. Email support@luxedealers.com with your order number and a photo of the problem.</p>"
+          }
+        },
+        "q14": {
+          "type": "question",
+          "settings": {
+            "topic": "refunds",
+            "question": "Do I need to send the item back?",
+            "answer": "<p>No. If an item arrives damaged, faulty, wrong or missing, there's no need to send anything back.</p>"
+          }
+        },
+        "q15": {
+          "type": "question",
+          "settings": {
+            "topic": "refunds",
+            "question": "What if my parcel doesn't arrive?",
+            "answer": "<p>Email us with your order number. Our refund or reship guarantee covers parcels that don't arrive.</p>"
+          }
+        },
+        "q16": {
+          "type": "question",
+          "settings": {
+            "topic": "refunds",
+            "question": "How long does a refund take?",
+            "answer": "<p>Refunds go back to your original payment method. Your bank may take 5 to 10 business days to show it. <a href=\"/policies/refund-policy\">Refund policy</a></p>"
           }
         }
       },
       "block_order": [
-        "h",
-        "b"
+        "q1",
+        "q2",
+        "q3",
+        "q4",
+        "q5",
+        "q6",
+        "q7",
+        "q8",
+        "q9",
+        "q10",
+        "q11",
+        "q12",
+        "q13",
+        "q14",
+        "q15",
+        "q16"
       ],
       "settings": {
-        "align": "center",
-        "subtle": true
+        "help_title": "Still need help?",
+        "help_text": "Real people answer every message, usually by email.",
+        "help_button": "Contact us",
+        "help_link": "/pages/contact"
       }
     }
   },
   "order": [
     "hero",
-    "shipping",
-    "orders",
-    "products",
-    "cta"
+    "help"
   ]
 }
