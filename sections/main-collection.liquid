@@ -1,63 +1,43 @@
 {%- liquid
   assign s = section.settings
-  assign has_image = false
-  if s.show_image and collection.image
-    assign has_image = true
-  endif
+  assign sort_by = collection.sort_by | default: collection.default_sort_by
+  assign count_text = 'collections.count' | t: count: collection.products_count
+  capture art
+    render 'coll-art', handle: collection.handle
+  endcapture
+  assign art = art | strip
+  assign clear_url = collection.url | append: '?sort_by=' | append: sort_by
 -%}
 <div data-collection data-section-id="{{ section.id }}">
   <div class="container">
-    <div class="collection-hero{% if has_image %} collection-hero--image{% endif %}">
-      <div class="collection-hero__text">
+    <div class="coll-hero tile tile--noir">
+      <div class="tile__text">
         <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span><span aria-current="page">{{ collection.title }}</span></nav>
-        <h1 class="h1" data-split>{{ collection.title }}</h1>
-        {%- if collection.description != blank and s.show_description -%}<div class="rte" data-reveal>{{ collection.description }}</div>{%- endif -%}
+        <h1 class="coll-hero__title">{{ collection.title }}</h1>
+        <p class="coll-hero__meta"><span>{{ count_text }}</span>{%- capture fp -%}{% render 'from-price', collection: collection %}{%- endcapture -%}{%- if fp != blank -%}<span>{{ 'sections.from_price' | t }} <strong>{{ fp }}</strong></span>{%- endif -%}<span>{% render 'icon', name: 'truck', class: 'icon--sm' %} {{ 'products.free_shipping' | t }}</span></p>
+        {%- if collection.description != blank and s.show_description -%}<div class="coll-hero__desc" data-clamp>{{ collection.description | strip_html | truncate: 260 }}</div>{%- endif -%}
       </div>
-      {%- if has_image -%}<div class="media collection-hero__media" data-reveal="mask">{% render 'image', image: collection.image, sizes: '(min-width: 990px) 50vw, 100vw', loading: 'eager' %}</div>{%- endif -%}
+      <div class="tile__art coll-hero__art"><img src="{{ art | append: '.svg' | asset_url }}" alt="" width="600" height="600" class="tile__img" fetchpriority="high"></div>
     </div>
+    {%- if s.chips_menu != blank -%}
+      <nav class="coll-chips" aria-label="{{ 'collections.browse' | t }}">
+        {%- for l in s.chips_menu.links -%}<a class="search-chip{% if l.url == collection.url %} is-active{% endif %}" href="{{ l.url }}">{{ l.title }}</a>{%- endfor -%}
+      </nav>
+    {%- endif -%}
+  </div>
 
-    {%- paginate collection.products by s.per_page -%}
-      <div class="toolbar">
-        <div class="toolbar__left">
-          {%- if collection.filters.size > 0 -%}
-            <button type="button" class="toolbar__btn" data-drawer-open="FacetDrawer" aria-controls="FacetDrawer" aria-expanded="false">{% render 'icon', name: 'filter', class: 'icon--sm' %} {{ 'collections.filter' | t }}</button>
-          {%- endif -%}
-          <span class="toolbar__count" data-product-count>{{ 'collections.count' | t: count: collection.products_count }}</span>
-        </div>
-        <div class="toolbar__right">
-          <label class="visually-hidden" for="SortBy">{{ 'collections.sort' | t }}</label>
-          {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-          <select class="select" id="SortBy" data-sort>
-            {%- for option in collection.sort_options -%}<option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>{%- endfor -%}
-          </select>
-          <div class="grid-switch" role="group" aria-label="{{ 'collections.grid' | t }}">
-            <button type="button" data-grid-cols="3" aria-pressed="true" aria-label="{{ 'collections.grid_3' | t }}">{% render 'icon', name: 'grid2', class: 'icon--sm' %}</button>
-            <button type="button" data-grid-cols="4" aria-pressed="false" aria-label="{{ 'collections.grid_4' | t }}">{% render 'icon', name: 'grid4', class: 'icon--sm' %}</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="active-filters" data-active-filters>
-        {%- for filter in collection.filters -%}
-          {%- for value in filter.active_values -%}
-            <a href="{{ value.url_to_remove }}" data-facet-link>{{ filter.label }}: {{ value.label }} {% render 'icon', name: 'close', class: 'icon--sm' %}</a>
-          {%- endfor -%}
-          {%- if filter.type == 'price_range' and filter.min_value.value or filter.type == 'price_range' and filter.max_value.value -%}
-            <a href="{{ filter.url_to_remove }}" data-facet-link>{{ filter.min_value.value | default: 0 | money }} – {{ filter.max_value.value | default: filter.range_max | money }} {% render 'icon', name: 'close', class: 'icon--sm' %}</a>
-          {%- endif -%}
-        {%- endfor -%}
-        {%- assign any_active = false -%}
-        {%- for filter in collection.filters -%}{%- if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value -%}{%- assign any_active = true -%}{%- endif -%}{%- endfor -%}
-        {%- if any_active -%}<a href="{{ collection.url }}?sort_by={{ sort_by }}" data-facet-link>{{ 'collections.clear' | t }}</a>{%- endif -%}
-      </div>
-
+  {%- paginate collection.products by s.per_page -%}
+  <div class="container coll{% if collection.filters.size == 0 %} coll--no-filters{% endif %}">
+    {%- if collection.filters.size > 0 -%}{% render 'coll-sidebar', results: collection, form_id: 'FacetForm', count_text: count_text %}{%- endif -%}
+    <div class="coll__main">
+      {% render 'coll-toolbar', results: collection, count_text: count_text, sort_options: collection.sort_options, sort_by: sort_by, clear_url: clear_url %}
       <div class="collection-grid" data-collection-grid>
         {%- if collection.products.size > 0 -%}
-          <div class="product-grid{% if s.columns == '4' %} product-grid--4{% endif %}" data-stagger>
+          <div class="product-grid">
             {%- for product in collection.products -%}
               {%- liquid
                 assign eager = false
-                if forloop.index <= 4 and paginate.current_page == 1
+                if forloop.index <= 3 and paginate.current_page == 1
                   assign eager = true
                 endif
               -%}
@@ -67,11 +47,10 @@
         {%- else -%}
           <div class="empty-state">
             <p class="h3">{{ 'collections.empty' | t }}</p>
-            <a class="btn btn--outline" href="{{ collection.url }}" data-facet-link>{{ 'collections.clear' | t }}</a>
+            <a class="btn btn--outline" href="{{ clear_url }}" data-facet-link>{{ 'collections.clear' | t }}</a>
           </div>
         {%- endif -%}
       </div>
-
       <div data-load-more>
         {%- if paginate.next -%}
           {%- liquid
@@ -88,22 +67,9 @@
           </div>
         {%- endif -%}
       </div>
-    {%- endpaginate -%}
-  </div>
-
-  <div class="drawer drawer--left" id="FacetDrawer" aria-hidden="true">
-    <div class="drawer__overlay" data-drawer-close></div>
-    <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="FacetTitle" tabindex="-1">
-      <div class="drawer__head">
-        <h2 class="drawer__title" id="FacetTitle">{{ 'collections.filter' | t }}</h2>
-        <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
-      </div>
-      <div class="drawer__body" data-facets>{% render 'facets', results: collection, id: 'FacetForm' %}</div>
-      <div class="drawer__foot">
-        <button type="button" class="btn btn--block" data-drawer-close>{{ 'collections.show_results' | t }} <span data-product-count>{{ 'collections.count' | t: count: collection.products_count }}</span></button>
-      </div>
     </div>
   </div>
+  {%- endpaginate -%}
 </div>
 
 {% schema %}
@@ -111,19 +77,9 @@
   "name": "Collection",
   "class": "section-main-collection",
   "settings": [
-    { "type": "range", "id": "per_page", "label": "Products per page", "min": 12, "max": 48, "step": 4, "default": 24 },
-    {
-      "type": "select",
-      "id": "columns",
-      "label": "Columns (desktop)",
-      "options": [
-        { "value": "3", "label": "3" },
-        { "value": "4", "label": "4" }
-      ],
-      "default": "3"
-    },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 12, "max": 48, "step": 3, "default": 24 },
     { "type": "checkbox", "id": "show_description", "label": "Show description", "default": true },
-    { "type": "checkbox", "id": "show_image", "label": "Show collection image", "default": true }
+    { "type": "link_list", "id": "chips_menu", "label": "Quick links under the banner" }
   ]
 }
 {% endschema %}

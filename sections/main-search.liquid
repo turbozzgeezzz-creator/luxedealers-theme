@@ -1,68 +1,83 @@
+{%- liquid
+  assign sort_by = search.sort_by | default: 'relevance'
+  assign count_text = 'search.results_count_short' | t: count: search.results_count
+-%}
 <div data-collection data-section-id="{{ section.id }}">
-  <div class="page-hero">
-    <div class="container page-hero__inner">
-      <span class="eyebrow">{{ 'search.title' | t }}</span>
-      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form" style="width: min(720px, 100%)">
-        <label class="visually-hidden" for="SearchPageInput">{{ 'search.label' | t }}</label>
-        <input id="SearchPageInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'search.placeholder' | t }}">
-        <input type="hidden" name="options[prefix]" value="last">
-        <button type="submit" class="icon-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
-      </form>
-      {%- if search.performed -%}<p>{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</p>{%- endif -%}
+  <div class="container">
+    <div class="coll-hero coll-hero--search tile tile--noir">
+      <div class="tile__text">
+        <span class="tile__eyebrow">{{ 'search.title' | t }}</span>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="search-hero">
+          <label class="visually-hidden" for="SearchPageInput">{{ 'search.label' | t }}</label>
+          <input id="SearchPageInput" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'header.search_placeholder' | t }}">
+          <input type="hidden" name="options[prefix]" value="last">
+          <input type="hidden" name="type" value="product">
+          <button type="submit" class="btn btn--gold">{% render 'icon', name: 'search', class: 'icon--sm' %} {{ 'header.search' | t }}</button>
+        </form>
+        {%- if search.performed -%}<p class="coll-hero__meta"><span>{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</span></p>{%- endif -%}
+      </div>
+      <div class="tile__art coll-hero__art"><img src="{{ 'lx-diamond.svg' | asset_url }}" alt="" width="600" height="600" class="tile__img"></div>
     </div>
+    {%- assign pops = section.settings.popular | split: ',' -%}
+    <nav class="coll-chips" aria-label="{{ 'search.popular' | t }}">{%- for q in pops -%}{%- assign qq = q | strip -%}<a class="search-chip" href="{{ routes.search_url }}?q={{ qq | url_encode }}&options%5Bprefix%5D=last&type=product">{{ qq }}</a>{%- endfor -%}</nav>
   </div>
-  <div class="container" style="padding-bottom: var(--section-pad)">
-    {%- if search.performed -%}
-      {%- paginate search.results by 24 -%}
-        {%- if search.filters.size > 0 -%}
-          <div class="toolbar">
-            <div class="toolbar__left">
-              <button type="button" class="toolbar__btn" data-drawer-open="FacetDrawer" aria-controls="FacetDrawer" aria-expanded="false">{% render 'icon', name: 'filter', class: 'icon--sm' %} {{ 'collections.filter' | t }}</button>
-              <span class="toolbar__count" data-product-count>{{ 'search.results_count_short' | t: count: search.results_count }}</span>
-            </div>
+
+  {%- if search.performed and search.results_count > 0 -%}
+    {%- paginate search.results by 24 -%}
+    <div class="container coll{% if search.filters.size == 0 %} coll--no-filters{% endif %}">
+      {%- if search.filters.size > 0 -%}{% render 'coll-sidebar', results: search, form_id: 'SearchFacetForm', count_text: count_text %}{%- endif -%}
+      <div class="coll__main">
+        {%- capture sorts -%}relevance:{{ 'search.sort_relevance' | t }}|price-ascending:{{ 'search.sort_price_up' | t }}|price-descending:{{ 'search.sort_price_down' | t }}{%- endcapture -%}
+        <div class="toolbar">
+          <div class="toolbar__left">
+            {%- if search.filters.size > 0 -%}<button type="button" class="toolbar__btn coll__filter-btn" data-drawer-open="FacetDrawer" aria-controls="FacetDrawer" aria-expanded="false">{% render 'icon', name: 'filter', class: 'icon--sm' %} {{ 'collections.filter' | t }}</button>{%- endif -%}
+            <span class="toolbar__count" data-product-count>{{ count_text }}</span>
           </div>
-        {%- endif -%}
+          <div class="toolbar__right">
+            <label class="toolbar__sort"><span>{{ 'collections.sort' | t }}</span>
+              <select class="select" data-sort>
+                {%- assign opts = sorts | split: '|' -%}
+                {%- for o in opts -%}{%- assign kv = o | split: ':' -%}<option value="{{ kv[0] }}"{% if kv[0] == sort_by %} selected{% endif %}>{{ kv[1] }}</option>{%- endfor -%}
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="active-filters" data-active-filters>
+          {%- for filter in search.filters -%}{%- for value in filter.active_values -%}<a href="{{ value.url_to_remove }}" data-facet-link>{{ value.label }} {% render 'icon', name: 'close', class: 'icon--sm' %}</a>{%- endfor -%}{%- endfor -%}
+        </div>
         <div class="collection-grid" data-collection-grid>
-          {%- if search.results.size > 0 -%}
-            <div class="product-grid product-grid--4">
-              {%- for item in search.results -%}
-                {%- case item.object_type -%}
-                  {%- when 'product' -%}{% render 'product-card', product: item %}
-                  {%- when 'article' -%}{% render 'article-card', article: item %}
-                  {%- when 'page' -%}
-                    <a class="post-card" href="{{ item.url }}"><div class="media post-card__media">{% render 'placeholder' %}</div><span class="post-card__meta">{{ 'search.page' | t }}</span><h3 class="post-card__title">{{ item.title }}</h3></a>
-                {%- endcase -%}
-              {%- endfor -%}
-            </div>
-          {%- else -%}
-            <div class="empty-state"><p class="h3">{{ 'search.no_results' | t: terms: search.terms }}</p><a class="btn btn--outline" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue' | t }}</a></div>
-          {%- endif -%}
+          <div class="product-grid">
+            {%- for item in search.results -%}
+              {%- if item.object_type == 'product' -%}{% render 'product-card', product: item, reveal: false %}{%- endif -%}
+            {%- endfor -%}
+          </div>
         </div>
         <div data-load-more>
           {%- if paginate.next -%}<div class="load-more"><a class="btn btn--outline" href="{{ paginate.next.url }}" data-next>{{ 'collections.load_more' | t }}</a></div>{%- endif -%}
         </div>
-      {%- endpaginate -%}
-      {%- if search.filters.size > 0 -%}
-        <div class="drawer drawer--left" id="FacetDrawer" aria-hidden="true">
-          <div class="drawer__overlay" data-drawer-close></div>
-          <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="FacetTitle" tabindex="-1">
-            <div class="drawer__head">
-              <h2 class="drawer__title" id="FacetTitle">{{ 'collections.filter' | t }}</h2>
-              <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
-            </div>
-            <div class="drawer__body" data-facets>{% render 'facets', results: search, id: 'SearchFacetForm' %}</div>
-            <div class="drawer__foot"><button type="button" class="btn btn--block" data-drawer-close>{{ 'collections.show_results' | t }}</button></div>
-          </div>
-        </div>
-      {%- endif -%}
-    {%- else -%}
-      <div class="predictive__terms" style="justify-content: center">
-        {%- for link in linklists['main-menu'].links -%}<a class="chip" href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
       </div>
+    </div>
+    {%- endpaginate -%}
+  {%- else -%}
+    <div class="container search-empty">
+      {%- if search.performed -%}<p class="h3">{{ 'search.no_results' | t: terms: search.terms }}</p><p class="muted">{{ 'search.no_results_hint' | t }}</p>{%- endif -%}
+    </div>
+    {%- assign sc = section.settings.collection -%}
+    {%- if sc != blank -%}
+      <section class="section section--tight section-products"><div class="container">
+        <div class="section-head"><div class="section-head__text"><h2 class="h2">{{ 'search.try' | t: title: sc.title }}</h2></div></div>
+        <div class="product-grid product-grid--4">{%- for p in sc.products limit: 8 -%}{% render 'product-card', product: p, reveal: false %}{%- endfor -%}</div>
+      </div></section>
     {%- endif -%}
-  </div>
+  {%- endif -%}
 </div>
 
 {% schema %}
-{ "name": "Search results" }
+{
+  "name": "Search results",
+  "settings": [
+    { "type": "text", "id": "popular", "label": "Popular searches", "default": "Handbags, Sneakers, Hoodies, Fragrances, Watches, Jewellery" },
+    { "type": "collection", "id": "collection", "label": "Products shown when nothing is found" }
+  ]
+}
 {% endschema %}

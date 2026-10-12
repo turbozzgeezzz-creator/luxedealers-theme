@@ -25,6 +25,7 @@
         <label class="visually-hidden" for="HeaderSearch">{{ 'header.search' | t }}</label>
         <input id="HeaderSearch" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="HeaderSearchPop" aria-autocomplete="list" data-search-input>
         <input type="hidden" name="options[prefix]" value="last">
+        <input type="hidden" name="type" value="product">
         <button type="submit" class="header__search-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
         <div class="search-pop" id="HeaderSearchPop" data-search-pop hidden>
           <div class="search-pop__idle" data-search-idle>

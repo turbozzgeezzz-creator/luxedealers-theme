@@ -1,0 +1,28 @@
+{%- comment -%} Picks a gold illustration for a collection handle. Param: handle {%- endcomment -%}
+{%- liquid
+  assign h = handle | downcase
+  assign art = 'lx-diamond'
+  if h contains 'bag'
+    assign art = 'lx-bag'
+  elsif h contains 'sneaker' or h contains 'shoe' or h contains 'slide'
+    assign art = 'lx-sneaker'
+  elsif h contains 'boot' or h contains 'heel'
+    assign art = 'lx-heel'
+  elsif h contains 'jewel' or h contains 'neck' or h contains 'bracelet'
+    assign art = 'lx-necklace'
+  elsif h contains 'watch'
+    assign art = 'lx-watch'
+  elsif h contains 'fragr' or h contains 'fragance' or h contains 'perfume'
+    assign art = 'lx-perfume'
+  elsif h contains 'access'
+    assign art = 'lx-sunglasses'
+  elsif h contains 'cloth' or h contains 'hood' or h contains 'shirt' or h contains 'jacket' or h contains 'denim' or h contains 'jersey'
+    assign art = 'lx-hoodie'
+  elsif h contains 'collect'
+    assign art = 'lx-gift'
+  elsif h contains 'women'
+    assign art = 'lx-ring'
+  elsif h contains 'men'
+    assign art = 'lx-tote'
+  endif
+-%}{{ art }}

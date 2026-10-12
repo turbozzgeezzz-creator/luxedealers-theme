@@ -1064,7 +1064,7 @@
     function render(q, data) {
       var r = (data && data.resources && data.resources.results) || {};
       var prods = r.products || [], cols = r.collections || [], qs = r.queries || [];
-      var url = L.routes.root.replace(/\/$/, '') + '/search?q=' + encodeURIComponent(q) + '&options%5Bprefix%5D=last';
+      var url = L.routes.root.replace(/\/$/, '') + '/search?q=' + encodeURIComponent(q) + '&options%5Bprefix%5D=last&type=product';
       var html = '';
       if (!prods.length && !cols.length && !qs.length) {
         html = '<p class="search-pop__empty">' + escapeHTML((S.none || '').replace('%TERMS%', q)) + '</p>';

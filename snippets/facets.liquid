@@ -2,7 +2,7 @@
   Filter form from Search & Discovery filters. Params: results (collection or search), id
 {%- endcomment -%}
 <form data-facet-form id="{{ id }}">
-  {%- if results.terms -%}<input type="hidden" name="q" value="{{ results.terms | escape }}"><input type="hidden" name="options[prefix]" value="last">{%- endif -%}
+  {%- if results.terms -%}<input type="hidden" name="q" value="{{ results.terms | escape }}"><input type="hidden" name="options[prefix]" value="last"><input type="hidden" name="type" value="product">{%- endif -%}
   {%- for filter in results.filters -%}
     <details class="facets__group"{% if forloop.index <= 3 or filter.active_values.size > 0 %} open{% endif %}>
       <summary>{{ filter.label }}{% if filter.active_values.size > 0 %} ({{ filter.active_values.size }}){% endif %} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>

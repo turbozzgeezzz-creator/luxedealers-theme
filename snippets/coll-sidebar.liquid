@@ -1,0 +1,14 @@
+{%- comment -%} Filters: a sticky sidebar on desktop, a drawer on phones. Params: results, form_id, count_text {%- endcomment -%}
+<aside class="drawer drawer--left drawer--sidebar coll__side" id="FacetDrawer" aria-hidden="true">
+  <div class="drawer__overlay" data-drawer-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="FacetTitle" tabindex="-1">
+    <div class="drawer__head">
+      <h2 class="drawer__title" id="FacetTitle">{{ 'collections.filter' | t }}</h2>
+      <button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+    </div>
+    <div class="drawer__body" data-facets>{% render 'facets', results: results, id: form_id %}</div>
+    <div class="drawer__foot">
+      <button type="button" class="btn btn--block btn--gold" data-drawer-close>{{ 'collections.show_results' | t }} <span data-product-count>{{ count_text }}</span></button>
+    </div>
+  </div>
+</aside>

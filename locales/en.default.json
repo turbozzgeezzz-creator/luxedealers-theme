@@ -150,7 +150,7 @@
   },
   "collections": {
     "filter": "Filter",
-    "sort": "Sort by",
+    "sort": "Sort",
     "count": {
       "one": "{{ count }} piece",
       "other": "{{ count }} pieces"
@@ -165,7 +165,8 @@
     "to": "To",
     "show_results": "Show results",
     "load_more": "Load more",
-    "shown": "Showing {{ shown }} of {{ total }}"
+    "shown": "Showing {{ shown }} of {{ total }}",
+    "browse": "Browse"
   },
   "search": {
     "title": "Search",
@@ -188,7 +189,12 @@
     "trending": "{{ title }}",
     "products": "Products",
     "collections": "Collections",
-    "suggestions": "Suggestions"
+    "suggestions": "Suggestions",
+    "sort_relevance": "Most relevant",
+    "sort_price_up": "Price, low to high",
+    "sort_price_down": "Price, high to low",
+    "no_results_hint": "Check the spelling, try a shorter word, or browse below.",
+    "try": "Try {{ title }}"
   },
   "newsletter": {
     "email": "Email address",
