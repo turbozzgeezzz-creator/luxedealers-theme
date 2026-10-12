@@ -1127,6 +1127,23 @@
     if (n) window.open('https://t.17track.net/en#nums=' + encodeURIComponent(n), '_blank', 'noopener');
   });
 
+  /* ---------- Gentle fade-up for cards and tiles as they scroll in ---------- */
+  (function () {
+    if (reduceMotion || !('IntersectionObserver' in window)) return;
+    var sel = '.promo__tile, .promo__side, .dept, .budget2__tile, .deal, .helpc__card, .promise, .review-card, .post-card, .why__list li, .pdp__set, .glance, .track__steps li, .coll-hero, .signup__band, .section-products .card';
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var el = en.target, sib = el.parentElement ? Array.prototype.indexOf.call(el.parentElement.children, el) : 0;
+        el.style.transitionDelay = Math.min(sib, 6) * 60 + 'ms';
+        el.classList.add('is-shown'); io.unobserve(el);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    function watch(ctx) { $$(sel, ctx).forEach(function (el) { if (el.dataset.fx) return; el.dataset.fx = '1'; if (el.getBoundingClientRect().top < window.innerHeight) return; el.classList.add('fx'); io.observe(el); }); }
+    watch(doc);
+    window.LuxeWatchFx = watch;
+  })();
+
   /* ---------- Promo slider ---------- */
   $$('[data-promo-slider]').forEach(function (wrap) {
     var slides = $$('.promo-slide', wrap), dots = $$('[data-promo-dot]', wrap);

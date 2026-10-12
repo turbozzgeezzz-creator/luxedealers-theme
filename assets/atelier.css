@@ -1061,3 +1061,52 @@ html:not(.no-js) .view-cursor { display: none !important; }
 .search-hero .btn { min-height: 52px; }
 .search-empty { padding-block: 32px 0; text-align: center; display: flex; flex-direction: column; gap: 8px; }
 @media (max-width: 989px) { .coll .card__btn { min-height: 38px; font-size: 12.5px; } }
+
+/* ---------- Motion: light, quick, and off for reduced motion ---------- */
+.fx { opacity: 0; transform: translateY(18px); }
+.fx.is-shown { opacity: 1; transform: none; transition: opacity .7s var(--ease-out), transform .9s var(--ease-out); }
+@media (prefers-reduced-motion: reduce) { .fx { opacity: 1; transform: none; } }
+.btn { transition: transform .25s var(--ease-out), background-color .3s, color .3s, border-color .3s, box-shadow .3s; }
+.btn--gold:hover { box-shadow: 0 10px 24px -12px rgba(184,137,46,.8); transform: translateY(-1px); }
+.card__btn:hover { transform: translateY(-1px); }
+a.tile { transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out); }
+a.tile:hover { transform: translateY(-3px); box-shadow: 0 30px 60px -36px rgba(0,0,0,.55); }
+.header__pill { position: relative; overflow: hidden; }
+.header__pill::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.55) 50%, transparent 70%); transform: translateX(-120%); animation: pill-glint 6s var(--ease) 2s infinite; }
+@keyframes pill-glint { 0%, 70% { transform: translateX(-120%); } 85%, 100% { transform: translateX(120%); } }
+html[data-motion="off"] .header__pill::after { animation: none; }
+
+/* ---------- Phone polish ---------- */
+@media (max-width: 749px) {
+  .section { padding-block: 40px; }
+  .section-head { margin-bottom: 16px; }
+  .h2, h2.h2 { font-size: 26px; }
+  .container { padding-inline: 16px; }
+  .promo__tiles { gap: 10px; }
+  .promo__tile { min-height: 190px; padding: 16px; border-radius: 18px; }
+  .tile { border-radius: 20px; }
+  .rail__track { grid-auto-columns: calc((100% - 12px) / 2) !important; gap: 12px; }
+  .reviews-strip__track { grid-auto-columns: 84% !important; }
+  .card { padding: 6px 6px 10px !important; }
+  .card .price { font-size: 15px; }
+  .card__title { font-size: 12px; }
+  .card__btn { min-height: 38px; font-size: 12.5px; padding: 0 8px; }
+  .pdp__trust { gap: 6px; }
+  .pdp__trust-item { padding: 10px; font-size: 12px; }
+  .pdp__title { font-size: 24px; }
+  .product__price .price__current { font-size: 26px; }
+  .buy-buttons__row .btn { min-height: 52px; }
+  .glance { padding: 20px; }
+  .glance__ticks { grid-template-columns: 1fr; }
+  .deal--offer { min-height: 380px; }
+  .budget2__tile { flex-direction: column; align-items: flex-start; min-height: 0; }
+  .budget2__tile .tile__text { max-width: none; }
+  .budget2__stack { align-self: flex-end; margin-top: -40px; height: 130px; width: 130px; }
+  .budget2__stack span { width: 88px; height: 88px; }
+  .footer__promises-grid { gap: 14px; }
+  .footer__promise-icon { width: 40px; height: 40px; }
+  .signup__band { padding: 24px 18px; border-radius: 22px; }
+  .signup__art { width: 140px; }
+  .why__title { font-size: 38px; }
+  .sticky-atc { left: 8px; right: 8px; bottom: 8px; border-radius: 16px; }
+}
