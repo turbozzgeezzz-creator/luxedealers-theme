@@ -168,8 +168,8 @@
     "popular": "Popular searches",
     "departments": "Departments",
     "journal": "From the Journal",
-    "view_all": "View all results for “{{ terms }}”",
-    "no_results": "Nothing found for “{{ terms }}”",
+    "view_all": "See all results for “{{ terms }}”",
+    "no_results": "No results for “{{ terms }}”. Try another word, or browse our new arrivals.",
     "page": "Page",
     "results_count": {
       "one": "{{ count }} result for “{{ terms }}”",
@@ -178,7 +178,11 @@
     "results_count_short": {
       "one": "{{ count }} result",
       "other": "{{ count }} results"
-    }
+    },
+    "trending": "{{ title }}",
+    "products": "Products",
+    "collections": "Collections",
+    "suggestions": "Suggestions"
   },
   "newsletter": {
     "email": "Email address",

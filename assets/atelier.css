@@ -775,3 +775,41 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .footer__bottom-right { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
 .footer__note { padding-bottom: 28px; font-size: 12px; color: rgba(255,255,255,.45); }
 .site-footer .payment-icons svg { width: 40px; height: 26px; }
+
+/* ---------- Header search dropdown ---------- */
+.header__search { z-index: 6; }
+.header__search.is-open input { border-color: var(--c-gold); background: #fff; box-shadow: 0 0 0 4px rgba(212,175,55,.15); }
+.header__search.is-loading .header__search-btn .icon { animation: spin .8s linear infinite; }
+.search-pop {
+  position: absolute; left: 0; right: 0; top: calc(100% + 8px); z-index: 40; max-height: min(70vh, 620px); overflow-y: auto;
+  padding: 18px; border-radius: 18px; background: #fff; border: 1px solid var(--c-border); box-shadow: 0 40px 80px -30px rgba(0,0,0,.35);
+  animation: menu-in .35s var(--ease-out);
+}
+.search-pop__label { margin: 4px 0 10px; font-size: 11px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--c-gold-text); }
+.search-pop__label:not(:first-child) { margin-top: 18px; }
+.search-pop__chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.search-chip { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 999px; background: #F6F3EC; font-size: 14px; font-weight: 500; transition: background-color .25s; }
+.search-chip:hover, .search-chip:focus-visible { background: #EFE2BE; }
+.search-chip .icon { color: var(--c-muted); }
+.search-pop__products { display: grid; gap: 4px; }
+.search-pop__products a { display: grid; grid-template-columns: 56px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 6px; border-radius: 12px; font-size: 14px; }
+.search-pop__products a:hover, .search-pop__products a:focus-visible { background: #F7F4EE; }
+.search-pop__img { width: 56px; height: 56px; border-radius: 10px; overflow: hidden; background: #F4F2EE; }
+.search-pop__img img { width: 100%; height: 100%; object-fit: cover; }
+.search-pop__name { font-weight: 500; text-transform: uppercase; font-size: 13px; line-height: 1.3; }
+.search-pop mark { background: #F6E7B4; color: inherit; border-radius: 3px; padding: 0 1px; }
+.search-pop__cols { display: grid; gap: 8px 28px; }
+@media (min-width: 990px) { .search-pop__cols { grid-template-columns: minmax(0, .8fr) minmax(0, 1.4fr); } }
+.search-pop__queries a { display: block; padding: 8px 10px; border-radius: 10px; font-size: 14.5px; }
+.search-pop__queries a:hover, .search-pop__queries a:focus-visible { background: #F7F4EE; }
+.search-pop__all { display: flex; justify-content: center; margin-top: 14px; padding: 12px; border-radius: 12px; background: #111; color: #fff; font-weight: 600; font-size: 14px; }
+.search-pop__all:hover { background: #2a2a2a; }
+.search-pop__empty { padding: 10px 4px; color: var(--c-muted); }
+/* Phones: the search bar sits under the logo row */
+@media (max-width: 989px) {
+  .header__inner { grid-template-columns: auto 1fr auto; row-gap: 0; height: auto; padding-block: 8px; }
+  .header__search { display: flex; grid-column: 1 / -1; order: 3; height: 46px; max-width: none; margin-bottom: 8px; }
+  .header__search input { font-size: 16px; border-radius: 12px; }
+  .header__search-icon { display: none; }
+  .search-pop { position: fixed; left: 12px; right: 12px; top: auto; margin-top: 8px; }
+}

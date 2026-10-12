@@ -23,9 +23,28 @@
 
       <form action="{{ routes.search_url }}" method="get" role="search" class="header__search" data-header-search>
         <label class="visually-hidden" for="HeaderSearch">{{ 'header.search' | t }}</label>
-        <input id="HeaderSearch" type="search" name="q" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay">
+        <input id="HeaderSearch" type="search" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off" role="combobox" aria-expanded="false" aria-controls="HeaderSearchPop" aria-autocomplete="list" data-search-input>
         <input type="hidden" name="options[prefix]" value="last">
         <button type="submit" class="header__search-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
+        <div class="search-pop" id="HeaderSearchPop" data-search-pop hidden>
+          <div class="search-pop__idle" data-search-idle>
+            {%- assign pops = section.settings.popular_searches | split: ',' -%}
+            {%- if pops.size > 0 -%}
+              <p class="search-pop__label">{{ 'search.popular' | t }}</p>
+              <div class="search-pop__chips">{%- for q in pops -%}{%- assign qq = q | strip -%}<a class="search-chip" href="{{ routes.search_url }}?q={{ qq | url_encode }}&options%5Bprefix%5D=last">{% render 'icon', name: 'search', class: 'icon--sm' %}{{ qq }}</a>{%- endfor -%}</div>
+            {%- endif -%}
+            {%- assign sc = section.settings.search_collection -%}
+            {%- if sc != blank -%}
+              <p class="search-pop__label">{{ 'search.trending' | t: title: sc.title }}</p>
+              <ul class="search-pop__products" role="list">
+                {%- for p in sc.products limit: 4 -%}
+                  <li><a href="{{ p.url }}"><span class="search-pop__img">{{ p.featured_media.preview_image | image_url: width: 160 | image_tag: width: 64, height: 64, loading: 'lazy', alt: '' }}</span><span class="search-pop__name">{{ p.title }}</span><strong>{{ p.price | money }}</strong></a></li>
+                {%- endfor -%}
+              </ul>
+            {%- endif -%}
+          </div>
+          <div class="search-pop__results" data-search-results hidden></div>
+        </div>
       </form>
 
       <div class="header__right">
@@ -221,6 +240,8 @@
     { "type": "text", "id": "highlight_item", "label": "Gold menu item", "info": "Exact title of a menu item to show in gold, e.g. New in." },
     { "type": "text", "id": "nav_hide", "label": "Leave out of the menu row", "info": "Comma-separated titles, e.g. Home, FAQs. They stay in the phone menu." },
     { "type": "link_list", "id": "help_menu", "label": "Help dropdown menu" },
+    { "type": "text", "id": "popular_searches", "label": "Popular searches", "default": "Handbags, Sneakers, Hoodies, Fragrances, Watches, Jewellery", "info": "Comma-separated. Shown when someone clicks the search bar." },
+    { "type": "collection", "id": "search_collection", "label": "Products shown before typing" },
     { "type": "text", "id": "help_label", "label": "Help dropdown name", "default": "Help" },
     { "type": "text", "id": "pill_label", "label": "Gold button text", "default": "New in" },
     { "type": "url", "id": "pill_link", "label": "Gold button link" },
