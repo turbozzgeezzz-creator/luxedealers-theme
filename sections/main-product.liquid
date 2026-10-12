@@ -212,11 +212,13 @@
 </section>
 
 {%- if has_size or chart != 'all' -%}
-  <div class="drawer" id="SizeGuide" aria-hidden="true">
+  <div class="drawer drawer--sheet" id="SizeGuide" aria-hidden="true">
     <div class="drawer__overlay" data-drawer-close></div>
     <div class="drawer__panel drawer__panel--wide" role="dialog" aria-modal="true" aria-labelledby="SizeGuideTitle" tabindex="-1">
-      <div class="drawer__head"><h2 class="drawer__title" id="SizeGuideTitle">{{ 'products.size_guide' | t }}</h2><button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
+      <div class="sheet__grab" data-sheet-grab aria-hidden="true"><span></span></div>
+      <div class="drawer__head"><h2 class="drawer__title" id="SizeGuideTitle">{{ 'products.size_guide' | t }}</h2><button type="button" class="bag__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
       <div class="drawer__body">{% render 'size-chart', show: chart %}</div>
+      <div class="sheet__foot"><button type="button" class="btn btn--block" data-drawer-close>{{ 'products.size_done' | t }}</button></div>
     </div>
   </div>
 {%- endif -%}

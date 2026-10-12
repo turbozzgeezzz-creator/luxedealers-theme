@@ -57,6 +57,8 @@
     "scroll": "Scroll"
   },
   "products": {
+    "size_cta": "Find your fit in seconds",
+    "size_done": "Done",
     "qty_title": "Buy more, save more",
     "qty_one": "1 piece",
     "qty_many": "{{ count }} pieces",

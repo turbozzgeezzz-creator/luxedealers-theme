@@ -992,6 +992,17 @@
     setTimeout(function () { var wrap = $('[data-header]'); if (wrap && !form.contains(doc.activeElement) && !$('input[type="search"]', form).value) wrap.classList.remove('is-search-open'); }, 200);
   });
 
+  /* ---------- Bottom sheets (size guide on phones): drag the handle down to close ---------- */
+  $$('.drawer--sheet').forEach(function (d) {
+    var panel = $('.drawer__panel', d), grab = $('[data-sheet-grab]', d), head = $('.drawer__head', d), y0 = null, dy = 0;
+    [grab, head].forEach(function (h) {
+      if (!h) return;
+      on(h, 'touchstart', function (e) { y0 = e.touches[0].clientY; dy = 0; panel.style.transition = 'none'; }, { passive: true });
+      on(h, 'touchmove', function (e) { if (y0 === null) return; dy = Math.max(0, e.touches[0].clientY - y0); panel.style.transform = 'translateY(' + dy + 'px)'; }, { passive: true });
+      on(h, 'touchend', function () { panel.style.transition = ''; panel.style.transform = ''; if (dy > 90) closeDrawer(d); y0 = null; });
+    });
+  });
+
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {
     var b = e.target.closest('[data-option-more]');

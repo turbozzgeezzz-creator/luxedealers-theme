@@ -44,7 +44,7 @@
     {%- assign many = false -%}{%- assign lim = 14 -%}{%- if oname contains 'size' -%}{%- assign lim = 24 -%}{%- endif -%}{%- if option.values.size > lim -%}{%- assign many = true -%}{%- endif -%}
     <fieldset class="option{% if many %} option--many{% endif %}" data-option-index="{{ forloop.index0 }}"{% if many %} data-option-many{% endif %}>
       <legend class="option__legend">{{ option.name }}: <span data-option-label>{{ option.selected_value }}</span>
-        {%- if size_page != blank and oname contains 'size' -%}<button type="button" class="option__guide" data-drawer-open="SizeGuide">{{ 'products.size_guide' | t }}</button>{%- endif -%}
+
       </legend>
       <div class="option__values">
         {%- for val in option.values -%}
@@ -64,6 +64,9 @@
           {%- endif -%}
         {%- endfor -%}
       </div>
+      {%- if size_page != blank and oname contains 'size' -%}
+        <button type="button" class="size-cta" data-drawer-open="SizeGuide">{% render 'icon', name: 'ruler', class: 'icon--sm' %}<span><strong>{{ 'products.size_guide' | t }}</strong><small>{{ 'products.size_cta' | t }}</small></span>{% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
+      {%- endif -%}
       {%- if many -%}
         <button type="button" class="option__more" data-option-more aria-expanded="false" data-less="{{ 'products.show_fewer' | t }}">{{ 'products.show_all_options' | t: count: option.values.size, name: option.name }} {% render 'icon', name: 'chevron-down', class: 'icon--sm' %}</button>
       {%- endif -%}
