@@ -10,7 +10,7 @@
   assign shown = 0
 -%}
 {%- capture photo_cards -%}
-  {%- for p in c.products limit: 80 -%}
+  {%- for p in c.products limit: 40 -%}
     {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
     {%- if jd.number_of_reviews > 0 -%}
       {%- for review in jd.reviews limit: 1 -%}
@@ -24,7 +24,7 @@
   {%- endfor -%}
 {%- endcapture -%}
 {%- capture cards -%}
-  {%- for p in c.products limit: 80 -%}
+  {%- for p in c.products limit: 40 -%}
     {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
     {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
     {%- if jd.number_of_reviews > 0 -%}

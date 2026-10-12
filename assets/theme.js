@@ -769,6 +769,25 @@
     }).catch(function () {});
   });
 
+  /* ---------- "From $X" labels: lowest price per collection, fetched once and cached ---------- */
+  (function () {
+    var els = $$('[data-from-price]');
+    if (!els.length) return;
+    var cache = storeGet('luxe:from', {}), day = 6 * 3600 * 1000, base = L.routes.root.replace(/\/$/, '');
+    var handles = {};
+    els.forEach(function (el) { handles[el.dataset.fromPrice] = true; });
+    Object.keys(handles).forEach(function (h) {
+      var fill = function (v) { $$('[data-from-price="' + h + '"]').forEach(function (el) { el.textContent = v; var p = el.closest('.tile__from, [data-from-wrap]'); if (p) p.classList.toggle('is-ready', !!v); }); };
+      var c = cache[h];
+      if (c && Date.now() - c.t < day) return fill(c.v);
+      fetch(base + '/collections/' + encodeURIComponent(h) + '?sort_by=price-ascending&view=minprice').then(function (r) { return r.ok ? r.text() : ''; }).then(function (v) {
+        v = (v || '').replace(/<[^>]*>/g, '').trim();
+        if (v.length > 24) v = '';
+        cache[h] = { v: v, t: Date.now() }; storeSet('luxe:from', cache); fill(v);
+      }).catch(function () {});
+    });
+  })();
+
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {
     var b = e.target.closest('[data-option-more]');

@@ -18,7 +18,7 @@
 {%- capture extra -%}
   {%- if need > 0 -%}
     {%- for pass in (1..2) -%}
-      {%- for p in collections.all.products limit: 80 -%}
+      {%- for p in collections.all.products limit: 30 -%}
         {%- if shown >= need -%}{%- break -%}{%- endif -%}
         {%- if p.id == product.id -%}{%- continue -%}{%- endif -%}
         {%- assign pj = p.metafields.judgeme.review_widget_data.value -%}
