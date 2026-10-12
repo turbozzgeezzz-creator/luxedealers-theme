@@ -438,17 +438,20 @@
       {
         "type": "text",
         "id": "social_instagram",
-        "label": "Instagram"
+        "label": "Instagram",
+        "default": "https://www.instagram.com/_luxedealers/"
       },
       {
         "type": "text",
         "id": "social_tiktok",
-        "label": "TikTok"
+        "label": "TikTok",
+        "default": "https://www.tiktok.com/@luxe.dealers"
       },
       {
         "type": "text",
         "id": "social_facebook",
-        "label": "Facebook"
+        "label": "Facebook",
+        "default": "https://www.facebook.com/people/LuxeDealers/61586243374554/"
       },
       {
         "type": "text",

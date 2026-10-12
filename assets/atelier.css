@@ -739,3 +739,39 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .card__body > .card__btn:first-child { margin-top: auto; }
 .card__body::after { content: ""; order: 1; }
 .card__badges .badge--sale { background: var(--gold-flat); color: #111; }
+
+/* ---------- Footer ---------- */
+.site-footer { background: #0A0908; color: #fff; }
+.footer__promises { border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(90deg, #15110A, #0A0908 60%); }
+.footer__promises-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding-block: 26px; }
+@media (min-width: 990px) { .footer__promises-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.footer__promise { display: flex; align-items: center; gap: 14px; }
+.footer__promise-icon { flex: none; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 14px; background: rgba(212,175,55,.12); color: var(--c-gold); }
+.footer__promise strong { display: block; font-size: 15px; }
+.footer__promise span { font-size: 13px; color: rgba(255,255,255,.6); }
+.footer__main { display: grid; gap: 28px; padding-block: clamp(40px, 5vw, 72px); }
+@media (min-width: 990px) { .footer__main { grid-template-columns: minmax(0, 1.5fr) repeat(3, minmax(0, .8fr)) minmax(0, 1.5fr); gap: 40px; } }
+.footer__name { font-family: 'Cinzel', Georgia, serif; font-weight: 600; font-size: 24px; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.footer__brand { gap: 12px; }
+.footer__brand .footer__title { margin-top: 10px; }
+.footer__about { font-size: 14px; color: rgba(255,255,255,.65); line-height: 1.6; }
+.footer__contact { display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.footer__contact a { display: inline-flex; align-items: center; gap: 10px; color: #fff; }
+.footer__contact .icon { color: var(--c-gold); }
+.footer__contact a:hover { color: var(--c-gold); }
+.footer__title { font-size: 13px; letter-spacing: .14em; }
+.footer__links { gap: 10px; font-size: 14.5px; }
+.footer__signup { gap: 12px; }
+.footer__signup-title { font-family: var(--font-heading); font-weight: 700; font-size: 26px; letter-spacing: -.02em; }
+.footer__signup .newsletter__row { background: #fff; border: 0; border-radius: 999px; }
+.footer__signup .newsletter__row input { color: #111; }
+.footer__signup .newsletter__row button { background: var(--gold-flat); color: #111; font-weight: 600; }
+.footer__signup .checkbox { color: rgba(255,255,255,.6); font-size: 12px; }
+.footer__signup .social { margin-left: -4px; }
+.footer__signup .social a { width: 42px; height: 42px; border: 1px solid rgba(255,255,255,.2); margin-right: 6px; }
+.footer__signup .social a:hover { border-color: var(--c-gold); color: var(--c-gold); background: transparent; }
+.footer__bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px; padding-block: 22px; border-top: 1px solid rgba(255,255,255,.1); }
+.footer__legal-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 24px; font-size: 13px; color: rgba(255,255,255,.6); }
+.footer__bottom-right { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; }
+.footer__note { padding-bottom: 28px; font-size: 12px; color: rgba(255,255,255,.45); }
+.site-footer .payment-icons svg { width: 40px; height: 26px; }

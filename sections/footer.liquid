@@ -1,16 +1,36 @@
+{%- assign s = section.settings -%}
 <footer class="site-footer">
+  {%- if s.show_promises -%}
+    <div class="footer__promises">
+      <div class="container footer__promises-grid">
+        {%- for i in (1..4) -%}
+          {%- liquid
+            assign ik = 'p_icon_' | append: i
+            assign tk = 'p_title_' | append: i
+            assign xk = 'p_text_' | append: i
+          -%}
+          {%- if s[tk] != blank -%}
+            <div class="footer__promise"><span class="footer__promise-icon">{% render 'icon', name: s[ik] %}</span><div><strong>{{ s[tk] }}</strong><span>{{ s[xk] }}</span></div></div>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
 
   <div class="container footer__main">
     {%- for block in section.blocks -%}
       {%- case block.type -%}
         {%- when 'brand' -%}
-          <div class="footer__col" {{ block.shopify_attributes }}>
-            <span class="footer__title">{{ block.settings.title }}</span>
+          <div class="footer__col footer__brand" {{ block.shopify_attributes }}>
+            <span class="footer__name">{{ block.settings.title }}</span>
             {%- if block.settings.text != blank -%}<div class="footer__about rte">{{ block.settings.text }}</div>{%- endif -%}
-            {%- if block.settings.show_newsletter -%}
-              <div class="newsletter" style="text-align: left">{% render 'newsletter-form', id: 'FooterNewsletter', source: 'footer' %}</div>
-            {%- endif -%}
-            {% render 'social-links' %}
+            {%- if block.settings.service_title != blank -%}<span class="footer__title">{{ block.settings.service_title }}</span>{%- endif -%}
+            {%- if block.settings.service_text != blank -%}<p class="footer__about">{{ block.settings.service_text }}</p>{%- endif -%}
+            <ul class="footer__contact" role="list">
+              {%- if settings.support_email != blank -%}<li><a href="mailto:{{ settings.support_email }}">{% render 'icon', name: 'mail', class: 'icon--sm' %}{{ settings.support_email }}</a></li>{%- endif -%}
+              {%- if settings.support_phone != blank -%}<li><a href="tel:{{ settings.support_phone | remove: ' ' }}">{% render 'icon', name: 'phone', class: 'icon--sm' %}{{ settings.support_phone }}</a></li>{%- endif -%}
+              {%- if block.settings.page != blank -%}<li><a href="{{ block.settings.page.url }}">{% render 'icon', name: 'chat', class: 'icon--sm' %}{{ 'footer.send_message' | t }}</a></li>{%- endif -%}
+            </ul>
           </div>
         {%- when 'menu' -%}
           <details class="footer__col footer__accordion" open {{ block.shopify_attributes }}>
@@ -18,47 +38,39 @@
             <ul class="footer__links" role="list">
               {%- if block.settings.menu != blank -%}
                 {%- for link in block.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
-              {%- elsif block.settings.fallback == 'help' -%}
-                {%- for policy in shop.policies -%}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{%- endfor -%}
-                {%- if pages.contact -%}<li><a href="{{ pages.contact.url }}">{{ 'footer.contact_us' | t }}</a></li>{%- endif -%}
-                {%- if pages.faq -%}<li><a href="{{ pages.faq.url }}">{{ pages.faq.title }}</a></li>{%- endif -%}
               {%- else -%}
-                <li><a href="{{ routes.all_products_collection_url }}">{{ 'footer.all_products' | t }}</a></li>
-                <li><a href="{{ routes.collections_url }}">{{ 'footer.collections' | t }}</a></li>
-                {%- if blogs.news.articles_count > 0 -%}<li><a href="{{ blogs.news.url }}">{{ blogs.news.title }}</a></li>{%- endif -%}
-                <li><a href="{{ routes.search_url }}">{{ 'header.search' | t }}</a></li>
+                {%- for policy in shop.policies -%}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{%- endfor -%}
               {%- endif -%}
             </ul>
           </details>
-        {%- when 'contact' -%}
-          <details class="footer__col footer__accordion" open {{ block.shopify_attributes }}>
-            <summary class="footer__title">{{ block.settings.title }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-            <ul class="footer__links" role="list">
-              {%- if settings.support_email != blank -%}<li><a href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a></li>{%- endif -%}
-              {%- if settings.support_phone != blank -%}<li><a href="tel:{{ settings.support_phone | remove: ' ' }}">{{ settings.support_phone }}</a></li>{%- endif -%}
-              {%- if settings.support_hours != blank -%}<li>{{ settings.support_hours }}</li>{%- endif -%}
-              {%- if settings.store_address != blank -%}<li>{{ settings.store_address | newline_to_br }}</li>{%- endif -%}
-              {%- if block.settings.page != blank -%}<li><a href="{{ block.settings.page.url }}" class="link" style="color: var(--c-ink)">{{ 'footer.contact_us' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></li>{%- endif -%}
-            </ul>
-          </details>
+        {%- when 'newsletter' -%}
+          <div class="footer__col footer__signup newsletter" {{ block.shopify_attributes }}>
+            <span class="footer__signup-title">{{ block.settings.title }}</span>
+            <p class="footer__about">{% if settings.welcome_code != blank and settings.welcome_offer != blank %}{{ 'footer.signup_offer' | t: offer: settings.welcome_offer }}{% else %}{{ block.settings.text }}{% endif %}</p>
+            {% render 'newsletter-form', id: 'FooterNewsletter', source: 'footer' %}
+            {% render 'social-links' %}
+          </div>
       {%- endcase -%}
     {%- endfor -%}
   </div>
 
   <div class="container footer__bottom">
-    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px">
-      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</span>
+    <div class="footer__legal-row">
+      <span>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ 'footer.rights' | t }}</span>
       <nav class="footer__legal" aria-label="{{ 'footer.legal' | t }}">
         {%- for policy in shop.policies -%}<a href="{{ policy.url }}">{{ policy.title }}</a>{%- endfor -%}
       </nav>
     </div>
-    {% render 'localization', id: 'FooterLocalization' %}
-    {%- if section.settings.show_payment -%}
-      <ul class="payment-icons" role="list" aria-label="{{ 'footer.payment' | t }}">
-        {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
-      </ul>
-    {%- endif -%}
+    <div class="footer__bottom-right">
+      {%- if s.show_payment -%}
+        <ul class="payment-icons" role="list" aria-label="{{ 'footer.payment' | t }}">
+          {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
+        </ul>
+      {%- endif -%}
+      {% render 'localization', id: 'FooterLocalization' %}
+    </div>
   </div>
+  {%- if s.note != blank -%}<div class="container footer__note">{{ s.note }}</div>{%- endif -%}
 </footer>
 <button type="button" class="to-top" aria-label="{{ 'general.back_to_top' | t }}">
   <svg viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="25"/></svg>
@@ -69,17 +81,33 @@
 {
   "name": "Footer",
   "settings": [
-    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true }
+    { "type": "checkbox", "id": "show_promises", "label": "Show promise row", "default": true },
+    { "type": "select", "id": "p_icon_1", "label": "Promise 1 icon", "options": [{ "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "chat", "label": "Chat" }, { "value": "diamond", "label": "Diamond" }], "default": "truck" },
+    { "type": "text", "id": "p_title_1", "label": "Promise 1 title", "default": "Free shipping" },
+    { "type": "text", "id": "p_text_1", "label": "Promise 1 text", "default": "On every order, tracked" },
+    { "type": "select", "id": "p_icon_2", "label": "Promise 2 icon", "options": [{ "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "chat", "label": "Chat" }, { "value": "diamond", "label": "Diamond" }], "default": "return" },
+    { "type": "text", "id": "p_title_2", "label": "Promise 2 title", "default": "Refund or reship" },
+    { "type": "text", "id": "p_text_2", "label": "Promise 2 text", "default": "If something's not right" },
+    { "type": "select", "id": "p_icon_3", "label": "Promise 3 icon", "options": [{ "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "chat", "label": "Chat" }, { "value": "diamond", "label": "Diamond" }], "default": "lock" },
+    { "type": "text", "id": "p_title_3", "label": "Promise 3 title", "default": "Secure checkout" },
+    { "type": "text", "id": "p_text_3", "label": "Promise 3 text", "default": "PayPal, Shop Pay and cards" },
+    { "type": "select", "id": "p_icon_4", "label": "Promise 4 icon", "options": [{ "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "chat", "label": "Chat" }, { "value": "diamond", "label": "Diamond" }], "default": "chat" },
+    { "type": "text", "id": "p_title_4", "label": "Promise 4 title", "default": "Real support" },
+    { "type": "text", "id": "p_text_4", "label": "Promise 4 text", "default": "People, not bots" },
+    { "type": "checkbox", "id": "show_payment", "label": "Show payment icons", "default": true },
+    { "type": "text", "id": "note", "label": "Small print" }
   ],
   "blocks": [
     {
       "type": "brand",
-      "name": "About and newsletter",
+      "name": "About and contact",
       "limit": 1,
       "settings": [
         { "type": "text", "id": "title", "label": "Heading", "default": "LuxeDealers" },
         { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Shop premium 1:1 inspired fashion including clothing, handbags, shoes and accessories.</p>" },
-        { "type": "checkbox", "id": "show_newsletter", "label": "Show newsletter sign-up", "default": true }
+        { "type": "text", "id": "service_title", "label": "Support heading", "default": "Customer service" },
+        { "type": "text", "id": "service_text", "label": "Support text", "default": "Send us a message any time. Real people reply." },
+        { "type": "page", "id": "page", "label": "Contact page" }
       ]
     },
     {
@@ -87,26 +115,16 @@
       "name": "Menu column",
       "settings": [
         { "type": "text", "id": "title", "label": "Heading" },
-        { "type": "link_list", "id": "menu", "label": "Menu" },
-        {
-          "type": "select",
-          "id": "fallback",
-          "label": "Links when no menu is picked",
-          "options": [
-            { "value": "shop", "label": "Catalogue links" },
-            { "value": "help", "label": "Policies and help" }
-          ],
-          "default": "shop"
-        }
+        { "type": "link_list", "id": "menu", "label": "Menu", "info": "With no menu, the column lists your policies." }
       ]
     },
     {
-      "type": "contact",
-      "name": "Contact column",
+      "type": "newsletter",
+      "name": "Email sign-up",
       "limit": 1,
       "settings": [
-        { "type": "text", "id": "title", "label": "Heading", "default": "Client care" },
-        { "type": "page", "id": "page", "label": "Contact page" }
+        { "type": "text", "id": "title", "label": "Heading", "default": "Deal alerts" },
+        { "type": "text", "id": "text", "label": "Text", "default": "New arrivals, restocks and subscriber-only offers by email." }
       ]
     }
   ]

@@ -35,7 +35,10 @@
     "collections": "Collections",
     "contact_us": "Contact us",
     "legal": "Legal",
-    "payment": "Payment methods"
+    "payment": "Payment methods",
+    "send_message": "Send us a message",
+    "signup_offer": "Sign up for {{ offer }}, plus restocks and subscriber-only offers.",
+    "rights": "All rights reserved."
   },
   "localization": {
     "country": "Country or region",
