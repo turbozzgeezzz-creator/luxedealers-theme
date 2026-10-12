@@ -259,6 +259,9 @@ html[data-theme="dark"] .badge--new { background: #D4AF37 !important; color: #11
 html[data-theme="dark"] .search-pop { background: #15130F; border-color: rgba(212,175,55,.2); }
 html[data-theme="dark"] .search-pop__products a:hover { background: #1F1B14; }
 html[data-theme="dark"] .sheet__grab span { background: #4A4337; }
+html[data-theme="dark"] .tile--gold, html[data-theme="dark"] .tile--gold h2, html[data-theme="dark"] .tile--gold h3, html[data-theme="dark"] .tile--gold .tile__title { color: #111 !important; }
+html[data-theme="dark"] .tile--gold .tile__copy, html[data-theme="dark"] .tile--gold p { color: rgba(17,17,17,.78) !important; }
+html[data-theme="dark"] .tile--gold .tile__eyebrow { color: #3E2E0A !important; }
 html[data-theme="dark"] .btn--outline { --btn-fg: #ECE6D9; --btn-line: #4A4337; }
 html[data-theme="dark"] .rte, html[data-theme="dark"] .rte p { color: #D9D2C3; }
 html[data-theme="dark"] .muted, html[data-theme="dark"] .breadcrumbs, html[data-theme="dark"] .breadcrumbs a { color: #A39C8D; }
