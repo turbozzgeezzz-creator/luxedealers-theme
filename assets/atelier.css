@@ -887,3 +887,44 @@ html:not(.no-js) .view-cursor { display: none !important; }
 .tier-offer { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 10px; padding: 10px 14px; border: 1px dashed #D9C48A; border-radius: 12px; background: #FFFBF0; font-size: 13.5px; font-weight: 600; }
 .tier-offer__icon { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: #111; color: var(--c-gold); }
 .tier-offer small { width: 100%; font-weight: 400; color: var(--c-muted); padding-left: 36px; }
+
+/* ---------- Logo ---------- */
+.brandmark { display: inline-flex; align-items: center; gap: 10px; line-height: 1; }
+.brandmark__gem { width: 38px; height: 38px; flex: none; transition: transform .8s var(--ease-out); }
+.header__logo:hover .brandmark__gem { transform: rotate(-12deg) scale(1.05); }
+.brandmark__word { font-family: 'Cinzel', Georgia, serif; font-weight: 600; font-size: clamp(19px, .8vw + 13px, 26px); letter-spacing: .06em; white-space: nowrap;
+  background: linear-gradient(110deg, #8A6116 0%, #D4A73E 22%, #FFF1C1 40%, #D4A73E 58%, #9C7A22 80%, #E2B957 100%); background-size: 220% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent; transition: background-position 1.4s var(--ease-out); }
+.header__logo:hover .brandmark__word { background-position: 100% 0; }
+.brandmark__dealers { font-weight: 500; }
+@media (max-width: 749px) { .brandmark__gem { width: 30px; height: 30px; } .brandmark__word { font-size: 18px; letter-spacing: .04em; } }
+@media (max-width: 380px) { .brandmark__word { font-size: 16px; } }
+.review-card__hero { display: block; margin: -10px -10px 4px; aspect-ratio: 1 / 1; border-radius: 14px; overflow: hidden; background: #F4F2EE; }
+.review-card__hero img { width: 100%; height: 100%; object-fit: cover; transition: transform 1s var(--ease-out); }
+.review-card--photo:hover .review-card__hero img { transform: scale(1.04); }
+.review-card--photo { padding: 18px; }
+
+/* ---------- Pages: track order, reviews wall ---------- */
+.track { display: flex; flex-direction: column; gap: 32px; }
+.track__steps { display: grid; gap: 14px; }
+@media (min-width: 750px) { .track__steps { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.track__steps li { position: relative; display: flex; flex-direction: column; gap: 6px; padding: 22px; border: 1px solid var(--c-border); border-radius: 20px; background: #fff; font-size: 14px; }
+.track__steps li span:last-child { color: var(--c-muted); }
+.track__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 14px; background: #111; color: var(--c-gold); margin-bottom: 6px; }
+.track__cards { display: grid; gap: 14px; }
+@media (min-width: 990px) { .track__cards { grid-template-columns: 1.4fr 1fr 1fr; } }
+.track__card { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; padding: 26px; border-radius: 22px; background: #F7F4EE; }
+.track__card h2 { font-size: 20px; font-weight: 700; }
+.track__card--dark { background: radial-gradient(120% 100% at 100% 0%, #3A2B12, #0B0907 65%); color: #fff; }
+.track__card--dark p { color: rgba(255,255,255,.75); }
+.track__form { display: flex; gap: 8px; width: 100%; }
+.track__form input { flex: 1; min-width: 0; border-radius: 12px; }
+.reviews-wall__score { display: flex; align-items: center; justify-content: center; gap: 16px; margin-bottom: 32px; }
+.reviews-wall__score > strong { font-family: var(--font-heading); font-size: 64px; font-weight: 700; letter-spacing: -.04em; }
+.reviews-wall__score div { display: flex; flex-direction: column; gap: 4px; color: var(--c-muted); }
+.reviews-wall__grid { columns: 1; column-gap: 16px; }
+@media (min-width: 640px) { .reviews-wall__grid { columns: 2; } }
+@media (min-width: 1100px) { .reviews-wall__grid { columns: 3; } }
+.reviews-wall__grid .review-card { break-inside: avoid; margin-bottom: 16px; height: auto; }
+.page-hero { background: radial-gradient(80% 120% at 50% 0%, #FBF6E8, #fff 70%); }
+.page-hero .h1 { font-weight: 700; letter-spacing: -.03em; }

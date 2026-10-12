@@ -1,0 +1,48 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "eyebrow": "Fit",
+        "heading": "Size charts",
+        "text": "Find your size before you order."
+      }
+    },
+    "guide": {
+      "type": "size-guide-page",
+      "settings": {}
+    },
+    "cta": {
+      "type": "rich-text",
+      "blocks": {
+        "h": {
+          "type": "heading",
+          "settings": {
+            "text": "Still have a question?"
+          }
+        },
+        "b": {
+          "type": "button",
+          "settings": {
+            "label": "Contact us",
+            "link": "/pages/contact",
+            "outline": false
+          }
+        }
+      },
+      "block_order": [
+        "h",
+        "b"
+      ],
+      "settings": {
+        "align": "center",
+        "subtle": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "guide",
+    "cta"
+  ]
+}

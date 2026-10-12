@@ -518,9 +518,9 @@
       "type": "reviews-strip",
       "settings": {
         "eyebrow": "Reviews",
-        "heading": "Loved by our customers",
+        "heading": "Real reviews from real customers",
         "collection": "shop-all",
-        "limit": 8,
+        "limit": 10,
         "min_rating": 1,
         "link_label": "All reviews",
         "link": "/pages/reviews"
@@ -530,13 +530,13 @@
   "order": [
     "hero",
     "usp",
+    "reviews",
     "depts",
     "latest",
     "deals",
     "budget",
     "wanted",
     "why",
-    "reviews",
     "journal",
     "help",
     "signup",

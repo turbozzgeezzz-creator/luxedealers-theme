@@ -1,0 +1,34 @@
+{%- comment -%} Order tracking help, shown on /pages/track-your-order (and the track-order page template). {%- endcomment -%}
+<div class="page-hero"><div class="container page-hero__inner"><span class="eyebrow">{{ 'track.eyebrow' | t }}</span><h1 class="h1">{{ 'track.title' | t }}</h1><p>{{ 'track.intro' | t }}</p></div></div>
+<section class="section section--flush-top">
+  <div class="container track">
+    <ol class="track__steps" role="list">
+      <li><span class="track__icon">{% render 'icon', name: 'check' %}</span><strong>{{ 'track.s1' | t }}</strong><span>{{ 'track.s1_text' | t }}</span></li>
+      <li><span class="track__icon">{% render 'icon', name: 'box' %}</span><strong>{{ 'track.s2' | t }}</strong><span>{{ 'track.s2_text' | t }}</span></li>
+      <li><span class="track__icon">{% render 'icon', name: 'truck' %}</span><strong>{{ 'track.s3' | t }}</strong><span>{{ 'track.s3_text' | t }}</span></li>
+      <li><span class="track__icon">{% render 'icon', name: 'home' %}</span><strong>{{ 'track.s4' | t }}</strong><span>{{ 'track.s4_text' | t }}</span></li>
+    </ol>
+    <div class="track__cards">
+      <div class="track__card">
+        <h2>{{ 'track.have_number' | t }}</h2>
+        <p>{{ 'track.have_number_text' | t }}</p>
+        <form class="track__form" action="https://t.17track.net/en" method="get" target="_blank" rel="noopener" data-track-form>
+          <label class="visually-hidden" for="TrackNumber">{{ 'track.number' | t }}</label>
+          <input class="field__input" id="TrackNumber" name="q" placeholder="{{ 'track.number' | t }}" required autocomplete="off">
+          <button type="submit" class="btn btn--gold">{{ 'track.track' | t }}</button>
+        </form>
+        <small class="muted">{{ 'track.opens' | t }}</small>
+      </div>
+      <div class="track__card">
+        <h2>{{ 'track.account' | t }}</h2>
+        <p>{{ 'track.account_text' | t }}</p>
+        <a class="btn btn--sm" href="{{ routes.account_url }}">{{ 'track.sign_in' | t }}</a>
+      </div>
+      <div class="track__card track__card--dark">
+        <h2>{{ 'track.help' | t }}</h2>
+        <p>{{ 'track.help_text' | t }}</p>
+        <a class="btn btn--sm btn--gold" href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>
+      </div>
+    </div>
+  </div>
+</section>

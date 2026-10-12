@@ -1118,6 +1118,15 @@
     on(form, 'focusout', function (e) { if (e.relatedTarget && !form.contains(e.relatedTarget)) close(); });
   });
 
+  /* ---------- Track order: open the carrier-neutral tracker with the number filled in ---------- */
+  on(doc, 'submit', function (e) {
+    var f = e.target.closest && e.target.closest('[data-track-form]');
+    if (!f) return;
+    e.preventDefault();
+    var n = (f.elements.q.value || '').trim();
+    if (n) window.open('https://t.17track.net/en#nums=' + encodeURIComponent(n), '_blank', 'noopener');
+  });
+
   /* ---------- Promo slider ---------- */
   $$('[data-promo-slider]').forEach(function (wrap) {
     var slides = $$('.promo-slide', wrap), dots = $$('[data-promo-dot]', wrap);

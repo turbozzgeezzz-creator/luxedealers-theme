@@ -341,6 +341,30 @@
   },
   "reviews": {
     "verified": "Verified buyer",
-    "from_count": "from {{ count }} reviews"
+    "from_count": "from {{ count }} reviews",
+    "photo_alt": "Customer photo"
+  },
+  "track": {
+    "eyebrow": "Help",
+    "title": "Track your order",
+    "intro": "Every order ships free with tracking. Here's how to follow yours.",
+    "s1": "Order confirmed",
+    "s1_text": "You get an email as soon as you order.",
+    "s2": "Hand-checked and packed",
+    "s2_text": "We check every piece before it ships.",
+    "s3": "Shipped with tracking",
+    "s3_text": "Your tracking number arrives by email. It can take up to 48 hours to show updates.",
+    "s4": "Delivered",
+    "s4_text": "Most orders arrive within 2–3 weeks.",
+    "have_number": "Have a tracking number?",
+    "have_number_text": "Enter it below to see where your parcel is.",
+    "number": "Tracking number",
+    "track": "Track",
+    "opens": "Opens a parcel tracking site in a new tab.",
+    "account": "Have an account?",
+    "account_text": "Sign in to see your orders and their status.",
+    "sign_in": "Sign in",
+    "help": "Need help?",
+    "help_text": "Tracking not working after 48 hours, or something not right? Email us with your order number."
   }
 }

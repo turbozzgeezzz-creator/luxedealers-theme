@@ -1,0 +1,23 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "eyebrow": "Reviews",
+        "heading": "What our customers say",
+        "text": "Real reviews from verified buyers, collected by Judge.me."
+      }
+    },
+    "wall": {
+      "type": "reviews-wall",
+      "settings": {
+        "collection": "shop-all",
+        "limit": 36
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "wall"
+  ]
+}

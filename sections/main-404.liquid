@@ -1,3 +1,6 @@
+{%- if request.path contains 'track-your-order' or request.path contains 'track-order' -%}
+{% render 'track-order' %}
+{%- else -%}
 <section class="container not-found">
   <div class="page-hero__inner">
     <p class="not-found__num gold-text" aria-hidden="true">404</p>
@@ -9,6 +12,8 @@
     </div>
   </div>
 </section>
+
+{%- endif -%}
 
 {% schema %}
 { "name": "404" }

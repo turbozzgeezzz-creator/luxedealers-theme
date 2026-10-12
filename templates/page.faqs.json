@@ -1,0 +1,176 @@
+{
+  "sections": {
+    "hero": {
+      "type": "page-hero",
+      "settings": {
+        "eyebrow": "Help",
+        "heading": "Frequently asked questions",
+        "text": "Everything about shipping, orders and sizing."
+      }
+    },
+    "shipping": {
+      "type": "faq",
+      "blocks": {
+        "q0": {
+          "type": "question",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Most orders arrive within 2–3 weeks. Larger or heavier orders can take a little longer.</p>"
+          }
+        },
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Is shipping free?",
+            "answer": "<p>Yes. Shipping is free on every order, with no minimum spend, and every order is tracked.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes. Choose your country at the top of the page to see prices in your currency.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "When will I get my tracking number?",
+            "answer": "<p>When your order ships we email your tracking number. It can take up to 48 hours to show updates. <a href=\"/pages/track-your-order\">Track your order</a></p>"
+          }
+        },
+        "q4": {
+          "type": "question",
+          "settings": {
+            "question": "Do I pay customs or import tax?",
+            "answer": "<p>Any customs duties or taxes charged by your country are paid by the customer.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q0",
+        "q1",
+        "q2",
+        "q3",
+        "q4"
+      ],
+      "settings": {
+        "eyebrow": "Shipping",
+        "heading": "Shipping and delivery",
+        "split": false,
+        "schema": true,
+        "subtle": false
+      }
+    },
+    "orders": {
+      "type": "faq",
+      "blocks": {
+        "q0": {
+          "type": "question",
+          "settings": {
+            "question": "Which payment methods do you accept?",
+            "answer": "<p>PayPal, Shop Pay, Apple Pay, Google Pay and major cards. Checkout is encrypted.</p>"
+          }
+        },
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Can I change or cancel my order?",
+            "answer": "<p>Email support@luxedealers.com as soon as possible with your order number and we'll do our best to help.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I add a gift message?",
+            "answer": "<p>Yes. Add a gift message in your bag before checkout.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q0",
+        "q1",
+        "q2"
+      ],
+      "settings": {
+        "eyebrow": "Orders",
+        "heading": "Orders and payment",
+        "split": false,
+        "schema": true,
+        "subtle": false
+      }
+    },
+    "products": {
+      "type": "faq",
+      "blocks": {
+        "q0": {
+          "type": "question",
+          "settings": {
+            "question": "Are your items true to size?",
+            "answer": "<p>Most clothing and shoes follow Asian sizing, so we recommend sizing up. See the <a href=\"/pages/size-charts\">size charts</a>, or email us and we'll help.</p>"
+          }
+        },
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "Are items checked before they ship?",
+            "answer": "<p>Yes. Every order is hand-checked before it's packed.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "What if something is wrong with my order?",
+            "answer": "<p>No returns needed. Email support@luxedealers.com with your order number and a photo, and we'll make it right with a refund or a free replacement. <a href=\"/policies/refund-policy\">Refund policy</a></p>"
+          }
+        }
+      },
+      "block_order": [
+        "q0",
+        "q1",
+        "q2"
+      ],
+      "settings": {
+        "eyebrow": "Products",
+        "heading": "Products and sizing",
+        "split": false,
+        "schema": true,
+        "subtle": false
+      }
+    },
+    "cta": {
+      "type": "rich-text",
+      "blocks": {
+        "h": {
+          "type": "heading",
+          "settings": {
+            "text": "Still have a question?"
+          }
+        },
+        "b": {
+          "type": "button",
+          "settings": {
+            "label": "Contact us",
+            "link": "/pages/contact",
+            "outline": false
+          }
+        }
+      },
+      "block_order": [
+        "h",
+        "b"
+      ],
+      "settings": {
+        "align": "center",
+        "subtle": true
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "shipping",
+    "orders",
+    "products",
+    "cta"
+  ]
+}
