@@ -83,7 +83,9 @@
         "pill_label": "New in",
         "pill_link": "/collections/new-arrivals",
         "show_localization": false,
-        "show_nav": true
+        "show_nav": true,
+        "popular_searches": "Handbags, Sneakers, Hoodies, Fragrances, Watches, Jewellery",
+        "search_collection": "new-arrivals"
       }
     }
   },
