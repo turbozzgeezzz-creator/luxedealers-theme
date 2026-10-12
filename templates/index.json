@@ -281,8 +281,8 @@
     "deals": {
       "type": "deals",
       "settings": {
-        "eyebrow": "Offers",
-        "heading": "Deals, sets and new drops",
+        "eyebrow": "Curated",
+        "heading": "Curated sets and new drops",
         "offer_illustration": "lx-coupon",
         "offer_eyebrow": "New here?",
         "offer_text": "Join our email list and your code appears straight away.",
@@ -348,7 +348,8 @@
         "heading": "Luxury at every price",
         "text": "Pick a budget and see everything that fits it.",
         "collection": "shop-all"
-      }
+      },
+      "disabled": true
     },
     "why": {
       "type": "why-us",
