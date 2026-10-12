@@ -1562,3 +1562,6 @@ body:has(.drawer.is-open) shopify-chat, body:has(.menu-overlay.is-open) shopify-
 .popup__code-label { font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--c-gold-text); }
 .popup__code-box { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 12px; background: #fff; font-family: ui-monospace, Menlo, monospace; font-size: 20px; letter-spacing: .08em; }
 .popup__code-note { font-size: 12.5px; }
+
+/* Light/dark toggle: header on desktop, menu on phones */
+@media (max-width: 989px) { .header__right .theme-toggle { display: none; } }

@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="theme-color" content="{{ settings.color_background }}">
+    <script>try{var m=localStorage.getItem('luxe:theme');if(m==='"dark"'||m==='dark'){document.documentElement.setAttribute('data-theme','dark');document.querySelector('meta[name=theme-color]').setAttribute('content','#0C0B09');}}catch(e){}</script>
     <link rel="canonical" href="{{ canonical_url }}">
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
     {%- if settings.favicon != blank -%}
@@ -43,6 +44,7 @@
     {% render 'css-variables' %}
     {{ 'theme.css' | asset_url | stylesheet_tag }}
     {{ 'atelier.css' | asset_url | stylesheet_tag }}
+    {{ 'dark.css' | asset_url | stylesheet_tag }}
     {%- if settings.page_transitions and settings.motion != 'off' -%}
       <style>@view-transition { navigation: auto; } ::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; }</style>
     {%- endif -%}

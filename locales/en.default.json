@@ -30,6 +30,9 @@
     "signed_in": "Signed in",
     "hello": "Hi {{ name }}",
     "shop": "Shop",
+    "theme_toggle": "Switch light or dark mode",
+    "dark_mode": "Dark mode",
+    "light_mode": "Light mode",
     "help": "Help and info"
   },
   "footer": {

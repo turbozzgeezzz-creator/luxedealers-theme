@@ -954,6 +954,23 @@
     }
   })();
 
+  /* ---------- Light / dark mode ---------- */
+  (function () {
+    var root = doc.documentElement;
+    function sync() { var d = root.getAttribute('data-theme') === 'dark'; $$('[data-theme-toggle]').forEach(function (b) { b.setAttribute('aria-pressed', d ? 'true' : 'false'); }); }
+    on(doc, 'click', function (e) {
+      if (!e.target.closest('[data-theme-toggle]')) return;
+      var dark = root.getAttribute('data-theme') !== 'dark';
+      root.classList.add('theme-switching');
+      if (dark) root.setAttribute('data-theme', 'dark'); else root.removeAttribute('data-theme');
+      storeSet('luxe:theme', dark ? 'dark' : 'light');
+      var m = doc.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', dark ? '#0C0B09' : '#ffffff');
+      setTimeout(function () { root.classList.remove('theme-switching'); }, 400);
+      sync();
+    });
+    sync();
+  })();
+
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {
     var b = e.target.closest('[data-option-more]');
