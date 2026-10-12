@@ -57,7 +57,8 @@
             <p class="muted">{{ 'cart.empty_sub' | t }}</p>
             <a href="{{ section.settings.empty_link | default: routes.all_products_collection_url }}" class="btn btn--gold">{{ 'cart.continue' | t }}</a>
             <div class="bag-empty__chips">
-              {%- for h in 'new-arrivals,handbags,shoes,clothing,accessories' | split: ',' -%}
+              {%- assign eh = 'new-arrivals,handbags,shoes,clothing,accessories' | split: ',' -%}
+              {%- for h in eh -%}
                 {%- assign c = collections[h] -%}{%- if c != blank and c.products_count > 0 -%}<a class="search-chip" href="{{ c.url }}">{{ c.title | downcase | capitalize }}</a>{%- endif -%}
               {%- endfor -%}
             </div>
