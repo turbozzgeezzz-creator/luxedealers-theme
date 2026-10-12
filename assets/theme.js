@@ -1003,6 +1003,7 @@
           var item = sel.closest('[data-set-item]'), opt = sel.options[sel.selectedIndex], cb = $('input[data-set-variant]', item);
           cb.dataset.setVariant = opt.value; cb.dataset.price = opt.dataset.price; cb.checked = true;
           $('[data-set-price]', item).textContent = opt.dataset.money;
+          var im = $('.bset__img img', item); if (im && opt.dataset.img) { im.src = opt.dataset.img; im.removeAttribute('srcset'); }
         }
         sum();
       });
