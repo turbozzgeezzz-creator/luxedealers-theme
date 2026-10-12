@@ -301,55 +301,6 @@
         "new_link": "See all collectibles"
       }
     },
-    "budget": {
-      "type": "budget-tiles",
-      "blocks": {
-        "a": {
-          "type": "tier",
-          "settings": {
-            "theme": "ivory",
-            "eyebrow": "Easy gifts",
-            "title": "Under $50",
-            "text": "Fragrances, jewellery and accessories.",
-            "min": 0,
-            "max": 50
-          }
-        },
-        "b": {
-          "type": "tier",
-          "settings": {
-            "theme": "gold",
-            "eyebrow": "Everyday upgrades",
-            "title": "$50 to $100",
-            "text": "Clothing, shoes and small leather goods.",
-            "min": 50,
-            "max": 100
-          }
-        },
-        "c": {
-          "type": "tier",
-          "settings": {
-            "theme": "noir",
-            "eyebrow": "Statement pieces",
-            "title": "$100 and up",
-            "text": "Handbags, outerwear and watches.",
-            "min": 100,
-            "max": 0
-          }
-        }
-      },
-      "block_order": [
-        "a",
-        "b",
-        "c"
-      ],
-      "settings": {
-        "eyebrow": "Shop by budget",
-        "heading": "Luxury at every price",
-        "text": "Pick a budget and see everything that fits it.",
-        "collection": "shop-all"
-      }
-    },
     "why": {
       "type": "why-us",
       "blocks": {
