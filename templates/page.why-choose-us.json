@@ -5,7 +5,9 @@
       "settings": {
         "eyebrow": "Why LuxeDealers",
         "heading": "Luxury looks, honest prices",
-        "text": "Premium 1:1 inspired clothing, bags, shoes and accessories, with free tracked shipping."
+        "text": "Premium 1:1 inspired clothing, bags, shoes and accessories, with free tracked shipping worldwide and a refund or reship guarantee.",
+        "show_meta": true,
+        "art": "watch"
       }
     },
     "promises": {
@@ -96,11 +98,11 @@
         "c"
       ],
       "settings": {
-        "eyebrow": "Why LuxeDealers",
-        "heading": "Luxury looks,\nhonest prices.",
-        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, with free tracked shipping on every order.</p>",
-        "button": "",
-        "link": "/pages/why-choose-us"
+        "eyebrow": "Our standards",
+        "heading": "What we promise,\nevery time.",
+        "text": "<p>No fake reviews, no countdown timers and no shipping fees. Just clear prices and people who answer your emails.</p>",
+        "button": "Contact us",
+        "link": "/pages/contact"
       }
     },
     "reviews": {
@@ -130,13 +132,101 @@
         "card_title": "Join the list",
         "card_text": "Enter your email and tick the box to subscribe."
       }
+    },
+    "steps": {
+      "type": "steps",
+      "blocks": {
+        "s1": {
+          "type": "step",
+          "settings": {
+            "icon": "sparkle",
+            "title": "Pick your piece",
+            "text": "Browse, check the size guide and choose your style. Questions? Ask us before you order."
+          }
+        },
+        "s2": {
+          "type": "step",
+          "settings": {
+            "icon": "diamond",
+            "title": "We hand-check it",
+            "text": "Every order is checked before it's packed, so what arrives matches what you picked."
+          }
+        },
+        "s3": {
+          "type": "step",
+          "settings": {
+            "icon": "truck",
+            "title": "Free tracked shipping",
+            "text": "Shipping is free on every order, worldwide. Most orders arrive within 2–3 weeks."
+          }
+        },
+        "s4": {
+          "type": "step",
+          "settings": {
+            "icon": "return",
+            "title": "Love it, or we fix it",
+            "text": "Damaged, wrong or missing? We'll refund or reship it, with no need to send anything back."
+          }
+        }
+      },
+      "block_order": [
+        "s1",
+        "s2",
+        "s3",
+        "s4"
+      ],
+      "settings": {
+        "eyebrow": "From order to door",
+        "heading": "How it works",
+        "text": "Every order follows the same four steps.",
+        "dark": false
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "q1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does shipping take?",
+            "answer": "<p>Most orders arrive within 2–3 weeks. You'll get a tracking number by email when your order ships.</p>"
+          }
+        },
+        "q2": {
+          "type": "question",
+          "settings": {
+            "question": "What if something isn't right?",
+            "answer": "<p>Email support@luxedealers.com with your order number and photos. We'll refund or reship it, with no need to send it back.</p>"
+          }
+        },
+        "q3": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship to my country?",
+            "answer": "<p>We ship internationally, and shipping is free on every order. Any customs duties or taxes charged by your country are paid by the customer.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "q1",
+        "q2",
+        "q3"
+      ],
+      "settings": {
+        "eyebrow": "Questions",
+        "heading": "Good to know",
+        "more_link": "/pages/faqs",
+        "schema": false
+      }
     }
   },
   "order": [
     "hero",
     "promises",
+    "steps",
     "why",
     "reviews",
+    "faq",
     "signup"
   ]
 }

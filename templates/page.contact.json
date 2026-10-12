@@ -5,12 +5,16 @@
       "settings": {
         "eyebrow": "Client care",
         "heading": "We're here to help",
-        "text": "Questions about a piece, an order or delivery to your country."
+        "text": "Questions about a piece, an order or delivery to your country? Real people answer every message.",
+        "art": "envelope"
       }
     },
     "main": {
       "type": "contact-form",
-      "settings": {}
+      "settings": {
+        "track_link": "/pages/track-your-order",
+        "faq_link": "/pages/faqs"
+      }
     },
     "faq": {
       "type": "faq",

@@ -4,7 +4,8 @@
       "type": "page-hero",
       "settings": {
         "eyebrow": "Our story",
-        "heading": "Considered style,\nsent to your door"
+        "heading": "Considered style,\nsent to your door",
+        "show_meta": true
       }
     },
     "intro": {

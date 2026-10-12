@@ -5,7 +5,8 @@
       "settings": {
         "eyebrow": "Reviews",
         "heading": "What our customers say",
-        "text": "Real reviews from verified buyers, collected by Judge.me."
+        "text": "Real reviews from verified buyers, collected by Judge.me.",
+        "show_meta": true
       }
     },
     "wall": {
