@@ -1,6 +1,1 @@
-{%- comment -%}
-  Lowest current price in a collection. Filled in by the browser (theme.js) from a tiny cached view
-  (/collections/handle?sort_by=price-ascending&view=minprice), so pages don't load 50 products per tile.
-  Param: collection
-{%- endcomment -%}
-{%- if collection != blank -%}<span class="js-from" data-from-price="{{ collection.handle }}"></span>{%- endif -%}
+{%- comment -%} "From $X" labels are switched off by the owner: low prices undersold the range. Kept as a no-op so sections still render. {%- endcomment -%}

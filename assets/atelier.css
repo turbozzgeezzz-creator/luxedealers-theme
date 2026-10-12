@@ -1505,3 +1505,15 @@ body:has(.drawer.is-open) #shopify-chat, body:has(.drawer.is-open) #ShopifyChat,
 body:has(.drawer.is-open) shopify-chat, body:has(.menu-overlay.is-open) shopify-chat, body:has(.popup.is-open) shopify-chat { display: none !important; }
 .mnav__depts { scroll-padding-inline: 16px; }
 .mnav__dept { flex-basis: 96px; }
+
+/* Round: glance spacing, rails never scroll vertically */
+.glance .glance__ticks { margin-top: 0; padding-top: 22px; }
+.rail__track { overflow-y: hidden !important; overscroll-behavior-x: contain; }
+.tile__from, [data-from-wrap] { display: none !important; }
+
+/* LD monogram logo */
+.brandmark__mark { width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(120,84,18,.18)); }
+.header__logo:hover .brandmark__mark { transform: scale(1.06) rotate(0); }
+@media (max-width: 749px) { .brandmark__mark { width: 36px; height: 36px; } }
+.mnav__logo .brandmark__mark { width: 34px; height: 34px; }
+@media (max-width: 989px) { .header__logo .brandmark__gem.brandmark__mark { width: 34px; height: 34px; } }

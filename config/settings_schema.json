@@ -388,7 +388,7 @@
         "type": "richtext",
         "id": "cart_note_text",
         "label": "Text under checkout button",
-        "default": "<p>Duties and taxes for your country are shown at checkout.</p>"
+        "default": ""
       }
     ]
   },

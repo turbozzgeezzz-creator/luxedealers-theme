@@ -100,7 +100,7 @@
 
           <div class="pdp__price">
             {% render 'price', product: product, variant: current, class: 'product__price' %}
-            <p class="product__tax">{%- if cart.taxes_included -%}{{ 'products.tax_included' | t }}{%- else -%}{{ 'products.tax_at_checkout' | t }}{%- endif -%}</p>
+
             <div class="pdp__installments">{% form 'product', product %}{{ form | payment_terms }}{% endform %}</div>
             {% render 'tier-offer' %}
           </div>
