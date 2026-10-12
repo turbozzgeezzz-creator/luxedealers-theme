@@ -35,7 +35,7 @@
         "advisor": {
           "type": "advisor",
           "settings": {
-            "text": "Questions about this piece? Email us.",
+            "text": "Sizing, quality or delivery: real people reply by email.",
             "page": "contact"
           }
         },

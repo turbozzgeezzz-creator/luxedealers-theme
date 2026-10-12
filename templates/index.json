@@ -350,53 +350,6 @@
         "collection": "shop-all"
       }
     },
-    "wanted": {
-      "type": "featured-collection",
-      "blocks": {
-        "c": {
-          "type": "collection",
-          "settings": {
-            "collection": "clothing",
-            "title": "Clothing"
-          }
-        },
-        "s": {
-          "type": "collection",
-          "settings": {
-            "collection": "shoes",
-            "title": "Shoes"
-          }
-        },
-        "b": {
-          "type": "collection",
-          "settings": {
-            "collection": "handbags",
-            "title": "Bags"
-          }
-        },
-        "f": {
-          "type": "collection",
-          "settings": {
-            "collection": "fragances",
-            "title": "Fragrances"
-          }
-        }
-      },
-      "block_order": [
-        "c",
-        "s",
-        "b",
-        "f"
-      ],
-      "settings": {
-        "eyebrow": "Most wanted",
-        "heading": "Shop by category",
-        "layout": "rail",
-        "limit": 10,
-        "view_all": true,
-        "subtle": false
-      }
-    },
     "why": {
       "type": "why-us",
       "blocks": {
@@ -535,7 +488,6 @@
     "latest",
     "deals",
     "budget",
-    "wanted",
     "why",
     "journal",
     "help",

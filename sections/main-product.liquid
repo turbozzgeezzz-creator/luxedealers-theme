@@ -70,7 +70,6 @@
             <button type="button" class="gallery__arrow gallery__arrow--next" data-gallery-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
             <span class="gallery__count" data-gallery-count aria-hidden="true">1 / {% if media_count > thumb_limit %}{{ thumb_limit }}{% else %}{{ media_count }}{% endif %}</span>
           {%- endif -%}
-          <span class="gallery__zoom-hint" aria-hidden="true">{% render 'icon', name: 'search', class: 'icon--sm' %}</span>
         </div>
         {%- if media_count > 0 -%}
           <div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="{{ 'products.zoom' | t }}">
@@ -142,10 +141,10 @@
                     {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
                   </a>
                 {%- elsif block.settings.page != blank -%}
-                  <a class="advisor" href="{{ block.settings.page.url }}" {{ block.shopify_attributes }}>
-                    {% render 'icon', name: 'chat', class: 'icon--sm' %}
-                    <span><strong style="font-weight: 600">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
-                    {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
+                  <a class="pdp__help" href="{{ block.settings.page.url }}" {{ block.shopify_attributes }}>
+                    <span class="pdp__help-icon">{% render 'icon', name: 'chat', class: 'icon--sm' %}</span>
+                    <span class="pdp__help-text"><strong>{{ 'products.help_title' | t }}</strong><span>{{ block.settings.text }}</span></span>
+                    <span class="pdp__help-cta">{{ 'products.help_cta' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</span>
                   </a>
                 {%- endif -%}
               {%- when 'text' -%}
@@ -225,14 +224,16 @@
 {%- comment -%} Sticky add to bag on scroll (all screen sizes) {%- endcomment -%}
 {%- if s.sticky_bar -%}
   <div class="sticky-atc" data-sticky-atc aria-hidden="false">
-    <div class="sticky-atc__info">
-      <div class="sticky-atc__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</div>
-      <div style="min-width: 0">
-        <div class="sticky-atc__title">{{ product.title }}</div>
-        {% render 'price', product: product, variant: current %}
+    <div class="sticky-atc__inner">
+      <div class="sticky-atc__info">
+        <div class="sticky-atc__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</div>
+        <div class="sticky-atc__text">
+          <div class="sticky-atc__title">{{ product.title }}</div>
+          <div class="sticky-atc__sub">{% render 'price', product: product, variant: current %}<span class="sticky-atc__ship">{% render 'icon', name: 'truck', class: 'icon--sm' %} {{ 'products.free_shipping' | t }}</span></div>
+        </div>
       </div>
+      <button type="button" class="btn btn--gold sticky-atc__btn" data-add-button{% unless current.available %} disabled{% endunless %}>{% render 'icon', name: 'bag', class: 'icon--sm' %}<span data-add-label>{% if current.available %}{{ 'products.add_to_bag' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span></button>
     </div>
-    <button type="button" class="btn btn--sm" data-add-button{% unless current.available %} disabled{% endunless %}><span data-add-label>{% if current.available %}{{ 'products.add_to_bag' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</span></button>
   </div>
 {%- endif -%}
 

@@ -119,7 +119,9 @@
     "price": "Price",
     "reviews": "Reviews",
     "real_support": "Real people answer every email",
-    "more_from": "More from {{ title }}"
+    "more_from": "More from {{ title }}",
+    "help_title": "Questions about this piece?",
+    "help_cta": "Ask us"
   },
   "cart": {
     "title": "Your bag",
@@ -379,5 +381,15 @@
     "sign_in": "Sign in",
     "help": "Need help?",
     "help_text": "Tracking not working after 48 hours, or something not right? Email us with your order number."
+  },
+  "bundle": {
+    "eyebrow": "Build your set",
+    "intro": "Tap the pieces you want, choose an option, and add them all at once.",
+    "this_item": "This item",
+    "selected": "selected ·",
+    "add_one": "Pick pieces to add",
+    "add_many": "Add [n] to bag",
+    "add_item": "Add {{ title }}",
+    "choose": "Choose an option for {{ title }}"
   }
 }

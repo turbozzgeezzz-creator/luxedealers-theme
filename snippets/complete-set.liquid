@@ -1,50 +1,77 @@
 {%- comment -%}
-  Buy together: this piece plus up to three chosen (or complementary)
-  products. Totals are the real sum of prices; no discount is implied.
-  Params: product, block
+  Build your set: this piece plus pieces from matching departments (or the
+  products picked in the block / Search & Discovery complementary products).
+  Shoppers tap to add, choose an option for each, and add everything at once.
+  Totals are the real sum of prices. Params: product, block
 {%- endcomment -%}
 {%- liquid
-  assign others = block.settings.products
-  if others == blank or others.size == 0
-    assign others = product.metafields['shopify--discovery--product_recommendation'].complementary_products.value
+  assign current = product.selected_or_first_available_variant
+  assign picks = block.settings.products
+  if picks == blank or picks.size == 0
+    assign picks = product.metafields['shopify--discovery--product_recommendation'].complementary_products.value
   endif
+
   comment
-    No picks and no complementary products: pair it with real pieces from a
-    matching department so every product page has a set.
+    Pair by department: what people usually buy alongside this kind of piece.
   endcomment
-  if others == blank or others.size == 0
-    assign pair_handle = block.settings.fallback | default: 'accessories'
-    for c in product.collections
-      if c.handle == pair_handle
-        assign pair_handle = block.settings.fallback_alt | default: 'clothing'
-      endif
-    endfor
-    assign others = collections[pair_handle].products
+  assign handles = ''
+  for c in product.collections
+    assign handles = handles | append: ' ' | append: c.handle
+  endfor
+  assign pair = 'accessories,fragances'
+  if handles contains 'bag'
+    assign pair = 'accessories,fragances'
+  elsif handles contains 'shoe' or handles contains 'sneaker' or handles contains 'boot' or handles contains 'slide'
+    assign pair = 'clothing,accessories'
+  elsif handles contains 'cloth' or handles contains 'hood' or handles contains 'shirt' or handles contains 'jacket' or handles contains 'denim' or handles contains 'jersey'
+    assign pair = 'sneakers-1,accessories'
+  elsif handles contains 'jewel' or handles contains 'watch'
+    assign pair = 'jewellery,fragances'
+  elsif handles contains 'fragr' or handles contains 'fragance'
+    assign pair = 'fragances,handbags'
+  elsif handles contains 'access'
+    assign pair = 'handbags,clothing'
   endif
+  assign pair_list = pair | split: ','
+  assign limit_each = 3
+  assign shown = 0
 -%}
-{%- if others != blank and others.size > 0 -%}
-  {%- assign current = product.selected_or_first_available_variant -%}
-  <div class="set" data-set>
-    <p class="set__title">{{ block.settings.title }}</p>
-    <div class="set__list">
-      <label class="set__item">
-        <input type="checkbox" checked disabled data-set-main data-price="{{ current.price }}">
-        <span class="set__media">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</span>
-        <span><span class="set__name">{{ 'products.this_piece' | t }}: {{ product.title }}</span><br><span class="set__price">{{ current.price | money }}</span></span>
-      </label>
-      {%- assign added = 0 -%}
-      {%- for p in others limit: 12 -%}
-        {%- if added >= 2 -%}{%- break -%}{%- endif -%}
-        {%- if p.available == false or p.id == product.id -%}{%- continue -%}{%- endif -%}
-        {%- assign added = added | plus: 1 -%}
-        {%- assign v = p.selected_or_first_available_variant -%}
-        <label class="set__item">
-          <input type="checkbox" checked data-set-variant="{{ v.id }}" data-price="{{ v.price }}">
-          <span class="set__media">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</span>
-          <span><span class="set__name">{{ p.title }}{% unless p.has_only_default_variant %} · {{ v.title }}{% endunless %}</span><br><span class="set__price">{{ v.price | money }}</span></span>
-        </label>
-      {%- endfor -%}
+<div class="bset" data-set>
+  <div class="bset__head">
+    <div>
+      <span class="eyebrow">{{ 'bundle.eyebrow' | t }}</span>
+      <h2 class="bset__title">{{ block.settings.title }}</h2>
+      <p class="muted">{{ 'bundle.intro' | t }}</p>
     </div>
-    <div class="set__total"><span>{{ 'products.set_total' | t }} <strong data-set-total>—</strong></span><button type="button" class="btn btn--sm" data-set-add>{{ 'products.add_selected' | t }}</button></div>
   </div>
-{%- endif -%}
+  <div class="bset__grid">
+    <div class="bset__item is-main">
+      <span class="bset__check is-on" aria-hidden="true">{% render 'icon', name: 'check', class: 'icon--sm' %}</span>
+      <span class="bset__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: '' }}{%- endif -%}</span>
+      <span class="bset__tag">{{ 'bundle.this_item' | t }}</span>
+      <span class="bset__name">{{ product.title }}</span>
+      <strong class="bset__price">{{ current.price | money }}</strong>
+      <input type="checkbox" checked disabled hidden data-set-main data-price="{{ current.price }}">
+    </div>
+    {%- capture cards -%}
+      {%- if picks != blank and picks.size > 0 -%}
+        {%- for p in picks limit: 6 -%}{%- if p.available and p.id != product.id -%}{% render 'set-item', p: p %}{%- assign shown = shown | plus: 1 -%}{%- endif -%}{%- endfor -%}
+      {%- else -%}
+        {%- for h in pair_list -%}
+          {%- assign n = 0 -%}
+          {%- for p in collections[h].products limit: 24 -%}
+            {%- if n >= limit_each -%}{%- break -%}{%- endif -%}
+            {%- if p.available == false or p.id == product.id or p.featured_media == blank -%}{%- continue -%}{%- endif -%}
+            {% render 'set-item', p: p %}
+            {%- assign n = n | plus: 1 -%}{%- assign shown = shown | plus: 1 -%}
+          {%- endfor -%}
+        {%- endfor -%}
+      {%- endif -%}
+    {%- endcapture -%}
+    {{ cards }}
+  </div>
+  <div class="bset__bar">
+    <div class="bset__sum"><span data-set-count>1</span> {{ 'bundle.selected' | t }} <strong data-set-total>{{ current.price | money }}</strong></div>
+    <button type="button" class="btn btn--gold" data-set-add disabled>{% render 'icon', name: 'bag', class: 'icon--sm' %} <span data-set-label data-one="{{ 'bundle.add_one' | t | escape }}" data-many="{{ 'bundle.add_many' | t | escape }}">{{ 'bundle.add_one' | t }}</span></button>
+  </div>
+</div>

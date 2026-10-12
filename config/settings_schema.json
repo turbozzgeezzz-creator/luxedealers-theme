@@ -237,7 +237,7 @@
         "type": "checkbox",
         "id": "card_vendor",
         "label": "Show brand",
-        "default": true
+        "default": false
       },
       {
         "type": "checkbox",

@@ -980,22 +980,38 @@
   function initSets(ctx) {
     $$('[data-set]', ctx).forEach(function (set) {
       if (set.dataset.ready) return; set.dataset.ready = '1';
-      var total = $('[data-set-total]', set);
+      var total = $('[data-set-total]', set), count = $('[data-set-count]', set), btn = $('[data-set-add]', set), label = $('[data-set-label]', set);
       function sum() {
-        var t = 0; $$('input[type="checkbox"]', set).forEach(function (c) { if (c.checked) t += parseInt(c.dataset.price, 10) || 0; });
+        var t = 0, n = 0;
+        $$('input[type="checkbox"]', set).forEach(function (c) {
+          var item = c.closest('[data-set-item]'); if (item) item.classList.toggle('is-on', c.checked);
+          if (c.checked) { t += parseInt(c.dataset.price, 10) || 0; n++; }
+        });
         total.textContent = formatMoney(t);
+        if (count) count.textContent = n;
+        if (btn) { btn.disabled = n < 2; if (label) label.textContent = (n < 2 ? label.dataset.one : label.dataset.many).replace('[n]', n); }
       }
-      on(set, 'change', sum); sum();
-      on($('[data-set-add]', set), 'click', function (e) {
-        var btn = e.currentTarget;
+      on(set, 'change', function (e) {
+        var sel = e.target.closest('[data-set-select]');
+        if (sel) {
+          var item = sel.closest('[data-set-item]'), opt = sel.options[sel.selectedIndex], cb = $('input[data-set-variant]', item);
+          cb.dataset.setVariant = opt.value; cb.dataset.price = opt.dataset.price; cb.checked = true;
+          $('[data-set-price]', item).textContent = opt.dataset.money;
+        }
+        sum();
+      });
+      sum();
+      on(btn, 'click', function (e) {
+        var b = e.currentTarget;
         var form = doc.querySelector('form[data-product-form]');
         var mainId = form ? parseInt($('input[name="id"]', form).value, 10) : null;
         var items = mainId ? [{ id: mainId, quantity: 1 }] : [];
         $$('input[data-set-variant]:checked', set).forEach(function (c) { items.push({ id: parseInt(c.dataset.setVariant, 10), quantity: 1 }); });
-        addToCart(items, btn).catch(function () {});
+        addToCart(items, b).catch(function () {});
       });
     });
   }
+
 
   /* ---------- Dispatch estimate (business days, store time zone) ---------- */
   function initDispatch(ctx) {
