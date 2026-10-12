@@ -1,0 +1,62 @@
+# LuxeMail: LuxeDealers' own email automation
+
+A Cloudflare Worker (free tier) with a D1 database, sending through Resend. Shopify ignores this folder; it isn't part of the theme.
+Live at `https://luxemail-main.turbozzgeezzz.workers.dev` (`/health` shows the status).
+
+## Status: built, sending OFF
+
+`SENDING_ENABLED = "0"` in `wrangler.toml`. Sign-ups, browsing, carts and checkouts are recorded and emails are queued,
+but nothing is sent and no discount codes are created. To go live (owner approval needed):
+
+1. Add `luxedealers.com` (or `send.luxedealers.com`) as a domain in Resend and add its DNS records in Cloudflare.
+2. When Resend shows it as verified, set `SENDING_ENABLED = "1"` and run `./deploy.sh`.
+3. Switch off the SendWILL pop-up app embed (Theme settings > App embeds). LuxeMail's welcome email gives the 10% code instead.
+4. Paste `pixel.js` into Shopify admin > Settings > Customer events > Add custom pixel, then Connect.
+
+## What LuxeMail may do in Shopify
+
+Read products, collections, blog posts and orders, and **create discount codes**. Nothing else: it never edits customers,
+products, webhooks or settings. Unsubscribes are kept in LuxeMail's own list.
+
+## Who gets email
+
+Only people on LuxeMail's own list (Spam Act):
+- anyone who signs up with a newsletter form (footer, pop-up, homepage, password page; the form says they agree to marketing emails), or
+- signed-in customers whose Shopify account already accepts marketing.
+
+Every email says why they're getting it and has a one-click unsubscribe. Consent is re-checked right before every send.
+
+## What it sends
+
+| Flow | When | Offer |
+|---|---|---|
+| welcome1 | Straight after sign-up | Unique WELCOME10-XXXXX: 10%, single use, 30 days |
+| welcome2 | Day 3, if no order | The same code |
+| welcome3 | Day 7, if no order (once per address ever) | Unique WELCOME15-XXXXX: 15%, 3 days |
+| checkout1 / checkout2 | Checkout not finished: after 4 h, then 2 days | checkout2: unique BACK5-XXXXX, 5%, 7 days |
+| cart1 / cart2 | Added to bag, no checkout: after 4 h, then 20 h later | cart2: unique BACK5-XXXXX |
+| browse | Viewed products 1-3 days ago, no cart or order; max weekly | none |
+| wishlist | Saved items 3+ days ago, not bought; max fortnightly | none |
+| postpurchase | 7 days after an order | Unique NEXT10-XXXXX: 10% off next order, 30 days |
+| nextreminder | A week before that code ends, if no new order | The same code |
+| vip | Verified orders total VIP_SPEND_CENTS+ | Unique VIP15-XXXXX: 15%, 30 days |
+| winback | Last order LAPSED_DAYS+ ago; once a quarter | Unique COMEBACK15-XXXXX: 15%, 14 days |
+| fortnight | Every second Tuesday evening, whole list, rotating: new arrivals (NEWIN10 shared code), picked for you, top picks, journal (INSIDER10 shared code) | |
+| weekly report | Mondays to ADMIN_EMAIL | |
+
+Rules: one email per person per 20 hours; at most DAILY_SEND_LIMIT a day; every code is a real Shopify discount whose
+expiry is stated in the email; previews never create codes. Spend-and-save tiers appear in emails only when
+TIER1_SPEND_CENTS is set (match them to the automatic discounts in Shopify).
+
+## Inputs
+
+- `POST /t`: theme beacon (`assets/theme.js`): product views, bag adds, wishlist saves, sign-ups. The theme's endpoint is
+  Theme settings > Email tracking.
+- `POST /p`: Shopify custom pixel (`pixel.js`): checkouts and orders. Ignored unless the email is a subscriber.
+- `/u`: unsubscribe.
+
+## Deploy
+
+With CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID, RESEND_API_KEY, MAIN_SHOPIFY_CLIENT_ID and MAIN_SHOPIFY_CLIENT_SECRET set: `./deploy.sh`
+(safe to rerun). Preview any email: `/preview?flow=welcome1&key=UNSUB_SECRET` (fortnight takes `&theme=new|picks|best|blog`).
+Email images: `node tools/assets.mjs`.

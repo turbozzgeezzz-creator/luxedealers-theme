@@ -22,7 +22,7 @@
   assign jd = product.metafields.judgeme.review_widget_data.value
   assign rcount = product.metafields.reviews.rating_count.value | default: 0
 -%}
-<section class="pdp" data-product data-product-handle="{{ product.handle }}" data-update-url="true">
+<section class="pdp" data-product data-product-handle="{{ product.handle }}" data-product-id="{{ product.id }}" data-product-title="{{ product.title | escape }}" data-update-url="true">
   <div class="container">
     <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}">
       <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span>

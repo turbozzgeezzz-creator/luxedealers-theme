@@ -394,6 +394,7 @@
     }).then(function (res) {
       if (L.cartType === 'page' && !$('#main-cart')) { window.location.href = L.routes.cart; return res; }
       renderSections(res.sections);
+      (res.items || []).forEach(function (it) { beacon({ t: 'cart', h: it.handle, p: String(it.product_id), ti: it.product_title }); });
       var open = $$('.popup.is-open'); open.forEach(closeDrawer);
       openDrawer('CartDrawer', btn);
       announce(L.strings.added);
@@ -703,7 +704,7 @@
     storeSet(WISH, list.slice(0, 60));
     initWishButtons();
     toast(i > -1 ? b.dataset.removedText || 'Removed from wishlist' : b.dataset.addedText || 'Saved to wishlist');
-    if (L.mail && L.mail.endpoint && i === -1) beacon({ type: 'wishlist', handle: h });
+    beacon({ t: i === -1 ? 'wishlist' : 'unwishlist', h: h });
   });
   function renderHandles(container, handles, emptyEl) {
     if (!container) return;
@@ -749,7 +750,7 @@
   if (current) {
     var h = current.dataset.productHandle, rv = storeGet(RV, []).filter(function (x) { return x !== h; });
     rv.unshift(h); storeSet(RV, rv.slice(0, 16));
-    if (L.mail && L.mail.endpoint) beacon({ type: 'view', handle: h });
+    beacon({ t: 'view', h: h, p: current.dataset.productId, ti: current.dataset.productTitle });
   }
   $$('[data-recently-viewed]').forEach(function (g) {
     var exclude = current ? current.dataset.productHandle : null;
@@ -769,17 +770,21 @@
   });
 
   /* ---------- LuxeMail beacon (only when an endpoint is configured) ---------- */
+  // Body: { cid, t?, h?, p?, ti?, e?, fn?, c?, src?, pg }. An email is only sent with c = 1: a sign-up,
+  // or a signed-in customer who already accepts marketing emails.
   function beacon(body) {
     if (!L.mail || !L.mail.endpoint) return;
     try {
       var id = storeGet('luxe:cid', null);
       if (!id) { id = Math.random().toString(36).slice(2) + Date.now().toString(36); storeSet('luxe:cid', id); }
-      body.cid = id; body.page = window.location.pathname;
-      if (L.mail.email) body.email = L.mail.email;
+      body.cid = id; body.pg = window.location.pathname;
+      if (!body.e && L.mail.email) { body.e = L.mail.email; body.fn = L.mail.firstName || null; body.c = 1; body.src = 'account'; }
+      var url = L.mail.endpoint.replace(/\/$/, ''); if (!/\/t$/.test(url)) url += '/t';
       var blob = new Blob([JSON.stringify(body)], { type: 'text/plain' });
-      if (navigator.sendBeacon) navigator.sendBeacon(L.mail.endpoint.replace(/\/$/, '') + '/t', blob);
+      if (navigator.sendBeacon) navigator.sendBeacon(url, blob);
     } catch (e) {}
   }
+  if (L.mail && L.mail.email && !storeGet('luxe:acct', null)) { storeSet('luxe:acct', 1); beacon({}); }
 
   /* ---------- Newsletter: consent, popup and welcome offer ---------- */
   on(doc, 'submit', function (e) {
@@ -794,7 +799,8 @@
     }
     storeSet('luxe:popup', { done: true, at: Date.now() });
     var email = $('input[type="email"]', f);
-    if (email) beacon({ type: 'signup', email: email.value, consent: consent ? consent.closest('label').textContent.trim() : 'form', source: f.dataset.newsletter });
+    var fname = $('input[name="contact[first_name]"]', f);
+    if (email && email.value) beacon({ e: email.value.trim(), fn: fname ? fname.value.trim() : null, c: 1, src: f.dataset.newsletter || 'newsletter' });
   });
   on(doc, 'click', function (e) {
     var c = e.target.closest('[data-copy]');
