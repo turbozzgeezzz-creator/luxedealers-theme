@@ -235,7 +235,14 @@
     "more": "More from the style desk",
     "shop_eyebrow": "Shop",
     "shop_title": "Free shipping on every order",
-    "shop_cta": "Shop new arrivals"
+    "shop_cta": "Shop new arrivals",
+    "contents": "In this guide",
+    "shop_story": "Shop {{ title }}",
+    "written_by": "Written by",
+    "author_default": "The LuxeDealers style desk: buying guides, care tips and styling ideas.",
+    "shop_text": "Free tracked shipping on every order, plus our refund or reship guarantee.",
+    "shop_cta_col": "Shop {{ title }}",
+    "keep_reading": "Keep reading"
   },
   "sections": {
     "add_collection": "Add a tab and choose a collection.",

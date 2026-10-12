@@ -1163,6 +1163,29 @@
   /* ---------- Footer menus start collapsed on phones ---------- */
   if (window.matchMedia('(max-width: 989px)').matches) $$('.footer__accordion[open]').forEach(function (d) { d.open = false; });
 
+  /* ---------- Blog post: reading progress and table of contents ---------- */
+  (function () {
+    var post = $('[data-post]'); if (!post) return;
+    var bar = $('[data-read-progress]'), content = $('[data-post-content]', post);
+    if (bar) on(window, 'scroll', function () {
+      var r = post.getBoundingClientRect(), total = r.height - window.innerHeight;
+      bar.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / Math.max(total, 1))) + ')';
+    }, { passive: true });
+    var hs = content ? $$('h2', content) : [];
+    var toc = $('[data-toc]'), list = $('[data-toc-list]');
+    if (!toc || hs.length < 3) return;
+    hs.forEach(function (h, i) {
+      if (!h.id) h.id = 'section-' + (i + 1);
+      var li = doc.createElement('li'); li.innerHTML = '<a href="#' + h.id + '">' + escapeHTML(h.textContent.trim()) + '</a>'; list.appendChild(li);
+    });
+    toc.hidden = false;
+    var links = $$('a', list);
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (en) { en.forEach(function (x) { if (x.isIntersecting) { links.forEach(function (l) { l.classList.toggle('is-active', l.getAttribute('href') === '#' + x.target.id); }); } }); }, { rootMargin: '0px 0px -70% 0px' });
+      hs.forEach(function (h) { io.observe(h); });
+    }
+  })();
+
   /* ---------- Promo slider ---------- */
   $$('[data-promo-slider]').forEach(function (wrap) {
     var slides = $$('.promo-slide', wrap), dots = $$('[data-promo-dot]', wrap);

@@ -1,44 +1,92 @@
-{%- assign words = article.content | strip_html | split: ' ' | size -%}
-{%- assign mins = words | divided_by: 200 | at_least: 1 -%}
-<article class="post">
-  <header class="post__head container">
-    <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
-    {%- if article.tags.size > 0 -%}<a class="post-card__tag" href="{{ blog.url }}/tagged/{{ article.tags.first | handleize }}">{{ article.tags.first }}</a>{%- endif -%}
-    <h1 class="post__title">{{ article.title }}</h1>
-    <div class="post__meta">
-      {%- if section.settings.show_author -%}<span>{{ article.author }}</span>{%- endif -%}
-      <span>{{ article.published_at | time_tag: format: 'date' }}</span>
-      <span>{{ 'blog.read_time' | t: count: mins }}</span>
+{%- liquid
+  assign words = article.content | strip_html | split: ' ' | size
+  assign mins = words | divided_by: 200 | at_least: 1
+  assign ah = article.author | handleize
+  assign author_page = pages[ah]
+  assign t = article.title | append: ' ' | append: article.tags | downcase
+  assign shop_handle = section.settings.shop_collection.handle | default: 'new-arrivals'
+  if t contains 'sneaker' or t contains 'shoe'
+    assign shop_handle = 'sneakers-1'
+  elsif t contains 'bag' or t contains 'leather'
+    assign shop_handle = 'handbags'
+  elsif t contains 'jewel' or t contains 'ring' or t contains 'necklace' or t contains 'bracelet'
+    assign shop_handle = 'jewellery'
+  elsif t contains 'watch' or t contains 'strap'
+    assign shop_handle = 'watches'
+  elsif t contains 'fragrance' or t contains 'perfume' or t contains 'scent'
+    assign shop_handle = 'fragances'
+  elsif t contains 'hoodie' or t contains 'jacket' or t contains 'clothing' or t contains 'tee'
+    assign shop_handle = 'clothing'
+  endif
+  assign shop_col = collections[shop_handle]
+-%}
+<div class="read-progress" aria-hidden="true"><span data-read-progress></span></div>
+<article class="post" data-post>
+  <header class="post-hero container">
+    <div class="post-hero__text">
+      <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
+      {%- if article.tags.size > 0 -%}<a class="post-card__tag" href="{{ blog.url }}/tagged/{{ article.tags.first | handleize }}">{{ article.tags.first }}</a>{%- endif -%}
+      <h1 class="post__title">{{ article.title }}</h1>
+      {%- if article.excerpt != blank -%}<p class="post-hero__lead">{{ article.excerpt | strip_html | truncate: 220 }}</p>{%- endif -%}
+      <div class="post-hero__by">
+        <span class="post-hero__avatar" aria-hidden="true">{{ article.author | slice: 0 }}</span>
+        <span><strong>{% if section.settings.show_author %}{% if author_page %}<a href="{{ author_page.url }}">{{ article.author }}</a>{% else %}{{ article.author }}{% endif %}{% else %}{{ shop.name }}{% endif %}</strong><small>{{ article.published_at | time_tag: format: 'date' }} · {{ 'blog.read_time' | t: count: mins }}</small></span>
+      </div>
+    </div>
+    <div class="post-hero__media">
+      {%- if article.image -%}{{ article.image | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 990px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: article.title }}{%- else -%}<img src="{{ 'lx-diamond.svg' | asset_url }}" alt="" width="600" height="600" class="post-hero__ill">{%- endif -%}
     </div>
   </header>
-  {%- if article.image -%}
-    <div class="post__hero container">{{ article.image | image_url: width: 1800 | image_tag: widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 1100px) 1000px, 100vw', loading: 'eager', fetchpriority: 'high', alt: article.title }}</div>
-  {%- endif -%}
-  <div class="post__body container">
-    <div class="rte post__content">{{ article.content }}</div>
+
+  <div class="post__layout container">
+    <aside class="post__toc" data-toc hidden>
+      <p class="post__toc-title">{{ 'blog.contents' | t }}</p>
+      <ol role="list" data-toc-list></ol>
+    </aside>
+    <div class="post__main">
+      <div class="rte post__content" data-post-content>{{ article.content }}</div>
+
+      {%- if shop_col != blank and shop_col.products_count > 0 -%}
+        <section class="post-shop">
+          <div class="post-shop__head"><span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span><h2>{{ 'blog.shop_story' | t: title: shop_col.title }}</h2><a class="pill-link" href="{{ shop_col.url }}">{{ 'sections.view_all' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></div>
+          <div class="post-shop__grid">{%- for p in shop_col.products limit: 4 -%}{% render 'product-card', product: p, reveal: false %}{%- endfor -%}</div>
+        </section>
+      {%- endif -%}
+
+      <div class="post-author">
+        <span class="post-author__avatar" aria-hidden="true">{{ article.author | slice: 0 }}</span>
+        <div>
+          <span class="eyebrow">{{ 'blog.written_by' | t }}</span>
+          <p class="post-author__name">{% if author_page %}<a href="{{ author_page.url }}">{{ article.author }}</a>{% else %}{{ article.author }}{% endif %}</p>
+          <p class="muted">{%- if author_page and author_page.content != blank -%}{{ author_page.content | strip_html | truncate: 200 }}{%- else -%}{{ 'blog.author_default' | t }}{%- endif -%}</p>
+        </div>
+      </div>
+
+      <div class="post__foot">
+        {%- if article.tags.size > 0 -%}<div class="blog__tags">{%- for tag in article.tags -%}<a class="search-chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}</div>{%- endif -%}
+        <div class="post__share">
+          <span>{{ 'products.share' | t }}</span>
+          <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook', class: 'icon--sm' %}</a>
+          <a href="https://www.pinterest.com/pin/create/button/?url={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest', class: 'icon--sm' %}</a>
+          <button type="button" data-copy="{{ request.origin | append: article.url }}" aria-label="{{ 'products.copy_link' | t }}">{% render 'icon', name: 'share', class: 'icon--sm' %}</button>
+        </div>
+      </div>
+    </div>
     <aside class="post__aside">
       <div class="post__card">
         <span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span>
         <p class="post__card-title">{{ 'blog.shop_title' | t }}</p>
-        <a class="btn btn--gold btn--sm" href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}">{{ 'blog.shop_cta' | t }}</a>
-      </div>
-      <div class="post__share">
-        <span>{{ 'products.share' | t }}</span>
-        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook', class: 'icon--sm' %}</a>
-        <a href="https://www.pinterest.com/pin/create/button/?url={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest', class: 'icon--sm' %}</a>
-        <button type="button" data-copy="{{ request.origin | append: article.url }}" aria-label="{{ 'products.copy_link' | t }}">{% render 'icon', name: 'share', class: 'icon--sm' %}</button>
+        <p class="post__card-text">{{ 'blog.shop_text' | t }}</p>
+        {%- if shop_col != blank -%}<a class="btn btn--gold btn--sm" href="{{ shop_col.url }}">{{ 'blog.shop_cta_col' | t: title: shop_col.title }}</a>{%- else -%}<a class="btn btn--gold btn--sm" href="{{ routes.all_products_collection_url }}">{{ 'blog.shop_cta' | t }}</a>{%- endif -%}
       </div>
     </aside>
   </div>
-  <footer class="post__foot container">
-    {%- if article.tags.size > 0 -%}<div class="blog__tags">{%- for tag in article.tags -%}<a class="search-chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}</div>{%- endif -%}
-    <a class="link" href="{{ blog.url }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %} {{ 'blog.back' | t }}</a>
-  </footer>
 </article>
+
 {%- assign more = 0 -%}
-<section class="section section--tight">
+<section class="section section--tight post-more">
   <div class="container">
-    <div class="section-head"><div class="section-head__text"><h2 class="h2">{{ 'blog.more' | t }}</h2></div></div>
+    <div class="section-head"><div class="section-head__text"><span class="eyebrow">{{ 'blog.keep_reading' | t }}</span><h2 class="h2">{{ 'blog.more' | t }}</h2></div><a class="pill-link" href="{{ blog.url }}">{{ 'blog.all_stories' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a></div>
     <div class="posts">
       {%- for a in blog.articles limit: 4 -%}{%- if a.id == article.id or more >= 3 -%}{%- continue -%}{%- endif -%}{% render 'article-card', article: a %}{%- assign more = more | plus: 1 -%}{%- endfor -%}
     </div>
@@ -50,7 +98,7 @@
   "name": "Article",
   "settings": [
     { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
-    { "type": "url", "id": "shop_link", "label": "Shop button link" }
+    { "type": "collection", "id": "shop_collection", "label": "Default products to show", "info": "Used when the article's title and tags don't match a department." }
   ]
 }
 {% endschema %}

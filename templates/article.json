@@ -4,7 +4,7 @@
       "type": "main-article",
       "settings": {
         "show_author": true,
-        "shop_link": "/collections/new-arrivals"
+        "shop_collection": "new-arrivals"
       }
     },
     "signup": {
