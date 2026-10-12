@@ -21,17 +21,6 @@
             "text_3": "Secure checkout"
           }
         },
-        "delivery": {
-          "type": "delivery",
-          "settings": {
-            "title": "Free tracked shipping",
-            "text": "Most orders arrive within 2–3 weeks. You'll get a tracking number by email when it ships."
-          }
-        },
-        "payments": {
-          "type": "payments",
-          "settings": {}
-        },
         "advisor": {
           "type": "advisor",
           "settings": {
@@ -59,8 +48,6 @@
       "block_order": [
         "buy",
         "trust",
-        "delivery",
-        "payments",
         "advisor",
         "set",
         "tabs"

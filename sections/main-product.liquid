@@ -121,6 +121,7 @@
                     -%}
                     {%- if block.settings[tk] != blank -%}<div class="pdp__trust-item">{% render 'icon', name: block.settings[ik] %}<span>{{ block.settings[tk] }}</span></div>{%- endif -%}
                   {%- endfor -%}
+                  <ul class="pdp__trust-pay" role="list" aria-label="{{ 'products.pay_securely' | t }}">{%- for type in shop.enabled_payment_types limit: 7 -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
                 </div>
               {%- when 'delivery' -%}
                 <div class="pdp__delivery" {{ block.shopify_attributes }}>

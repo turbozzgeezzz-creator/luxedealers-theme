@@ -1,7 +1,6 @@
 /* Dark mode. Generated from theme.css and atelier.css by the theme build script; extra hand tweaks at the end. */
 html[data-theme="dark"] { color-scheme: dark; --c-bg: #0C0B09; --c-subtle: #15130F; --c-ink: #F6F3EC; --c-ink-rgb: 246, 243, 236; --c-muted: #A39C8D; --c-border: #2A2620; --c-gold-text: #E6C463; }
 html[data-theme="dark"] body { background: #0C0B09; color: #ECE6D9; }
-html[data-theme="dark"] .btn::after { background: rgba(21,19,15,.92); }
 html[data-theme="dark"] .ph { background: #15130F; }
 html[data-theme="dark"] .ph::before { background: rgba(21,19,15,.92); }
 html[data-theme="dark"] .splash { background: #15130F; }
@@ -259,6 +258,10 @@ html[data-theme="dark"] .badge--new { background: #D4AF37 !important; color: #11
 html[data-theme="dark"] .search-pop { background: #15130F; border-color: rgba(212,175,55,.2); }
 html[data-theme="dark"] .search-pop__products a:hover { background: #1F1B14; }
 html[data-theme="dark"] .sheet__grab span { background: #4A4337; }
+html[data-theme="dark"] .card__title, html[data-theme="dark"] .card__title a, html[data-theme="dark"] .card .price, html[data-theme="dark"] .card .price__current, html[data-theme="dark"] .card__meta { color: #FFFFFF !important; }
+html[data-theme="dark"] .card .price__compare { color: rgba(255,255,255,.5) !important; }
+html[data-theme="dark"] .btn::after { background: linear-gradient(110deg, transparent 30%, rgba(255,240,200,.35) 50%, transparent 70%); }
+html[data-theme="dark"] .btn.is-loading::before { border-color: #111; border-right-color: transparent; }
 html[data-theme="dark"] .tile--gold, html[data-theme="dark"] .tile--gold h2, html[data-theme="dark"] .tile--gold h3, html[data-theme="dark"] .tile--gold .tile__title { color: #111 !important; }
 html[data-theme="dark"] .tile--gold .tile__copy, html[data-theme="dark"] .tile--gold p { color: rgba(17,17,17,.78) !important; }
 html[data-theme="dark"] .tile--gold .tile__eyebrow { color: #3E2E0A !important; }

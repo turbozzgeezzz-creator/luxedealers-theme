@@ -8,11 +8,11 @@
           "settings": {
             "illustration": "lx-watch",
             "theme": "noir",
-            "eyebrow": "Watches",
-            "heading": "Iced out.\nGold on gold.",
-            "text": "Diamond-set bezels, gold tones and steel bracelets.",
+            "eyebrow": "Timepieces",
+            "heading": "Crafted to\nbe noticed.",
+            "text": "Bold dials, polished steel and rich gold tones. Every piece is hand-checked before it ships.",
             "collection": "watches",
-            "show_from": true,
+            "show_from": false,
             "button": "Shop watches",
             "link": "",
             "button_2": "New arrivals",
@@ -24,14 +24,14 @@
           "settings": {
             "illustration": "lx-bag",
             "theme": "onyx",
-            "eyebrow": "Handbags",
-            "heading": "The bag edit",
-            "text": "Quilted flaps, totes, crossbody and shoulder bags.",
+            "eyebrow": "The bag edit",
+            "heading": "Carry the\nicon.",
+            "text": "Quilted leather, gold hardware and timeless silhouettes, chosen for how they wear every day.",
             "collection": "handbags",
-            "show_from": true,
+            "show_from": false,
             "button": "Shop bags",
             "link": "",
-            "button_2": "All bags",
+            "button_2": "View all",
             "link_2": "/collections/bags-3"
           }
         },
@@ -41,10 +41,10 @@
             "illustration": "lx-sneaker",
             "theme": "noir",
             "eyebrow": "Sneakers",
-            "heading": "Step up\nyour rotation",
-            "text": "Low tops, high tops and runners in every colourway.",
+            "heading": "Statement\npairs.",
+            "text": "The colourways everyone asks about, hand-checked and sent with tracking.",
             "collection": "sneakers-1",
-            "show_from": true,
+            "show_from": false,
             "button": "Shop sneakers",
             "link": "",
             "button_2": "All shoes",
@@ -56,13 +56,13 @@
           "settings": {
             "illustration": "lx-perfume",
             "theme": "gold",
-            "eyebrow": "Fragrances",
+            "eyebrow": "Fragrance",
             "heading": "Signature scents",
-            "text": "Find the one they remember.",
+            "text": "A scent they will remember.",
             "collection": "fragances",
-            "show_from": true,
+            "show_from": false,
             "link": "",
-            "button": "Shop fragrances"
+            "button": "Discover"
           }
         },
         "t1": {
@@ -71,12 +71,12 @@
             "illustration": "lx-ring",
             "theme": "noir",
             "eyebrow": "Jewellery",
-            "heading": "Rings, chains\nand bracelets",
+            "heading": "Fine details",
             "collection": "jewellery",
-            "show_from": true,
+            "show_from": false,
             "link": "",
             "opens_popup": false,
-            "button": "Shop"
+            "button": "Explore"
           }
         },
         "t2": {
@@ -85,40 +85,40 @@
             "illustration": "lx-hoodie",
             "theme": "onyx",
             "eyebrow": "Clothing",
-            "heading": "Hoodies, tees\nand jackets",
+            "heading": "Elevated\nessentials",
             "collection": "clothing",
-            "show_from": true,
+            "show_from": false,
             "link": "",
             "opens_popup": false,
-            "button": "Shop"
+            "button": "Explore"
           }
         },
         "t3": {
           "type": "tile",
           "settings": {
-            "illustration": "lx-gift",
+            "illustration": "lx-tote",
             "theme": "gold",
-            "eyebrow": "Gifting",
-            "heading": "Gifts under $50",
-            "collection": "",
+            "eyebrow": "Just landed",
+            "heading": "New this\nseason",
+            "collection": "new-arrivals",
             "show_from": false,
-            "link": "/collections/shop-all?filter.v.price.gte=0&filter.v.price.lte=50",
+            "link": "",
             "opens_popup": false,
-            "button": "Shop gifts"
+            "button": "See what's new"
           }
         },
         "t4": {
           "type": "tile",
           "settings": {
-            "illustration": "lx-parcel",
+            "illustration": "lx-diamond",
             "theme": "noir",
-            "eyebrow": "Shipping",
-            "heading": "Free shipping\non every order",
+            "eyebrow": "Our promise",
+            "heading": "Hand-checked,\nevery order",
             "collection": "",
             "show_from": false,
-            "link": "/policies/shipping-policy",
+            "link": "/pages/why-choose-us",
             "opens_popup": false,
-            "button": "How it works"
+            "button": "Why LuxeDealers"
           }
         }
       },
@@ -281,8 +281,8 @@
     "deals": {
       "type": "deals",
       "settings": {
-        "eyebrow": "Offers",
-        "heading": "Deals, sets and new drops",
+        "eyebrow": "Curated",
+        "heading": "Curated sets and new drops",
         "offer_illustration": "lx-coupon",
         "offer_eyebrow": "New here?",
         "offer_text": "Join our email list and your code appears straight away.",
@@ -487,7 +487,6 @@
     "depts",
     "latest",
     "deals",
-    "budget",
     "why",
     "journal",
     "help",

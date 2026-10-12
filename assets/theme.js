@@ -82,7 +82,16 @@
     entries.forEach(function (en) {
       if (en.isIntersecting) { en.target.classList.add('is-in'); revealObserver.unobserve(en.target); }
     });
-  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }) : null;
+  }, { rootMargin: '0px 0px -4% 0px', threshold: 0 }) : null;
+  // Safety net: anything already on screen, or anything left when you reach the bottom, is shown.
+  function revealVisible() {
+    var vh = window.innerHeight, atEnd = window.innerHeight + window.scrollY >= doc.documentElement.scrollHeight - 40;
+    $$('[data-reveal]:not(.is-in), [data-split]:not(.is-in)').forEach(function (el) {
+      if (atEnd || el.getBoundingClientRect().top < vh) { el.classList.add('is-in'); if (revealObserver) revealObserver.unobserve(el); }
+    });
+  }
+  window.addEventListener('scroll', function () { clearTimeout(revealVisible.t); revealVisible.t = setTimeout(revealVisible, 120); }, { passive: true });
+  window.addEventListener('load', function () { setTimeout(revealVisible, 600); });
   function initReveals(ctx) {
     prepareSplit(ctx);
     $$('[data-stagger]', ctx).forEach(function (wrap) {
