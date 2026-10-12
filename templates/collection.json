@@ -1,8 +1,15 @@
 {
   "sections": {
-    "main": { "type": "main-collection", "settings": { "per_page": 24, "columns": "3", "show_description": true, "show_image": true } },
-    "newsletter": { "type": "newsletter", "settings": { "style": "subtle", "eyebrow": "The private list", "heading": "First to know,\nfirst to own", "show_offer": true } },
-    "recent": { "type": "recently-viewed", "settings": { "heading": "Recently viewed", "limit": 8 } }
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "per_page": 24,
+        "show_description": true,
+        "chips_menu": "main-menu-1"
+      }
+    }
   },
-  "order": ["main", "recent", "newsletter"]
+  "order": [
+    "main"
+  ]
 }
