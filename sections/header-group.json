@@ -54,10 +54,22 @@
             "opens_popup": false,
             "needs_code": false
           }
+        },
+        "m5": {
+          "type": "message",
+          "settings": {
+            "icon": "gift",
+            "text": "Spend more, save up to 10%",
+            "link": "",
+            "opens_popup": false,
+            "needs_code": false,
+            "needs_tiers": true
+          }
         }
       },
       "block_order": [
         "m0",
+        "m5",
         "m1",
         "m2",
         "m3",
