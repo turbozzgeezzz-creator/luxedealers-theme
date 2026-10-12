@@ -3,7 +3,7 @@
   tracking follow the visitor's choice. Shopify decides where consent is needed (e.g. the EU, UK):
   the banner only appears there. If another cookie app is still active, this stays hidden.
 {%- endcomment -%}
-{%- if settings.cookie_banner -%}
+{%- unless settings.cookie_banner == false -%}
 <div class="cookies" id="CookieBanner" role="dialog" aria-live="polite" aria-labelledby="CookieTitle" hidden data-cookie-banner>
   <div class="cookies__card">
     <div class="cookies__head">
@@ -24,4 +24,4 @@
     </div>
   </div>
 </div>
-{%- endif -%}
+{%- endunless -%}
