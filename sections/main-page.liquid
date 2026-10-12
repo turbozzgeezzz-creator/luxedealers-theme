@@ -1,13 +1,9 @@
 {%- if section.settings.show_title -%}
-  <div class="page-hero">
-    <div class="container page-hero__inner">
-      <h1 class="h1" data-split>{{ page.title }}</h1>
-    </div>
-  </div>
+  {% render 'page-banner', title: page.title, art: section.settings.art %}
 {%- endif -%}
 {%- if page.content != blank -%}
-  <div class="container container--narrow" style="padding-bottom: var(--section-pad)">
-    <div class="rte" data-reveal>{{ page.content }}</div>
+  <div class="container page-body">
+    <div class="page-body__card rte" data-reveal>{{ page.content }}</div>
   </div>
 {%- endif -%}
 
@@ -15,7 +11,10 @@
 {
   "name": "Page content",
   "settings": [
-    { "type": "checkbox", "id": "show_title", "label": "Show page title", "default": true }
+    { "type": "checkbox", "id": "show_title", "label": "Show page title", "default": true },
+    { "type": "select", "id": "art", "label": "Illustration", "default": "diamond", "options": [
+      { "value": "diamond", "label": "Diamond" }, { "value": "envelope", "label": "Envelope" }, { "value": "gift", "label": "Gift" },
+      { "value": "parcel", "label": "Parcel" }, { "value": "coupon", "label": "Coupon" } ] }
   ]
 }
 {% endschema %}

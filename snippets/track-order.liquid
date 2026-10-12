@@ -1,5 +1,6 @@
 {%- comment -%} Order tracking help, shown on /pages/track-your-order (and the track-order page template). {%- endcomment -%}
-<div class="page-hero"><div class="container page-hero__inner"><span class="eyebrow">{{ 'track.eyebrow' | t }}</span><h1 class="h1">{{ 'track.title' | t }}</h1><p>{{ 'track.intro' | t }}</p></div></div>
+{%- assign tt = 'track.title' | t -%}{%- assign te = 'track.eyebrow' | t -%}{%- assign tx = 'track.intro' | t -%}
+{% render 'page-banner', title: tt, eyebrow: te, text: tx, art: 'parcel' %}
 <section class="section section--flush-top">
   <div class="container track">
     <ol class="track__steps" role="list">

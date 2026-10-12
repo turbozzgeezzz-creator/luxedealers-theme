@@ -1,33 +1,44 @@
 {%- assign s = section.settings -%}
-<section class="section section--flush-top">
-  <div class="container contact-layout">
-    <div class="contact-details" data-reveal>
-      {%- if s.text != blank -%}<div class="rte muted">{{ s.text }}</div>{%- endif -%}
-      <dl class="contact-details">
-        {%- if settings.support_email != blank -%}<div><dt>{{ 'contact.email' | t }}</dt><dd><a href="mailto:{{ settings.support_email }}" class="link" style="text-transform: none; letter-spacing: .02em; font-size: var(--fs-md)">{{ settings.support_email }}</a></dd></div>{%- endif -%}
-        {%- if settings.support_phone != blank -%}<div><dt>{{ 'contact.phone' | t }}</dt><dd><a href="tel:{{ settings.support_phone | remove: ' ' }}">{{ settings.support_phone }}</a></dd></div>{%- endif -%}
-        {%- if settings.support_hours != blank -%}<div><dt>{{ 'contact.hours' | t }}</dt><dd>{{ settings.support_hours }}</dd></div>{%- endif -%}
-        {%- if settings.store_address != blank -%}<div><dt>{{ 'contact.address' | t }}</dt><dd>{{ settings.store_address | newline_to_br }}</dd></div>{%- endif -%}
-      </dl>
+<section class="section section--tight">
+  <div class="container contact2">
+    <div class="contact2__ways" data-reveal>
+      <p class="eyebrow">{{ 'contact.ways' | t }}</p>
+      {%- if s.text != blank -%}<div class="rte muted contact2__intro">{{ s.text }}</div>{%- endif -%}
+      <div class="contact2__cards">
+        {%- if settings.support_email != blank -%}
+          <a class="contact2__card" href="mailto:{{ settings.support_email }}"><span class="contact2__ico">{% render 'icon', name: 'mail' %}</span><span><strong>{{ 'contact.email_title' | t }}</strong><span class="contact2__val">{{ settings.support_email }}</span><small>{{ 'contact.email_text' | t }}</small></span></a>
+        {%- endif -%}
+        <div class="contact2__card"><span class="contact2__ico">{% render 'icon', name: 'chat' %}</span><span><strong>{{ 'contact.chat_title' | t }}</strong><small>{{ 'contact.chat_text' | t }}</small></span></div>
+        {%- if s.track_link != blank -%}<a class="contact2__card" href="{{ s.track_link }}"><span class="contact2__ico">{% render 'icon', name: 'truck' %}</span><span><strong>{{ 'contact.track_title' | t }}</strong><small>{{ 'contact.track_text' | t }}</small></span>{% render 'icon', name: 'arrow-right', class: 'icon--sm contact2__go' %}</a>{%- endif -%}
+        {%- if s.faq_link != blank -%}<a class="contact2__card" href="{{ s.faq_link }}"><span class="contact2__ico">{% render 'icon', name: 'help' %}</span><span><strong>{{ 'contact.faq_title' | t }}</strong><small>{{ 'contact.faq_text' | t }}</small></span>{% render 'icon', name: 'arrow-right', class: 'icon--sm contact2__go' %}</a>{%- endif -%}
+      </div>
+      {%- if settings.support_hours != blank -%}<p class="muted contact2__hours">{{ 'contact.hours' | t }}: {{ settings.support_hours }}</p>{%- endif -%}
       {% render 'social-links' %}
     </div>
-    <div data-reveal>
+    <div class="contact2__form" data-reveal>
+      <h2 class="h3">{{ 'contact.form_title' | t }}</h2>
+      <p class="muted">{{ 'contact.form_text' | t }}</p>
       {%- form 'contact', id: 'ContactForm', class: 'form-grid' -%}
         {%- if form.posted_successfully? -%}
           <p class="form-message form-message--success" role="status" tabindex="-1" data-autofocus>{{ 'contact.success' | t }}</p>
         {%- elsif form.errors -%}
           <div class="form-message form-message--error" role="alert">{{ form.errors | default_errors }}</div>
         {%- endif -%}
+        <fieldset class="contact2__topics">
+          <legend class="field__label">{{ 'contact.topic' | t }}</legend>
+          {%- assign topics = 'topic_order,topic_product,topic_refund,topic_other' | split: ',' -%}
+          {%- for k in topics -%}
+            {%- assign lbl = 'contact.' | append: k | t -%}
+            <input type="radio" id="ct-{{ k }}" name="contact[topic]" value="{{ lbl | escape }}"{% if forloop.first %} checked{% endif %} class="visually-hidden"><label for="ct-{{ k }}" class="search-chip">{{ lbl }}</label>
+          {%- endfor -%}
+        </fieldset>
         <div class="form-grid form-grid--2">
           <div class="field"><label class="field__label" for="ContactName">{{ 'contact.name' | t }}</label><input class="field__input" id="ContactName" name="contact[name]" autocomplete="name" value="{{ form.name }}"></div>
           <div class="field"><label class="field__label" for="ContactEmail">{{ 'contact.email' | t }} *</label><input class="field__input" id="ContactEmail" type="email" name="contact[email]" autocomplete="email" required value="{{ form.email }}"></div>
         </div>
-        <div class="form-grid form-grid--2">
-          <div class="field"><label class="field__label" for="ContactPhone">{{ 'contact.phone' | t }}</label><input class="field__input" id="ContactPhone" type="tel" name="contact[phone]" autocomplete="tel" value="{{ form.phone }}"></div>
-          <div class="field"><label class="field__label" for="ContactOrder">{{ 'contact.order' | t }}</label><input class="field__input" id="ContactOrder" name="contact[order]" value="{{ form.order }}"></div>
-        </div>
+        <div class="field"><label class="field__label" for="ContactOrder">{{ 'contact.order' | t }}</label><input class="field__input" id="ContactOrder" name="contact[order]" placeholder="#1001" value="{{ form.order }}"></div>
         <div class="field"><label class="field__label" for="ContactMessage">{{ 'contact.message' | t }} *</label><textarea class="field__input" id="ContactMessage" name="contact[body]" rows="6" required>{{ form.body }}</textarea></div>
-        <div><button type="submit" class="btn">{{ 'contact.send' | t }}</button></div>
+        <button type="submit" class="btn btn--gold contact2__send">{% render 'icon', name: 'mail', class: 'icon--sm' %} {{ 'contact.send' | t }}</button>
       {%- endform -%}
     </div>
   </div>
@@ -38,7 +49,9 @@
   "name": "Contact",
   "class": "section-contact",
   "settings": [
-    { "type": "richtext", "id": "text", "label": "Intro text", "default": "<p>Questions about a piece, an order or sizing? Write to us and our team will reply by email.</p>" }
+    { "type": "richtext", "id": "text", "label": "Intro text", "default": "<p>Questions about a piece, an order or sizing? Write to us and our team will reply by email.</p>" },
+    { "type": "url", "id": "track_link", "label": "Track order link" },
+    { "type": "url", "id": "faq_link", "label": "FAQ link" }
   ],
   "presets": [{ "name": "Contact" }]
 }

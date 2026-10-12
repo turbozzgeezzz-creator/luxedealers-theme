@@ -220,6 +220,22 @@
     "privacy": "Privacy policy"
   },
   "contact": {
+    "ways": "Ways to reach us",
+    "email_title": "Email us",
+    "email_text": "Real people reply to every message.",
+    "chat_title": "Live chat",
+    "chat_text": "Tap Chat at the bottom right of any page.",
+    "track_title": "Track an order",
+    "track_text": "Follow your parcel with your tracking number.",
+    "faq_title": "Quick answers",
+    "faq_text": "Shipping, sizing, payments and refunds.",
+    "form_title": "Send us a message",
+    "form_text": "Add your order number if it's about an order.",
+    "topic": "What's it about?",
+    "topic_order": "An order",
+    "topic_product": "A product or sizing",
+    "topic_refund": "Refund or reship",
+    "topic_other": "Something else",
     "name": "Name",
     "email": "Email",
     "phone": "Phone",
@@ -252,6 +268,7 @@
     "keep_reading": "Keep reading"
   },
   "sections": {
+    "from_reviews": "from {{ count }} reviews",
     "add_collection": "Add a tab and choose a collection.",
     "empty_collection": "This collection has no products yet.",
     "view_all": "View all",

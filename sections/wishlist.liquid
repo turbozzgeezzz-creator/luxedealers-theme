@@ -1,10 +1,5 @@
-<div class="page-hero">
-  <div class="container page-hero__inner">
-    <span class="eyebrow">{{ section.settings.eyebrow }}</span>
-    <h1 class="h1" data-split>{{ section.settings.heading }}</h1>
-    <p>{{ 'wishlist.note' | t }}</p>
-  </div>
-</div>
+{%- assign wn = 'wishlist.note' | t -%}
+{% render 'page-banner', title: section.settings.heading, eyebrow: section.settings.eyebrow, text: wn, art: 'tote' %}
 <div class="container" style="padding-bottom: var(--section-pad)">
   <div class="product-grid product-grid--4" data-wishlist-grid></div>
   <div class="wishlist-empty" data-wishlist-empty hidden>

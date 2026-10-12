@@ -1,22 +1,40 @@
-{%- assign s = section.settings -%}
-<section class="page-hero{% if s.image != blank %} page-hero--image{% endif %}">
-  {%- if s.image != blank -%}<div class="page-hero__media" data-parallax style="--parallax: 40px">{% render 'image', image: s.image, sizes: '100vw', loading: 'eager' %}</div>{%- endif -%}
-  <div class="container page-hero__inner">
-    {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
-    <h1 class="h1" data-split>{{ s.heading | default: page.title | newline_to_br }}</h1>
-    {%- if s.text != blank -%}<p data-reveal>{{ s.text }}</p>{%- endif -%}
-  </div>
-</section>
+{%- liquid
+  assign s = section.settings
+  assign art = s.art
+  if art == 'auto'
+    assign h = page.handle | default: request.path
+    assign art = 'diamond'
+    if h contains 'contact'
+      assign art = 'envelope'
+    elsif h contains 'faq'
+      assign art = 'gift'
+    elsif h contains 'size'
+      assign art = 'heel'
+    elsif h contains 'track'
+      assign art = 'parcel'
+    elsif h contains 'review'
+      assign art = 'ring'
+    elsif h contains 'why' or h contains 'about'
+      assign art = 'watch'
+    endif
+  endif
+  assign title = s.heading | default: page.title | newline_to_br
+-%}
+{% render 'page-banner', title: title, eyebrow: s.eyebrow, text: s.text, art: art, meta: s.show_meta %}
 
 {% schema %}
 {
   "name": "Page header",
   "class": "section-page-hero",
   "settings": [
-    { "type": "image_picker", "id": "image", "label": "Background image" },
     { "type": "text", "id": "eyebrow", "label": "Small heading" },
     { "type": "textarea", "id": "heading", "label": "Heading", "info": "Leave empty to use the page title." },
-    { "type": "text", "id": "text", "label": "Text" }
+    { "type": "text", "id": "text", "label": "Text" },
+    { "type": "select", "id": "art", "label": "Illustration", "default": "auto", "options": [
+      { "value": "auto", "label": "Automatic" }, { "value": "diamond", "label": "Diamond" }, { "value": "envelope", "label": "Envelope" },
+      { "value": "gift", "label": "Gift" }, { "value": "parcel", "label": "Parcel" }, { "value": "ring", "label": "Ring" }, { "value": "watch", "label": "Watch" },
+      { "value": "heel", "label": "Heel" }, { "value": "bag", "label": "Bag" }, { "value": "sneaker", "label": "Sneaker" }, { "value": "coupon", "label": "Coupon" } ] },
+    { "type": "checkbox", "id": "show_meta", "label": "Show rating and promises", "default": false }
   ],
   "presets": [{ "name": "Page header" }]
 }
