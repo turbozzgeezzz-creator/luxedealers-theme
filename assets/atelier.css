@@ -1324,7 +1324,7 @@ html[data-motion="off"] .header__pill::after { animation: none; }
 
 /* Policies get the same banner look */
 .shopify-policy__container { max-width: min(1200px, calc(100% - 2 * var(--gutter))) !important; margin: 16px auto var(--section-pad) !important; padding: 0 !important; border: 0; background: none; }
-.shopify-policy__title { position: relative; overflow: hidden; min-height: 200px; display: flex; align-items: center; margin-bottom: clamp(20px, 3vw, 40px); padding: clamp(24px, 3vw, 44px); border: 0; border-radius: 24px; background: url(lx-coupon.svg) right 4% center / min(260px, 34%) no-repeat, radial-gradient(120% 90% at 75% 35%, #3A2B12 0%, #17110A 45%, #070605 100%); }
+.shopify-policy__title { position: relative; overflow: hidden; min-height: 200px; display: flex; align-items: center; margin-bottom: clamp(20px, 3vw, 40px); padding: clamp(24px, 3vw, 44px); border: 0; border-radius: 24px; background: url(lx-diamond.svg) right 4% center / min(260px, 34%) no-repeat, radial-gradient(120% 90% at 75% 35%, #3A2B12 0%, #17110A 45%, #070605 100%); }
 .shopify-policy__title h1 { color: #fff; font-size: clamp(32px, 2.6vw + 16px, 60px); }
 .shopify-policy__body { max-width: 860px; margin-inline: auto; padding: clamp(22px, 4vw, 52px); border: 1px solid var(--c-border); border-radius: 24px; background: #fff; }
 @media (max-width: 749px) { .shopify-policy__title { background-size: 120px auto, auto; background-position: right -10px bottom -10px, center; align-items: flex-start; } }
