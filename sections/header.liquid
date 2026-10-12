@@ -136,9 +136,33 @@
                         </div>
                       {%- endif -%}
                     </div>
-                    <div class="mega__features">
-                      {%- render 'menu-visual', link: link, blocks: section.blocks, mode: 'mega' -%}
-                    </div>
+                    {%- liquid
+                      assign mc = nil
+                      if link.type == 'collection_link'
+                        assign mc = link.object
+                      else
+                        for child in link.links
+                          if child.type == 'collection_link'
+                            assign mc = child.object
+                            break
+                          endif
+                        endfor
+                      endif
+                    -%}
+                    {%- if mc != nil and mc.products_count > 0 -%}
+                      <div class="mega__shots">
+                        {%- for p in mc.products limit: 3 -%}
+                          {%- if p.featured_media -%}
+                            <a class="mega__shot" href="{{ p.url }}">
+                              <span class="mega__shot-img">{{ p.featured_media.preview_image | image_url: width: 300 | image_tag: width: 150, height: 150, loading: 'lazy', alt: '' }}</span>
+                              <span class="mega__shot-name">{{ p.title }}</span>
+                              <span class="mega__shot-price">{{ p.price | money }}</span>
+                            </a>
+                          {%- endif -%}
+                        {%- endfor -%}
+                        <a class="mega__shot-all" href="{{ mc.url }}">{{ 'header.shop_all' | t: title: mc.title }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
+                      </div>
+                    {%- endif -%}
                   </div>
                 </div>
               {%- endif -%}

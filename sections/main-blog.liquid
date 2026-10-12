@@ -1,24 +1,39 @@
-<div class="page-hero">
+<div class="page-hero blog-hero">
   <div class="container page-hero__inner">
-    <span class="eyebrow">{{ 'blog.journal' | t }}</span>
-    <h1 class="h1" data-split>{{ blog.title }}</h1>
-    {%- if blog.all_tags.size > 0 -%}
-      <div class="predictive__terms" style="justify-content: center; margin: 12px 0 0">
-        <a class="chip{% unless current_tags %} chip--active{% endunless %}" href="{{ blog.url }}">{{ 'blog.all' | t }}</a>
-        {%- for tag in blog.all_tags -%}<a class="chip{% if current_tags contains tag %} chip--active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}
-      </div>
-    {%- endif -%}
+    <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+    <h1 class="h1">{{ blog.title }}</h1>
+    {%- if section.settings.text != blank -%}<p>{{ section.settings.text }}</p>{%- endif -%}
   </div>
 </div>
-<div class="container" style="padding-bottom: var(--section-pad)">
-  {%- paginate blog.articles by 9 -%}
-    <div class="posts" data-stagger>
-      {%- for article in blog.articles -%}{% render 'article-card', article: article %}{%- endfor -%}
-    </div>
+<div class="container blog">
+  {%- if blog.all_tags.size > 0 -%}
+    <nav class="blog__tags" aria-label="{{ 'blog.topics' | t }}">
+      <a class="search-chip{% unless current_tags %} is-active{% endunless %}" href="{{ blog.url }}">{{ 'blog.all' | t }}</a>
+      {%- for tag in blog.all_tags limit: section.settings.tag_limit -%}<a class="search-chip{% if current_tags contains tag %} is-active{% endif %}" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}
+    </nav>
+  {%- endif -%}
+  {%- paginate blog.articles by 10 -%}
+    {%- for article in blog.articles -%}
+      {%- if forloop.first and paginate.current_page == 1 and current_tags == blank -%}
+        {% render 'article-card', article: article, featured: true %}
+        <div class="posts">
+      {%- else -%}
+        {%- if forloop.first -%}<div class="posts">{%- endif -%}
+        {% render 'article-card', article: article %}
+      {%- endif -%}
+      {%- if forloop.last -%}</div>{%- endif -%}
+    {%- endfor -%}
     {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
   {%- endpaginate -%}
 </div>
 
 {% schema %}
-{ "name": "Blog" }
+{
+  "name": "Blog",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "The style desk" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Guides, care tips and style inspiration from the LuxeDealers team." },
+    { "type": "range", "id": "tag_limit", "label": "Topics to show", "min": 0, "max": 20, "step": 1, "default": 8 }
+  ]
+}
 {% endschema %}

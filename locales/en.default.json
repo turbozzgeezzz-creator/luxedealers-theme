@@ -220,7 +220,14 @@
     "all": "All",
     "all_stories": "All stories",
     "back": "Back to the Journal",
-    "placeholder": "Your first story"
+    "placeholder": "Your first story",
+    "read_time": "{{ count }} min read",
+    "read": "Read the guide",
+    "topics": "Topics",
+    "more": "More from the style desk",
+    "shop_eyebrow": "Shop",
+    "shop_title": "Free shipping on every order",
+    "shop_cta": "Shop new arrivals"
   },
   "sections": {
     "add_collection": "Add a tab and choose a collection.",

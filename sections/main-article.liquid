@@ -1,26 +1,56 @@
-<article class="container" style="padding-block: clamp(48px, 7vw, 110px) var(--section-pad)">
-  <div class="article">
-    <div class="page-hero__inner" style="text-align: center">
-      <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
-      <h1 class="h1" data-split>{{ article.title }}</h1>
-      <div class="article__meta">{{ article.published_at | time_tag: format: 'date' }}{% if section.settings.show_author %}<span>{{ article.author }}</span>{% endif %}</div>
+{%- assign words = article.content | strip_html | split: ' ' | size -%}
+{%- assign mins = words | divided_by: 200 | at_least: 1 -%}
+<article class="post">
+  <header class="post__head container">
+    <nav class="breadcrumbs" aria-label="{{ 'general.breadcrumbs' | t }}"><a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span><a href="{{ blog.url }}">{{ blog.title }}</a></nav>
+    {%- if article.tags.size > 0 -%}<a class="post-card__tag" href="{{ blog.url }}/tagged/{{ article.tags.first | handleize }}">{{ article.tags.first }}</a>{%- endif -%}
+    <h1 class="post__title">{{ article.title }}</h1>
+    <div class="post__meta">
+      {%- if section.settings.show_author -%}<span>{{ article.author }}</span>{%- endif -%}
+      <span>{{ article.published_at | time_tag: format: 'date' }}</span>
+      <span>{{ 'blog.read_time' | t: count: mins }}</span>
+    </div>
+  </header>
+  {%- if article.image -%}
+    <div class="post__hero container">{{ article.image | image_url: width: 1800 | image_tag: widths: '600, 900, 1200, 1500, 1800', sizes: '(min-width: 1100px) 1000px, 100vw', loading: 'eager', fetchpriority: 'high', alt: article.title }}</div>
+  {%- endif -%}
+  <div class="post__body container">
+    <div class="rte post__content">{{ article.content }}</div>
+    <aside class="post__aside">
+      <div class="post__card">
+        <span class="eyebrow">{{ 'blog.shop_eyebrow' | t }}</span>
+        <p class="post__card-title">{{ 'blog.shop_title' | t }}</p>
+        <a class="btn btn--gold btn--sm" href="{{ section.settings.shop_link | default: routes.all_products_collection_url }}">{{ 'blog.shop_cta' | t }}</a>
+      </div>
+      <div class="post__share">
+        <span>{{ 'products.share' | t }}</span>
+        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Facebook">{% render 'icon', name: 'facebook', class: 'icon--sm' %}</a>
+        <a href="https://www.pinterest.com/pin/create/button/?url={{ request.origin | append: article.url | url_encode }}" target="_blank" rel="noopener" aria-label="Pinterest">{% render 'icon', name: 'pinterest', class: 'icon--sm' %}</a>
+        <button type="button" data-copy="{{ request.origin | append: article.url }}" aria-label="{{ 'products.copy_link' | t }}">{% render 'icon', name: 'share', class: 'icon--sm' %}</button>
+      </div>
+    </aside>
+  </div>
+  <footer class="post__foot container">
+    {%- if article.tags.size > 0 -%}<div class="blog__tags">{%- for tag in article.tags -%}<a class="search-chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}</div>{%- endif -%}
+    <a class="link" href="{{ blog.url }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %} {{ 'blog.back' | t }}</a>
+  </footer>
+</article>
+{%- assign more = 0 -%}
+<section class="section section--tight">
+  <div class="container">
+    <div class="section-head"><div class="section-head__text"><h2 class="h2">{{ 'blog.more' | t }}</h2></div></div>
+    <div class="posts">
+      {%- for a in blog.articles limit: 4 -%}{%- if a.id == article.id or more >= 3 -%}{%- continue -%}{%- endif -%}{% render 'article-card', article: a %}{%- assign more = more | plus: 1 -%}{%- endfor -%}
     </div>
   </div>
-  {%- if article.image -%}<div class="media article__hero" data-reveal="mask" style="max-width: 1200px; margin-inline: auto">{% render 'image', image: article.image, sizes: '(min-width: 1200px) 1200px, 100vw', loading: 'eager' %}</div>{%- endif -%}
-  <div class="article">
-    <div class="rte article__content" data-reveal>{{ article.content }}</div>
-    {%- if article.tags.size > 0 -%}
-      <div class="predictive__terms" style="margin-top: 40px">{%- for tag in article.tags -%}<a class="chip" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>{%- endfor -%}</div>
-    {%- endif -%}
-    <p style="margin-top: 48px"><a class="link" href="{{ blog.url }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %} {{ 'blog.back' | t }}</a></p>
-  </div>
-</article>
+</section>
 
 {% schema %}
 {
   "name": "Article",
   "settings": [
-    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": false }
+    { "type": "checkbox", "id": "show_author", "label": "Show author", "default": true },
+    { "type": "url", "id": "shop_link", "label": "Shop button link" }
   ]
 }
 {% endschema %}
