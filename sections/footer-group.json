@@ -9,51 +9,64 @@
           "type": "brand",
           "settings": {
             "title": "LuxeDealers",
-            "text": "<p>Shop premium 1:1 inspired fashion including clothing, handbags, shoes and accessories. Hand-checked and sent with tracking to most countries.</p>",
-            "show_newsletter": false
+            "text": "<p>Shop premium 1:1 inspired fashion including clothing, handbags, shoes and accessories, with free tracked shipping.</p>",
+            "service_title": "Customer service",
+            "service_text": "Send us a message any time. Real people reply.",
+            "page": "contact"
+          }
+        },
+        "help": {
+          "type": "menu",
+          "settings": {
+            "title": "Help",
+            "menu": "support-menu"
           }
         },
         "shop": {
           "type": "menu",
           "settings": {
-            "title": "Menu",
-            "menu": "main-menu-1",
-            "fallback": "shop"
-          }
-        },
-        "support": {
-          "type": "menu",
-          "settings": {
-            "title": "Support",
-            "menu": "support-menu",
-            "fallback": "help"
+            "title": "Shop",
+            "menu": "main-menu-1"
           }
         },
         "legal": {
           "type": "menu",
           "settings": {
             "title": "Legal",
-            "menu": "legal-menu",
-            "fallback": "help"
+            "menu": "legal-menu"
           }
         },
-        "contact": {
-          "type": "contact",
+        "news": {
+          "type": "newsletter",
           "settings": {
-            "title": "Contact",
-            "page": "contact"
+            "title": "Deal alerts",
+            "text": "New arrivals, restocks and subscriber-only offers by email."
           }
         }
       },
       "block_order": [
         "brand",
+        "help",
         "shop",
-        "support",
         "legal",
-        "contact"
+        "news"
       ],
       "settings": {
-        "show_payment": true
+        "show_promises": true,
+        "p_icon_1": "truck",
+        "p_title_1": "Free shipping",
+        "p_text_1": "On every order, tracked",
+        "p_icon_2": "return",
+        "p_title_2": "Refund or reship",
+        "p_text_2": "If something's not right",
+        "p_icon_3": "lock",
+        "p_title_3": "Secure checkout",
+        "p_text_3": "PayPal, Shop Pay and cards",
+        "p_icon_4": "chat",
+        "p_title_4": "Real support",
+        "p_text_4": "People, not bots",
+        "show_payment": true,
+        "note": "Prices and stock can change without notice. Photos may differ slightly from the item you receive."
       }
     }
   },
