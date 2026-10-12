@@ -19,6 +19,7 @@
     assign shop_handle = 'clothing'
   endif
   assign shop_col = collections[shop_handle]
+  # Collection name in sentence case, e.g. "Watches"
   assign shop_name = shop_col.title | downcase | capitalize
 -%}
 <div class="read-progress" aria-hidden="true"><span data-read-progress></span></div>

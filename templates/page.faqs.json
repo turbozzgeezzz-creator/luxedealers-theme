@@ -161,7 +161,7 @@
       ],
       "settings": {
         "help_title": "Still need help?",
-        "help_text": "Real people answer every message, usually by email.",
+        "help_text": "Real people answer every message.",
         "help_button": "Contact us",
         "help_link": "/pages/contact"
       }
