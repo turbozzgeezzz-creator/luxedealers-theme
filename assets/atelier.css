@@ -1656,3 +1656,5 @@ body:has(.drawer.is-open) shopify-chat, body:has(.menu-overlay.is-open) shopify-
   .promo-slide .tile__art { width: 62%; bottom: 56px; }
   .promo__side { min-height: 0; }
 }
+.bag-up__title { min-height: 2.6em; }
+.bag-up__add { margin-top: auto; }
