@@ -2,220 +2,224 @@
   assign s = section.settings
   assign current = product.selected_or_first_available_variant
   assign media_count = product.media.size
-  assign ratio = settings.card_ratio | default: 'portrait'
+  assign thumb_limit = 40
+  assign has_size = false
+  for o in product.options
+    assign on = o | downcase
+    if on contains 'size'
+      assign has_size = true
+    endif
+  endfor
+  assign chart = 'all'
+  assign ptitle = product.title | downcase
+  for c in product.collections
+    if c.handle contains 'shoe' or c.handle contains 'sneaker' or c.handle contains 'boot' or c.handle contains 'slide'
+      assign chart = 'shoes'
+    elsif c.handle == 'clothing' or c.handle contains 'hoodie' or c.handle contains 'jacket' or c.handle contains 'shirt' or c.handle contains 'denim' or c.handle contains 'jersey'
+      assign chart = 'apparel'
+    endif
+  endfor
+  assign jd = product.metafields.judgeme.review_widget_data.value
+  assign rcount = product.metafields.reviews.rating_count.value | default: 0
 -%}
-<section class="container section--flush-top" data-product data-product-handle="{{ product.handle }}" data-update-url="true" style="padding-bottom: var(--section-pad)">
-  <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}" style="padding-top: 24px">
-    <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span>
-    {%- if collection -%}<a href="{{ collection.url }}">{{ collection.title }}</a><span aria-hidden="true">/</span>{%- elsif product.collections.first -%}<a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a><span aria-hidden="true">/</span>{%- endif -%}
-    <span aria-current="page">{{ product.title }}</span>
-  </nav>
+<section class="pdp" data-product data-product-handle="{{ product.handle }}" data-update-url="true">
+  <div class="container">
+    <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}">
+      <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span>
+      {%- if collection -%}<a href="{{ collection.url }}">{{ collection.title }}</a><span aria-hidden="true">/</span>{%- elsif product.collections.first -%}<a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a><span aria-hidden="true">/</span>{%- endif -%}
+      <span aria-current="page">{{ product.title }}</span>
+    </nav>
 
-  <div class="product">
-    {%- comment -%} Gallery {%- endcomment -%}
-    <div class="gallery gallery--{{ s.gallery }}" data-gallery data-zoom="{{ s.hover_zoom }}">
-      <div class="gallery__main" tabindex="0" aria-label="{{ 'products.gallery' | t }}">
-        {%- for media in product.media -%}
-          <div class="gallery__slide ratio-{{ ratio }}" data-media-id="{{ media.id }}"{% if forloop.first %} data-reveal="zoom"{% endif %}>
-            {%- case media.media_type -%}
-              {%- when 'image' -%}
-                {%- liquid
-                  assign load = 'lazy'
-                  if forloop.first
-                    assign load = 'eager'
-                  endif
-                  assign sz = '(min-width: 990px) 60vw, 100vw'
-                  if s.gallery == 'grid' and forloop.first == false
-                    assign sz = '(min-width: 990px) 30vw, 100vw'
-                  endif
-                -%}
-                {{ media | image_url: width: 2000 | image_tag: widths: '500, 750, 1000, 1300, 1600, 2000', sizes: sz, loading: load, alt: media.alt | default: product.title }}
-              {%- when 'video' -%}
-                {{ media | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, image_size: '1200x' }}
-              {%- when 'external_video' -%}
-                {{ media | external_video_tag }}
-              {%- when 'model' -%}
-                {{ media | model_viewer_tag: image_size: '1200x', reveal: 'interaction', toggleable: true }}
-            {%- endcase -%}
-          </div>
-        {%- else -%}
-          <div class="gallery__slide ratio-{{ ratio }}">{% render 'placeholder' %}</div>
-        {%- endfor -%}
-      </div>
-      {%- if media_count > 1 -%}
-        <span class="gallery__count" data-gallery-count aria-hidden="true">1 / {{ media_count }}</span>
-        <div class="gallery__dots">
-          {%- for media in product.media -%}
-            <button type="button" class="gallery__dot" aria-label="{{ 'products.show_image' | t: n: forloop.index }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}"></button>
-          {%- endfor -%}
-        </div>
-      {%- endif -%}
-      {%- if media_count > 0 -%}
-        <div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="{{ 'products.zoom' | t }}">
-          <button type="button" class="lightbox__close" aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
-          <div class="lightbox__track">
-            {%- for media in product.media -%}
-              {%- if media.media_type == 'image' -%}
-                <div class="lightbox__item">{{ media | image_url: width: 2600 | image_tag: loading: 'lazy', alt: media.alt | default: product.title, widths: '1200, 1800, 2600', sizes: '100vw' }}</div>
-              {%- endif -%}
+    <div class="pdp__grid">
+      {%- comment -%} Gallery: thumbnails beside one main image {%- endcomment -%}
+      <div class="gallery gallery--slider pdp__gallery" data-gallery data-zoom="{{ s.hover_zoom }}">
+        {%- if media_count > 1 -%}
+          <div class="gallery__thumbs" role="list">
+            {%- for media in product.media limit: thumb_limit -%}
+              <button type="button" class="gallery__dot gallery__thumb" role="listitem" aria-label="{{ 'products.show_image' | t: n: forloop.index }}" aria-current="{% if forloop.first %}true{% else %}false{% endif %}">{{ media.preview_image | image_url: width: 160 | image_tag: width: 72, height: 72, loading: 'lazy', alt: '' }}</button>
             {%- endfor -%}
           </div>
+        {%- endif -%}
+        <div class="gallery__stage">
+          <div class="gallery__main" tabindex="0" aria-label="{{ 'products.gallery' | t }}">
+            {%- for media in product.media limit: thumb_limit -%}
+              <div class="gallery__slide" data-media-id="{{ media.id }}">
+                {%- case media.media_type -%}
+                  {%- when 'image' -%}
+                    {%- liquid
+                      assign load = 'lazy'
+                      if forloop.first
+                        assign load = 'eager'
+                      endif
+                    -%}
+                    {{ media | image_url: width: 1400 | image_tag: widths: '400, 600, 800, 1000, 1200, 1400', sizes: '(min-width: 990px) 46vw, 100vw', loading: load, alt: media.alt | default: product.title }}
+                  {%- when 'video' -%}
+                    {{ media | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, controls: false, image_size: '1000x' }}
+                  {%- when 'external_video' -%}
+                    {{ media | external_video_tag }}
+                  {%- when 'model' -%}
+                    {{ media | model_viewer_tag: image_size: '1000x', reveal: 'interaction', toggleable: true }}
+                {%- endcase -%}
+              </div>
+            {%- else -%}
+              <div class="gallery__slide">{% render 'placeholder' %}</div>
+            {%- endfor -%}
+          </div>
+          {%- if media_count > 1 -%}
+            <button type="button" class="gallery__arrow gallery__arrow--prev" data-gallery-prev aria-label="{{ 'general.previous' | t }}">{% render 'icon', name: 'arrow-left', class: 'icon--sm' %}</button>
+            <button type="button" class="gallery__arrow gallery__arrow--next" data-gallery-next aria-label="{{ 'general.next' | t }}">{% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
+            <span class="gallery__count" data-gallery-count aria-hidden="true">1 / {% if media_count > thumb_limit %}{{ thumb_limit }}{% else %}{{ media_count }}{% endif %}</span>
+          {%- endif -%}
+          <span class="gallery__zoom-hint" aria-hidden="true">{% render 'icon', name: 'search', class: 'icon--sm' %}</span>
         </div>
-      {%- endif -%}
-    </div>
+        {%- if media_count > 0 -%}
+          <div class="lightbox" data-lightbox role="dialog" aria-modal="true" aria-label="{{ 'products.zoom' | t }}">
+            <button type="button" class="lightbox__close" aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
+            <div class="lightbox__track">
+              {%- for media in product.media limit: thumb_limit -%}
+                {%- if media.media_type == 'image' -%}
+                  <div class="lightbox__item">{{ media | image_url: width: 2000 | image_tag: loading: 'lazy', alt: media.alt | default: product.title, widths: '1000, 1500, 2000', sizes: '100vw' }}</div>
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
 
-    {%- comment -%} Info {%- endcomment -%}
-    <div class="product__info">
-      <div class="product__info-inner">
-        {%- for block in section.blocks -%}
-          {%- case block.type -%}
-            {%- when 'title' -%}
-              <div style="display: flex; flex-direction: column; gap: 12px" {{ block.shopify_attributes }}>
-                {%- if product.vendor != blank -%}<a class="product__vendor" href="{{ product.vendor | url_for_vendor }}">{{ product.vendor }}</a>{%- endif -%}
-                <h1 class="product__title" data-split>{{ product.title }}</h1>
-                {%- capture rating -%}{% render 'rating', product: product %}{%- endcapture -%}
-                {%- if rating != blank -%}<a href="#reviews" style="align-self: flex-start">{{ rating }}</a>{%- endif -%}
-              </div>
-            {%- when 'price' -%}
-              <div {{ block.shopify_attributes }}>
-                {% render 'price', product: product, variant: current, class: 'product__price' %}
-                <p class="product__tax">
-                  {%- if cart.taxes_included -%}{{ 'products.tax_included' | t }}{%- else -%}{{ 'products.tax_at_checkout' | t }}{%- endif -%}
-                  {% if shop.shipping_policy.body != blank %} <a href="{{ shop.shipping_policy.url }}" style="text-decoration: underline">{{ 'products.shipping_link' | t }}</a>{% endif %}
-                </p>
-                <div style="margin-top: 10px">{% form 'product', product %}{{ form | payment_terms }}{% endform %}</div>
-              </div>
-            {%- when 'divider' -%}
-              <hr class="product__divider" {{ block.shopify_attributes }}>
-            {%- when 'buy' -%}
-              <div style="display: flex; flex-direction: column; gap: 22px" {{ block.shopify_attributes }}>
-                {%- liquid
-                  assign size_page = nil
-                  for b in section.blocks
-                    if b.type == 'accordions' and b.settings.size_page != blank
-                      assign size_page = b.settings.size_page
-                    endif
-                  endfor
-                -%}
-                {% render 'product-form', product: product, form_id: 'ProductForm', show_dynamic: block.settings.dynamic, show_qty: block.settings.qty, size_page: size_page %}
-                <div class="pickup">
-                  {%- assign sku_hidden = true -%}{%- if current.sku != blank -%}{%- assign sku_hidden = false -%}{%- endif -%}
-                  <span {% if sku_hidden %}hidden{% endif %}>{{ 'products.ref' | t }}: <span data-sku>{{ current.sku }}</span></span>
+      {%- comment -%} Buy box {%- endcomment -%}
+      <div class="pdp__info">
+        <div class="pdp__box">
+          <div class="pdp__top">
+            {%- if product.vendor != blank -%}<span class="pdp__vendor">{{ product.vendor }}</span>{%- endif -%}
+            <h1 class="pdp__title">{{ product.title }}</h1>
+            {%- if rcount > 0 -%}
+              {%- assign r = product.metafields.reviews.rating.value -%}
+              {%- assign pct = r.rating | divided_by: r.scale_max | times: 100 -%}
+              <a class="pdp__rating" href="#reviews"><span class="rating__stars rating__stars--gold" aria-hidden="true"><span style="--pct: {{ pct }}%"></span></span><strong>{{ r.rating | round: 1 }}</strong><span>{{ 'products.reviews_count' | t: count: rcount }}</span></a>
+            {%- endif -%}
+          </div>
+
+          <div class="pdp__price">
+            {% render 'price', product: product, variant: current, class: 'product__price' %}
+            <p class="product__tax">{%- if cart.taxes_included -%}{{ 'products.tax_included' | t }}{%- else -%}{{ 'products.tax_at_checkout' | t }}{%- endif -%}</p>
+            <div class="pdp__installments">{% form 'product', product %}{{ form | payment_terms }}{% endform %}</div>
+          </div>
+
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'buy' -%}
+                <div class="pdp__buy" {{ block.shopify_attributes }}>
+                  {%- assign sp = nil -%}{%- if has_size -%}{%- assign sp = 'chart' -%}{%- endif -%}
+                  {% render 'product-form', product: product, form_id: 'ProductForm', show_dynamic: block.settings.dynamic, show_qty: block.settings.qty, size_page: sp %}
                 </div>
-              </div>
-            {%- when 'advisor' -%}
-              {%- if settings.advisor_whatsapp != blank -%}
-                {%- capture msg -%}{{ 'products.advisor_message' | t: title: product.title }} {{ request.origin }}{{ product.url }}{%- endcapture -%}
-                <a class="advisor" href="https://wa.me/{{ settings.advisor_whatsapp }}?text={{ msg | url_encode }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
-                  <span class="advisor__dot" aria-hidden="true"></span>
-                  <span><strong style="font-weight: 500">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
-                  {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
-                </a>
-              {%- elsif block.settings.page != blank -%}
-                <a class="advisor" href="{{ block.settings.page.url }}" {{ block.shopify_attributes }}>
-                  {% render 'icon', name: 'chat', class: 'icon--sm' %}
-                  <span><strong style="font-weight: 500">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
-                  {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
-                </a>
-              {%- endif -%}
-            {%- when 'set' -%}
-              <div {{ block.shopify_attributes }}>{% render 'complete-set', product: product, block: block %}</div>
-            {%- when 'text' -%}
-              <div class="rte muted" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
-            {%- when 'trust' -%}
-              <div class="product__trust" {{ block.shopify_attributes }}>
-                {%- for i in (1..3) -%}
-                  {%- liquid
-                    assign tk = 'text_' | append: i
-                    assign ik = 'icon_' | append: i
-                  -%}
-                  {%- if block.settings[tk] != blank -%}
-                    <div class="trust-item">{% render 'icon', name: block.settings[ik] %}<span>{{ block.settings[tk] }}</span></div>
-                  {%- endif -%}
-                {%- endfor -%}
-              </div>
-            {%- when 'accordions' -%}
-              <div class="accordion" {{ block.shopify_attributes }}>
-                {%- if product.description != blank -%}
-                  <details{% if block.settings.open_first %} open{% endif %}>
-                    <summary>{{ 'products.description' | t }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-                    <div class="accordion__content rte">{{ product.description }}</div>
-                  </details>
+              {%- when 'trust' -%}
+                <div class="pdp__trust" {{ block.shopify_attributes }}>
+                  {%- for i in (1..3) -%}
+                    {%- liquid
+                      assign tk = 'text_' | append: i
+                      assign ik = 'icon_' | append: i
+                    -%}
+                    {%- if block.settings[tk] != blank -%}<div class="pdp__trust-item">{% render 'icon', name: block.settings[ik] %}<span>{{ block.settings[tk] }}</span></div>{%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- when 'delivery' -%}
+                <div class="pdp__delivery" {{ block.shopify_attributes }}>
+                  <span class="pdp__delivery-icon">{% render 'icon', name: 'truck' %}</span>
+                  <div><strong>{{ block.settings.title }}</strong><p>{{ block.settings.text }}</p></div>
+                </div>
+              {%- when 'payments' -%}
+                <div class="pdp__pay" {{ block.shopify_attributes }}>
+                  <span>{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'products.pay_securely' | t }}</span>
+                  <ul class="payment-icons" role="list">{%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+                </div>
+              {%- when 'advisor' -%}
+                {%- if settings.advisor_whatsapp != blank -%}
+                  {%- capture msg -%}{{ 'products.advisor_message' | t: title: product.title }} {{ request.origin }}{{ product.url }}{%- endcapture -%}
+                  <a class="advisor" href="https://wa.me/{{ settings.advisor_whatsapp }}?text={{ msg | url_encode }}" target="_blank" rel="noopener" {{ block.shopify_attributes }}>
+                    <span class="advisor__dot" aria-hidden="true"></span>
+                    <span><strong style="font-weight: 600">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
+                    {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
+                  </a>
+                {%- elsif block.settings.page != blank -%}
+                  <a class="advisor" href="{{ block.settings.page.url }}" {{ block.shopify_attributes }}>
+                    {% render 'icon', name: 'chat', class: 'icon--sm' %}
+                    <span><strong style="font-weight: 600">{{ settings.advisor_label }}</strong><br><span class="muted">{{ block.settings.text }}</span></span>
+                    {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}
+                  </a>
                 {%- endif -%}
-                {%- if product.metafields.custom.details != blank or product.vendor != blank -%}
-                  <details>
-                    <summary>{{ 'products.details' | t }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-                    <div class="accordion__content">
-                      <table class="details-table">
-                        {%- if product.vendor != blank -%}<tr><th scope="row">{{ 'products.brand' | t }}</th><td>{{ product.vendor }}</td></tr>{%- endif -%}
-                        {%- if current.sku != blank -%}<tr><th scope="row">{{ 'products.ref' | t }}</th><td>{{ current.sku }}</td></tr>{%- endif -%}
-                        {%- assign meta = product.metafields.custom.details -%}
-                        {%- if meta.type == 'json' -%}
-                          {%- for pair in meta.value -%}<tr><th scope="row">{{ pair[0] }}</th><td>{{ pair[1] }}</td></tr>{%- endfor -%}
-                        {%- elsif meta.type == 'multi_line_text_field' -%}
-                          {%- assign lines = meta.value | newline_to_br | split: '<br />' -%}
-                          {%- for line in lines -%}
-                            {%- assign parts = line | strip | split: ':' -%}
-                            {%- if parts.size > 1 -%}<tr><th scope="row">{{ parts[0] | strip }}</th><td>{{ line | strip | remove_first: parts[0] | remove_first: ':' | strip }}</td></tr>{%- endif -%}
-                          {%- endfor -%}
-                        {%- endif -%}
-                      </table>
-                      {%- if meta.type == 'rich_text_field' -%}<div class="rte" style="margin-top: 16px">{{ meta | metafield_tag }}</div>{%- endif -%}
-                    </div>
-                  </details>
-                {%- endif -%}
-                {%- if block.settings.size_page != blank -%}
-                  <details>
-                    <summary>{{ 'products.size_guide' | t }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-                    <div class="accordion__content rte">{{ block.settings.size_page.content }}</div>
-                  </details>
-                {%- endif -%}
-                {%- if block.settings.shipping_text != blank or shop.shipping_policy.body != blank -%}
-                  <details>
-                    <summary>{{ 'products.delivery_returns' | t }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-                    <div class="accordion__content rte">
-                      {{ block.settings.shipping_text }}
-                      <p>
-                        {%- if shop.shipping_policy.body != blank -%}<a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title }}</a>{%- endif -%}
-                        {%- if shop.refund_policy.body != blank -%} · <a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title }}</a>{%- endif -%}
-                      </p>
-                    </div>
-                  </details>
-                {%- endif -%}
-                {%- if block.settings.care_text != blank -%}
-                  <details>
-                    <summary>{{ 'products.care' | t }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
-                    <div class="accordion__content rte">{{ block.settings.care_text }}</div>
-                  </details>
-                {%- endif -%}
-              </div>
-            {%- when 'share' -%}
-              <div class="product__share" {{ block.shopify_attributes }}>
-                {% render 'icon', name: 'share', class: 'icon--sm' %} {{ 'products.share' | t }}:
-                <a class="link" style="padding: 0" href="https://www.pinterest.com/pin/create/button/?url={{ request.origin | append: product.url | url_encode }}" target="_blank" rel="noopener">Pinterest</a>
-                <a class="link" style="padding: 0" href="https://www.facebook.com/sharer/sharer.php?u={{ request.origin | append: product.url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
-                <button type="button" class="link" style="padding: 0" data-copy="{{ request.origin | append: product.url }}">{{ 'products.copy_link' | t }}</button>
-              </div>
-            {%- when '@app' -%}
-              {% render block %}
-          {%- endcase -%}
-        {%- endfor -%}
+              {%- when 'text' -%}
+                <div class="rte muted" {{ block.shopify_attributes }}>{{ block.settings.text }}</div>
+              {%- when 'share' -%}
+                <div class="product__share" {{ block.shopify_attributes }}>
+                  {% render 'icon', name: 'share', class: 'icon--sm' %} {{ 'products.share' | t }}:
+                  <a class="link" style="padding: 0" href="https://www.pinterest.com/pin/create/button/?url={{ request.origin | append: product.url | url_encode }}" target="_blank" rel="noopener">Pinterest</a>
+                  <a class="link" style="padding: 0" href="https://www.facebook.com/sharer/sharer.php?u={{ request.origin | append: product.url | url_encode }}" target="_blank" rel="noopener">Facebook</a>
+                  <button type="button" class="link" style="padding: 0" data-copy="{{ request.origin | append: product.url }}">{{ 'products.copy_link' | t }}</button>
+                </div>
+              {%- when '@app' -%}
+                {% render block %}
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
       </div>
     </div>
+
+    {%- comment -%} Bought together {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'set' -%}<div class="pdp__set" {{ block.shopify_attributes }}>{% render 'complete-set', product: product, block: block %}</div>{%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} Details: tabs and an at-a-glance card {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'accordions' -%}
+        <div class="pdp__more" {{ block.shopify_attributes }}>
+          <div class="pdp__tabs" data-tabs>
+            <div class="pdp__tablist" role="tablist">
+              <button type="button" role="tab" class="pdp__tab" id="pt-1" aria-controls="pp-1" aria-selected="true">{{ 'products.description' | t }}</button>
+              <button type="button" role="tab" class="pdp__tab" id="pt-2" aria-controls="pp-2" aria-selected="false" tabindex="-1">{{ 'products.shipping_refunds' | t }}</button>
+              {%- if has_size or chart != 'all' -%}<button type="button" role="tab" class="pdp__tab" id="pt-3" aria-controls="pp-3" aria-selected="false" tabindex="-1">{{ 'products.size_guide' | t }}</button>{%- endif -%}
+            </div>
+            <div role="tabpanel" id="pp-1" aria-labelledby="pt-1" class="pdp__panel rte">{{ product.description | default: '—' }}</div>
+            <div role="tabpanel" id="pp-2" aria-labelledby="pt-2" class="pdp__panel rte" hidden>
+              {{ block.settings.shipping_text }}
+              <p>{%- if shop.shipping_policy.body != blank -%}<a href="{{ shop.shipping_policy.url }}">{{ shop.shipping_policy.title }}</a>{%- endif -%}{%- if shop.refund_policy.body != blank -%} · <a href="{{ shop.refund_policy.url }}">{{ shop.refund_policy.title }}</a>{%- endif -%}</p>
+            </div>
+            {%- if has_size or chart != 'all' -%}<div role="tabpanel" id="pp-3" aria-labelledby="pt-3" class="pdp__panel" hidden>{% render 'size-chart', show: chart %}</div>{%- endif -%}
+          </div>
+          <aside class="glance">
+            <span class="glance__kicker">{{ 'products.at_a_glance' | t }}</span>
+            <dl>
+              {%- if product.collections.first -%}<div><dt>{{ 'products.department' | t }}</dt><dd><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></dd></div>{%- endif -%}
+              {%- unless product.has_only_default_variant -%}<div><dt>{{ 'products.options_count' | t }}</dt><dd>{{ product.variants.size }}</dd></div>{%- endunless -%}
+              <div><dt>{{ 'products.price' | t }}</dt><dd>{% if product.price_varies %}{{ 'products.from' | t }} {% endif %}{{ product.price_min | money }}</dd></div>
+              <div><dt>{{ 'products.availability' | t }}</dt><dd>{% if product.available %}{{ 'products.in_stock_short' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</dd></div>
+              <div><dt>{{ 'products.shipping' | t }}</dt><dd>{{ 'products.shipping_value' | t }}</dd></div>
+              <div><dt>{{ 'products.guarantee' | t }}</dt><dd>{{ 'products.guarantee_value' | t }}</dd></div>
+              {%- if rcount > 0 -%}<div><dt>{{ 'products.reviews' | t }}</dt><dd><a href="#reviews">{{ product.metafields.reviews.rating.value.rating | round: 1 }} / 5 · {{ 'products.reviews_count' | t: count: rcount }}</a></dd></div>{%- endif -%}
+              {%- if current.sku != blank -%}<div><dt>{{ 'products.ref' | t }}</dt><dd data-sku>{{ current.sku }}</dd></div>{%- endif -%}
+            </dl>
+            <ul class="glance__ticks" role="list">
+              <li>{% render 'icon', name: 'truck', class: 'icon--sm' %}{{ 'products.free_shipping' | t }}</li>
+              <li>{% render 'icon', name: 'lock', class: 'icon--sm' %}{{ 'products.secure_checkout' | t }}</li>
+              <li>{% render 'icon', name: 'return', class: 'icon--sm' %}{{ 'products.refund_reship' | t }}</li>
+              <li>{% render 'icon', name: 'chat', class: 'icon--sm' %}{{ 'products.real_support' | t }}</li>
+            </ul>
+          </aside>
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
   </div>
 </section>
 
-{%- for b in section.blocks -%}
-  {%- if b.type == 'accordions' and b.settings.size_page != blank -%}
-    <div class="drawer" id="SizeGuide" aria-hidden="true">
-      <div class="drawer__overlay" data-drawer-close></div>
-      <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="SizeGuideTitle" tabindex="-1">
-        <div class="drawer__head"><h2 class="drawer__title" id="SizeGuideTitle">{{ b.settings.size_page.title }}</h2><button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
-        <div class="drawer__body"><div class="rte">{{ b.settings.size_page.content }}</div></div>
-      </div>
+{%- if has_size or chart != 'all' -%}
+  <div class="drawer" id="SizeGuide" aria-hidden="true">
+    <div class="drawer__overlay" data-drawer-close></div>
+    <div class="drawer__panel drawer__panel--wide" role="dialog" aria-modal="true" aria-labelledby="SizeGuideTitle" tabindex="-1">
+      <div class="drawer__head"><h2 class="drawer__title" id="SizeGuideTitle">{{ 'products.size_guide' | t }}</h2><button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
+      <div class="drawer__body">{% render 'size-chart', show: chart %}</div>
     </div>
-  {%- endif -%}
-{%- endfor -%}
+  </div>
+{%- endif -%}
 
 {%- comment -%} Sticky add to bag on scroll (all screen sizes) {%- endcomment -%}
 {%- if s.sticky_bar -%}
@@ -241,20 +245,25 @@
       "id": "gallery",
       "label": "Desktop gallery",
       "options": [
-        { "value": "stack", "label": "Full-height stack" },
-        { "value": "grid", "label": "Photo grid" },
-        { "value": "slider", "label": "Slider" }
+        { "value": "slider", "label": "Thumbnails and slider" }
       ],
-      "default": "stack"
+      "default": "slider"
     },
     { "type": "checkbox", "id": "hover_zoom", "label": "Zoom on hover", "default": true },
     { "type": "checkbox", "id": "sticky_bar", "label": "Sticky add to bag bar", "default": true }
   ],
   "blocks": [
     { "type": "@app" },
-    { "type": "title", "name": "Brand and title", "limit": 1, "settings": [] },
-    { "type": "price", "name": "Price", "limit": 1, "settings": [] },
-    { "type": "divider", "name": "Line", "settings": [] },
+    {
+      "type": "delivery",
+      "name": "Delivery box",
+      "limit": 1,
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Free tracked shipping" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Most orders arrive within 2–3 weeks. You'll get a tracking number by email when it ships." }
+      ]
+    },
+    { "type": "payments", "name": "Payment icons", "limit": 1, "settings": [] },
     {
       "type": "buy",
       "name": "Options and buttons",
@@ -270,11 +279,11 @@
       "name": "Promise row",
       "limit": 1,
       "settings": [
-        { "type": "select", "id": "icon_1", "label": "Icon 1", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "diamond" },
-        { "type": "text", "id": "text_1", "label": "Text 1", "default": "Tracked shipping" },
-        { "type": "select", "id": "icon_2", "label": "Icon 2", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "globe" },
-        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Secure checkout" },
-        { "type": "select", "id": "icon_3", "label": "Icon 3", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }], "default": "lock" },
+        { "type": "select", "id": "icon_1", "label": "Icon 1", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }, { "value": "chat", "label": "Chat" }, { "value": "shield", "label": "Shield" }], "default": "diamond" },
+        { "type": "text", "id": "text_1", "label": "Text 1", "default": "Free shipping" },
+        { "type": "select", "id": "icon_2", "label": "Icon 2", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }, { "value": "chat", "label": "Chat" }, { "value": "shield", "label": "Shield" }], "default": "globe" },
+        { "type": "text", "id": "text_2", "label": "Text 2", "default": "Refund or reship guarantee" },
+        { "type": "select", "id": "icon_3", "label": "Icon 3", "options": [{ "value": "diamond", "label": "Diamond" }, { "value": "globe", "label": "Globe" }, { "value": "truck", "label": "Delivery" }, { "value": "return", "label": "Returns" }, { "value": "lock", "label": "Secure" }, { "value": "gift", "label": "Gift" }, { "value": "chat", "label": "Chat" }, { "value": "shield", "label": "Shield" }], "default": "lock" },
         { "type": "text", "id": "text_3", "label": "Text 3", "default": "Secure checkout" }
       ]
     },
@@ -284,7 +293,7 @@
       "limit": 1,
       "settings": [
         { "type": "checkbox", "id": "open_first", "label": "Open description", "default": true },
-        { "type": "page", "id": "size_page", "label": "Size guide page" },
+        
         { "type": "richtext", "id": "shipping_text", "label": "Delivery and returns text" },
         { "type": "richtext", "id": "care_text", "label": "Care text" }
       ]

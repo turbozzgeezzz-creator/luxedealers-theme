@@ -90,7 +90,32 @@
     "add_selected": "Add selected",
     "choose_options": "Choose options",
     "view": "View",
-    "in_stock_short": "In stock"
+    "in_stock_short": "In stock",
+    "save_percent": "Save {{ percent }}%",
+    "reviews_count": {
+      "one": "{{ count }} review",
+      "other": "{{ count }} reviews"
+    },
+    "free_shipping": "Free shipping",
+    "refund_reship": "Refund or reship guarantee",
+    "secure_checkout": "Secure checkout",
+    "delivery_title": "Free tracked shipping",
+    "delivery_text": "Most orders arrive within 2–3 weeks. You'll get a tracking number by email when it ships.",
+    "pay_securely": "Pay securely with",
+    "at_a_glance": "At a glance",
+    "overview": "Overview",
+    "department": "Department",
+    "options_count": "Options",
+    "availability": "Availability",
+    "shipping": "Shipping",
+    "shipping_value": "Free, tracked",
+    "guarantee": "If it's not right",
+    "guarantee_value": "Refund or reship",
+    "shipping_refunds": "Shipping and refunds",
+    "choose": "Choose",
+    "price": "Price",
+    "reviews": "Reviews",
+    "real_support": "Real people answer every email"
   },
   "cart": {
     "title": "Your bag",
@@ -278,5 +303,24 @@
     "heading": "Pick up where you left off",
     "view": "View this piece",
     "browse": "Browse everything"
+  },
+  "size": {
+    "asian": "True to Asian sizing",
+    "size_up": "Size up for the best fit",
+    "intl": "International sizing",
+    "standard": "CN / EU standard, as listed by the maker",
+    "footwear": "Footwear",
+    "length": "Foot length",
+    "men": "Clothing · Men / Unisex",
+    "women": "Clothing · Women",
+    "tag": "Tag",
+    "fits_like": "Fits like (US)",
+    "recommended": "Recommended",
+    "unsure": "Still unsure?",
+    "unsure_text": "Compare the length column with your best-fitting pair: it's more reliable than the tag. Or email us and we'll help."
+  },
+  "reviews": {
+    "verified": "Verified buyer",
+    "from_count": "from {{ count }} reviews"
   }
 }

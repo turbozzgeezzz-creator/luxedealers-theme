@@ -62,7 +62,7 @@
     {%- if product.available == false -%}
       <span class="badge badge--soldout">{{ 'products.sold_out' | t }}</span>
     {%- elsif product.compare_at_price > product.price -%}
-      <span class="badge badge--sale">{{ 'products.sale' | t }}</span>
+      {%- assign cp = product.compare_at_price | minus: product.price | times: 100 | divided_by: product.compare_at_price -%}<span class="badge badge--sale">-{{ cp }}%</span>
     {%- elsif is_new -%}
       <span class="badge badge--new">{{ 'products.new' | t }}</span>
     {%- endif -%}
@@ -86,11 +86,11 @@
     {%- if settings.card_vendor and product.vendor != blank -%}<span class="card__vendor">{{ product.vendor }}</span>{%- endif -%}
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {% render 'price', product: product, show_from: true %}
+    <div class="card__rating">{%- render 'rating', product: product -%}</div>
     {%- if settings.card_button -%}
       {%- if product.available -%}<span class="card__stock"><span class="dot"></span>{{ 'products.in_stock_short' | t }}</span>{%- endif -%}
     {%- endif -%}
-    {%- capture rating -%}{% render 'rating', product: product %}{%- endcapture -%}
-    {%- if rating != blank -%}<div class="card__rating">{{ rating }}</div>{%- endif -%}
+
     {%- if settings.card_swatches and color_index != nil and color_opt.values.size > 1 -%}
       <div class="swatches" aria-label="{{ color_opt.values.size }} {{ color_opt.name | escape }}">
         {%- for val in color_opt.values limit: 5 -%}

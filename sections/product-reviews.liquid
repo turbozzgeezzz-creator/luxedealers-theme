@@ -1,0 +1,50 @@
+{%- comment -%}
+  Real reviews from Judge.me (the app writes them to the product's
+  judgeme.review_widget_data metafield). Nothing is shown when a product has
+  no reviews. Add Judge.me's own app block here to let shoppers write one.
+{%- endcomment -%}
+{%- liquid
+  assign jd = product.metafields.judgeme.review_widget_data.value
+  assign count = jd.number_of_reviews | default: 0
+-%}
+<section class="section reviews" id="reviews">
+  <div class="container">
+    {%- if count > 0 -%}
+      <div class="reviews__grid">
+        <div class="reviews__summary">
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+          <h2 class="h2">{{ section.settings.heading }}</h2>
+          <div class="reviews__score">
+            <strong>{{ jd.average_rating | times: 1 | round: 1 }}</strong>
+            <div><span class="rating__stars rating__stars--gold rating__stars--lg" aria-hidden="true"><span style="--pct: {{ jd.average_rating | times: 20 }}%"></span></span><span class="muted">{{ jd.review_summary_text }}</span></div>
+          </div>
+          <ul class="reviews__bars" role="list">
+            {%- for h in jd.histogram -%}
+              <li><span>{{ h.rating }} ★</span><span class="reviews__bar"><span style="width: {{ h.percentage }}%"></span></span><span class="muted">{{ h.frequency }}</span></li>
+            {%- endfor -%}
+          </ul>
+          {%- if section.settings.all_link != blank -%}<a class="pill-link" href="{{ section.settings.all_link }}">{{ section.settings.all_label }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>{%- endif -%}
+        </div>
+        <div class="reviews__list">
+          {%- for review in jd.reviews limit: 6 -%}{% render 'review-card', review: review %}{%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+    {%- for block in section.blocks -%}<div class="reviews__app" {{ block.shopify_attributes }}>{% render block %}</div>{%- endfor -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Product reviews",
+  "class": "section-reviews",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Reviews" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "What customers say" },
+    { "type": "text", "id": "all_label", "label": "Link text", "default": "All store reviews" },
+    { "type": "url", "id": "all_link", "label": "Link" }
+  ],
+  "blocks": [{ "type": "@app" }],
+  "presets": [{ "name": "Product reviews" }]
+}
+{% endschema %}

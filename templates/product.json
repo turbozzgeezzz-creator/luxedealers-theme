@@ -3,18 +3,6 @@
     "main": {
       "type": "main-product",
       "blocks": {
-        "title": {
-          "type": "title",
-          "settings": {}
-        },
-        "price": {
-          "type": "price",
-          "settings": {}
-        },
-        "line1": {
-          "type": "divider",
-          "settings": {}
-        },
         "buy": {
           "type": "buy",
           "settings": {
@@ -26,60 +14,75 @@
           "type": "trust",
           "settings": {
             "icon_1": "truck",
-            "text_1": "Tracked shipping",
+            "text_1": "Free shipping",
             "icon_2": "return",
-            "text_2": "14-day returns",
+            "text_2": "Refund or reship guarantee",
             "icon_3": "lock",
             "text_3": "Secure checkout"
+          }
+        },
+        "delivery": {
+          "type": "delivery",
+          "settings": {
+            "title": "Free tracked shipping",
+            "text": "Most orders arrive within 2–3 weeks. You'll get a tracking number by email when it ships."
+          }
+        },
+        "payments": {
+          "type": "payments",
+          "settings": {}
+        },
+        "advisor": {
+          "type": "advisor",
+          "settings": {
+            "text": "Questions about this piece? Email us.",
+            "page": "contact"
+          }
+        },
+        "set": {
+          "type": "set",
+          "settings": {
+            "title": "Often bought together"
           }
         },
         "tabs": {
           "type": "accordions",
           "settings": {
             "open_first": true,
-            "size_page": "size-charts",
-            "shipping_text": "<p>Orders are processed within 5 to 10 business days and sent by tracked post. Delivery to most countries usually takes 2 to 4 weeks. Any customs duties or taxes charged by your country are paid by you.</p><p>You can request a return within 14 days of receiving your item. It must be unworn and unused, with tags and in its original packaging. Return postage is paid by the customer. <a href=\"/policies/refund-policy\">Full refund policy</a></p>"
-          }
-        },
-        "share": {
-          "type": "share",
-          "settings": {}
-        },
-        "advisor": {
-          "type": "advisor",
-          "settings": {
-            "text": "Questions about this piece? Chat with us."
-          }
-        },
-        "set": {
-          "type": "set",
-          "settings": {
-            "title": "Complete the set"
+            "shipping_text": "<p><strong>Free shipping on every order.</strong> Orders are sent by tracked post, and most arrive within 2–3 weeks. You'll get a tracking number by email when your order ships.</p><p><strong>Refund or reship guarantee.</strong> If something isn't right with your order, email support@luxedealers.com with your order number and a photo, and we'll make it right with a refund or a free replacement. There's no need to send the item back.</p>",
+            "care_text": ""
           }
         }
       },
       "block_order": [
-        "title",
-        "price",
-        "line1",
         "buy",
+        "trust",
+        "delivery",
+        "payments",
         "advisor",
         "set",
-        "trust",
-        "tabs",
-        "share"
+        "tabs"
       ],
       "settings": {
-        "gallery": "stack",
+        "gallery": "slider",
         "hover_zoom": true,
         "sticky_bar": true
+      }
+    },
+    "reviews": {
+      "type": "product-reviews",
+      "settings": {
+        "eyebrow": "Reviews",
+        "heading": "What customers say",
+        "all_label": "All store reviews",
+        "all_link": "/pages/reviews"
       }
     },
     "recommendations": {
       "type": "product-recommendations",
       "settings": {
-        "eyebrow": "You may also like",
-        "heading": "Pairs well with",
+        "eyebrow": "",
+        "heading": "You might also like",
         "intent": "related",
         "limit": 8
       }
@@ -94,6 +97,7 @@
   },
   "order": [
     "main",
+    "reviews",
     "recommendations",
     "recent"
   ]

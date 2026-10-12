@@ -25,6 +25,8 @@
   <span class="price__current">{{ price | money }}</span>
   {%- if on_sale -%}
     <s class="price__compare"><span class="visually-hidden">{{ 'products.regular_price' | t }}</span>{{ compare | money }}</s>
+    {%- assign pct = compare | minus: price | times: 100 | divided_by: compare -%}
+    <span class="price__save">{{ 'products.save_percent' | t: percent: pct }}</span>
   {%- endif -%}
 </div>
 {%- if variant.unit_price_measurement -%}
