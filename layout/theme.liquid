@@ -76,7 +76,9 @@
           soldOut: {{ 'products.sold_out' | t | json }},
           unavailable: {{ 'products.unavailable' | t | json }},
           addToBag: {{ 'products.add_to_bag' | t | json }},
-          copied: {{ 'general.copied' | t | json }}
+          copied: {{ 'general.copied' | t | json }},
+          view: {{ 'wishlist.view' | t | json }},
+          remove: {{ 'wishlist.remove' | t | json }}
         }
       };
     </script>
@@ -103,6 +105,7 @@
     {% render 'search-overlay' %}
     {% render 'quick-view' %}
     {% render 'welcome-back' %}
+    {% render 'wishlist-drawer' %}
     {%- if settings.advisor_float and settings.advisor_whatsapp != blank -%}
       <a class="advisor-float" href="https://wa.me/{{ settings.advisor_whatsapp }}" target="_blank" rel="noopener"><span class="advisor__dot" aria-hidden="true"></span>{{ settings.advisor_label }}</a>
     {%- endif -%}

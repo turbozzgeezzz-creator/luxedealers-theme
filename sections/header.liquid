@@ -49,9 +49,7 @@
 
       <div class="header__right">
         <button type="button" class="icon-btn header__search-icon" data-drawer-open="SearchOverlay" aria-controls="SearchOverlay" aria-expanded="false" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search' %}</button>
-        {%- if section.settings.wishlist_page != blank -%}
-          <a href="{{ section.settings.wishlist_page.url }}" class="icon-btn header__wish" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></a>
-        {%- endif -%}
+        <button type="button" class="icon-btn header__wish" data-drawer-open="WishlistDrawer" aria-controls="WishlistDrawer" aria-expanded="false" aria-label="{{ 'header.wishlist' | t }}">{% render 'icon', name: 'heart' %}<span class="cart-count" data-wish-count hidden>0</span></button>
         {%- if shop.customer_accounts_enabled -%}
           <a href="{% if customer %}{{ routes.account_url }}{% else %}{{ routes.account_login_url }}{% endif %}" class="header__action header__account">
             {% render 'icon', name: 'account' %}

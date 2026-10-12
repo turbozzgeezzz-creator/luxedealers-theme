@@ -1,6 +1,7 @@
 {%- comment -%}
-  Shopify customer newsletter form with an explicit, unticked consent box
-  (Spam Act / GDPR). Params: id (unique), source (tag), button_label
+  Shopify customer newsletter form. Submitting it is the sign-up: the notice
+  under the field says the visitor is subscribing to marketing emails and can
+  unsubscribe any time (Spam Act / GDPR clear affirmative action). Params: id (unique), source (tag), button_label
   After a successful sign-up the welcome code (if set) is revealed.
 {%- endcomment -%}
 {%- liquid
@@ -32,11 +33,8 @@
       <input id="{{ id }}-email" type="email" name="contact[email]" required autocomplete="email" placeholder="{{ 'newsletter.email' | t }}"{% if form.errors %} aria-invalid="true" aria-describedby="{{ id }}-error"{% endif %}>
       <button type="submit">{{ label }} {% render 'icon', name: 'arrow-right' %}</button>
     </div>
-    <label class="checkbox">
-      <input type="checkbox" name="contact[accepts_marketing]" value="true" data-consent required>
-      <span>{{ 'newsletter.consent' | t }}</span>
-    </label>
-    <p class="form-message form-message--error" data-consent-error hidden>{{ 'newsletter.consent_error' | t }}</p>
+    <input type="hidden" name="contact[accepts_marketing]" value="true">
+    <p class="newsletter__notice">{{ 'newsletter.notice' | t }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">{{ 'newsletter.privacy' | t }}</a></p>
     {%- if form.errors -%}
       <p class="form-message form-message--error" id="{{ id }}-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
     {%- endif -%}

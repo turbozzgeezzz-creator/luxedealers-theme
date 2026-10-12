@@ -1,8 +1,5 @@
 {%- liquid
   assign hide = false
-  if section.settings.enabled == false
-    assign hide = true
-  endif
   if request.page_type == 'password' or template.name == 'customers/login' or template.name == 'customers/register' or request.page_type == 'cart'
     assign hide = true
   endif
@@ -10,6 +7,7 @@
 {%- unless hide -%}
 <div class="popup" id="NewsletterPopup" aria-hidden="true"
   data-delay="{{ section.settings.delay }}"
+  data-auto="{{ section.settings.enabled }}"
   data-trigger="{{ section.settings.trigger }}"
   data-repeat-days="{{ section.settings.repeat_days }}"
   data-hide-for-marketing="{% if customer and customer.accepts_marketing %}true{% else %}false{% endif %}">
@@ -35,7 +33,7 @@
 {
   "name": "Email popup",
   "settings": [
-    { "type": "checkbox", "id": "enabled", "label": "Show popup", "default": true },
+    { "type": "checkbox", "id": "enabled", "label": "Open by itself", "default": false, "info": "Off by default because the SendWILL app shows your 10% popup. Buttons marked 'Opens the email popup' still open it." },
     {
       "type": "select",
       "id": "trigger",

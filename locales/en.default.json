@@ -118,7 +118,8 @@
     "choose": "Choose",
     "price": "Price",
     "reviews": "Reviews",
-    "real_support": "Real people answer every email"
+    "real_support": "Real people answer every email",
+    "more_from": "More from {{ title }}"
   },
   "cart": {
     "title": "Your bag",
@@ -140,7 +141,12 @@
     "gift_message": "Add a gift message",
     "gift_placeholder": "Your message, printed or included where possible",
     "free_shipping_remaining": "You're {{ amount }} away from free shipping",
-    "free_shipping_unlocked": "You've unlocked free shipping"
+    "free_shipping_unlocked": "You've unlocked free shipping",
+    "tier_need": "Spend {{ amount }} more to save {{ percent }}%",
+    "tier_next": "You're saving {{ current }}%. Spend {{ amount }} more to save {{ percent }}%",
+    "tier_done": "You've unlocked {{ percent }}% off, applied at checkout",
+    "tier_offer_1": "Spend {{ amount }}, save {{ percent }}%",
+    "tier_auto": "Applied automatically at checkout"
   },
   "collections": {
     "filter": "Filter",
@@ -194,7 +200,9 @@
     "your_code": "Your code:",
     "copy": "Copy code",
     "apply": "Apply and shop",
-    "no_thanks": "No thanks"
+    "no_thanks": "No thanks",
+    "notice": "By signing up you agree to receive our marketing emails. Unsubscribe any time.",
+    "privacy": "Privacy policy"
   },
   "contact": {
     "name": "Name",
@@ -231,7 +239,12 @@
   },
   "wishlist": {
     "note": "Your saved pieces are kept on this device.",
-    "empty": "Nothing saved yet"
+    "empty": "Nothing saved yet",
+    "title": "Wishlist",
+    "empty_hint": "Tap the heart on any product to save it here.",
+    "browse": "Browse products",
+    "remove": "Remove",
+    "view": "View"
   },
   "password": {
     "enter": "Enter with password",

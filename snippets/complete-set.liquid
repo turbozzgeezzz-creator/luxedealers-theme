@@ -8,6 +8,19 @@
   if others == blank or others.size == 0
     assign others = product.metafields['shopify--discovery--product_recommendation'].complementary_products.value
   endif
+  comment
+    No picks and no complementary products: pair it with real pieces from a
+    matching department so every product page has a set.
+  endcomment
+  if others == blank or others.size == 0
+    assign pair_handle = block.settings.fallback | default: 'accessories'
+    for c in product.collections
+      if c.handle == pair_handle
+        assign pair_handle = block.settings.fallback_alt | default: 'clothing'
+      endif
+    endfor
+    assign others = collections[pair_handle].products
+  endif
 -%}
 {%- if others != blank and others.size > 0 -%}
   {%- assign current = product.selected_or_first_available_variant -%}
@@ -19,8 +32,11 @@
         <span class="set__media">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</span>
         <span><span class="set__name">{{ 'products.this_piece' | t }}: {{ product.title }}</span><br><span class="set__price">{{ current.price | money }}</span></span>
       </label>
-      {%- for p in others limit: 3 -%}
+      {%- assign added = 0 -%}
+      {%- for p in others limit: 12 -%}
+        {%- if added >= 2 -%}{%- break -%}{%- endif -%}
         {%- if p.available == false or p.id == product.id -%}{%- continue -%}{%- endif -%}
+        {%- assign added = added | plus: 1 -%}
         {%- assign v = p.selected_or_first_available_variant -%}
         <label class="set__item">
           <input type="checkbox" checked data-set-variant="{{ v.id }}" data-price="{{ v.price }}">

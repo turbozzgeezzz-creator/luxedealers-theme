@@ -22,6 +22,7 @@
     <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: {{ pct }}%"></div></div>
   </div>
 {%- endif -%}
+{% render 'tier-bar' %}
 {%- if settings.cart_gift_note -%}
   <details class="cart-gift"{% if cart.note != blank %} open{% endif %}>
     <summary>{{ 'cart.gift_message' | t }} {% render 'icon', name: 'gift', class: 'icon--sm' %}</summary>

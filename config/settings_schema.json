@@ -309,6 +309,38 @@
         "info": "0 hides the progress bar. Create the matching free rate in Settings > Shipping and delivery first."
       },
       {
+        "type": "header",
+        "content": "Spend and save"
+      },
+      {
+        "type": "paragraph",
+        "content": "Create matching automatic discounts in Discounts first (Amount off order, minimum purchase amount). Leave Spend at 0 to hide."
+      },
+      {
+        "type": "number",
+        "id": "tier_1_spend",
+        "label": "Tier 1: spend (store currency)",
+        "default": 0
+      },
+      {
+        "type": "number",
+        "id": "tier_1_percent",
+        "label": "Tier 1: % off",
+        "default": 5
+      },
+      {
+        "type": "number",
+        "id": "tier_2_spend",
+        "label": "Tier 2: spend (store currency)",
+        "default": 0
+      },
+      {
+        "type": "number",
+        "id": "tier_2_percent",
+        "label": "Tier 2: % off",
+        "default": 10
+      },
+      {
         "type": "checkbox",
         "id": "cart_gift_note",
         "label": "Gift message box",

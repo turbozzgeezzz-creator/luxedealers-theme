@@ -42,7 +42,9 @@
         "set": {
           "type": "set",
           "settings": {
-            "title": "Often bought together"
+            "title": "Complete the look",
+            "fallback": "accessories",
+            "fallback_alt": "clothing"
           }
         },
         "tabs": {
@@ -81,10 +83,10 @@
     "recommendations": {
       "type": "product-recommendations",
       "settings": {
-        "eyebrow": "",
+        "eyebrow": "Picked for you",
         "heading": "You might also like",
         "intent": "related",
-        "limit": 8
+        "limit": 12
       }
     },
     "recent": {
@@ -93,12 +95,20 @@
         "heading": "Recently viewed",
         "limit": 8
       }
+    },
+    "more": {
+      "type": "product-more",
+      "settings": {
+        "eyebrow": "Keep browsing",
+        "limit": 12
+      }
     }
   },
   "order": [
     "main",
-    "reviews",
     "recommendations",
+    "reviews",
+    "more",
     "recent"
   ]
 }

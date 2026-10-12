@@ -835,3 +835,55 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .header__search input:focus-visible { outline: none; }
 .rating__stars.rating__stars--gold span { color: var(--c-gold); }
 @media (max-width: 989px) { .footer__accordion:not([open]) .footer__links { display: none; } }
+
+/* ---------- Sign-up forms: no tick box, nothing cut off ---------- */
+.newsletter__form { width: 100%; max-width: 100%; }
+.newsletter__row { width: 100%; min-width: 0; }
+.newsletter__row input { min-width: 0; width: 100%; }
+.newsletter__row button { flex: none; white-space: nowrap; }
+.newsletter__notice { font-size: 12px; line-height: 1.5; color: var(--c-muted); text-align: left; }
+.newsletter__notice a { text-decoration: underline; text-underline-offset: 2px; }
+.section--ink .newsletter__notice, .newsletter--panel .newsletter__notice, .site-footer .newsletter__notice, .signup__band .signup__copy .newsletter__notice { color: rgba(255,255,255,.6); }
+@media (max-width: 480px) {
+  .newsletter__row { padding: 5px 5px 5px 16px; }
+  .newsletter__row button { padding: 0 14px; font-size: 13px; }
+  .newsletter__row button .icon { display: none; }
+}
+
+/* ---------- Wishlist drawer ---------- */
+.wish-list { display: flex; flex-direction: column; gap: 12px; }
+.wish-item { display: grid; grid-template-columns: 88px minmax(0, 1fr); gap: 14px; padding: 10px; border: 1px solid var(--c-border); border-radius: 16px; animation: menu-in .5s var(--ease-out); }
+.wish-item__img { width: 88px; height: 88px; border-radius: 12px; overflow: hidden; background: #F4F2EE; }
+.wish-item__img img { width: 100%; height: 100%; object-fit: cover; }
+.wish-item__info { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.wish-item__title { font-size: 13.5px; font-weight: 600; text-transform: uppercase; line-height: 1.3; }
+.wish-item__actions { display: flex; align-items: center; gap: 14px; margin-top: auto; }
+.wish-item__actions .btn { min-height: 36px; padding: 0 16px; }
+.wish-empty { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 48px 12px; text-align: center; }
+.wish-empty__icon { width: 64px; height: 64px; display: grid; place-items: center; border-radius: 50%; background: #F7F2E4; color: var(--c-gold-text); }
+
+/* ---------- Product cards: calmer hover, heart always visible ---------- */
+.card__img--hover { transform: none; transition: opacity .6s var(--ease-out); }
+.card:hover .card__img--primary.has-hover { opacity: 0; transform: none; }
+.card:hover .card__img--hover { opacity: 1; transform: none; }
+.card:hover .card__img--primary:not(.has-hover) { transform: scale(1.025); }
+.card__media img { transition: opacity .6s var(--ease-out), transform 1.2s var(--ease-out); }
+.card__wish { top: 8px; right: 8px; }
+.wish-btn { width: 38px; height: 38px; background: rgba(255,255,255,.92); box-shadow: 0 4px 14px -6px rgba(0,0,0,.25); }
+.wish-btn:hover { transform: scale(1.08); }
+.wish-btn svg { width: 18px; height: 18px; }
+.wish-btn[aria-pressed="true"] svg { fill: #C0392B; stroke: #C0392B; }
+.wish-inline[aria-pressed="true"] svg { fill: #C0392B; stroke: #C0392B; }
+.header__wish { display: inline-grid !important; }
+html:not(.no-js) .view-cursor { display: none !important; }
+
+/* ---------- Spend and save ---------- */
+.tier-bar { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-radius: 14px; background: linear-gradient(120deg, #FBF5E4, #F4E7C2); }
+.tier-bar__msg { font-size: 13.5px; font-weight: 600; }
+.tier-bar__track { position: relative; height: 8px; margin: 4px 14px 14px 0; border-radius: 4px; background: rgba(0,0,0,.08); }
+.tier-bar__fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #B8892E, #E6C463); transition: width .8s var(--ease-out); }
+.tier-bar__mark { position: absolute; top: 50%; transform: translate(-50%, -50%); padding: 2px 6px; border-radius: 999px; background: #fff; border: 1px solid #D9C48A; font-size: 10.5px; font-weight: 700; }
+.tier-bar__mark.is-hit { background: #111; color: var(--c-gold); border-color: #111; }
+.tier-offer { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 10px; padding: 10px 14px; border: 1px dashed #D9C48A; border-radius: 12px; background: #FFFBF0; font-size: 13.5px; font-weight: 600; }
+.tier-offer__icon { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 8px; background: #111; color: var(--c-gold); }
+.tier-offer small { width: 100%; font-weight: 400; color: var(--c-muted); padding-left: 36px; }
