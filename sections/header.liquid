@@ -133,7 +133,7 @@
                         {%- endfor -%}
                       {%- else -%}
                         <div>
-                          <a class="mega__title" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }}</a>
+                          <a class="mega__title" href="{{ link.url }}">{{ link.title }}</a>
                           <ul class="mega__links mega__links--cols" role="list">{%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}</ul>
                         </div>
                       {%- endif -%}

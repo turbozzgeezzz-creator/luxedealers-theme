@@ -827,3 +827,11 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 .shopify-policy__body a { color: var(--c-gold-text); text-decoration: underline; text-underline-offset: 3px; }
 .shopify-policy__body table { margin-top: 1em; border: 1px solid var(--c-border); border-radius: 12px; overflow: hidden; }
 .shopify-policy__body td, .shopify-policy__body th { padding: 10px 14px; border-bottom: 1px solid var(--c-border); }
+.pdp__grid, .pdp__more { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 990px) { .pdp__grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); } .pdp__more { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } }
+.pdp__panel { overflow-wrap: anywhere; }
+.pdp__set:not(:has(.set)) { display: none; }
+.footer__signup, .footer__signup .newsletter__form { text-align: left; align-items: flex-start; }
+.header__search input:focus-visible { outline: none; }
+.rating__stars.rating__stars--gold span { color: var(--c-gold); }
+@media (max-width: 989px) { .footer__accordion:not([open]) .footer__links { display: none; } }
