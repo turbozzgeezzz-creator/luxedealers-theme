@@ -1368,3 +1368,4 @@ a.contact2__card:hover { border-color: #E2D7BC; box-shadow: 0 18px 40px -30px rg
 .steps--dark { background: #0D0B07; color: #fff; }
 .steps--dark .steps__item { background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.1); }
 .steps--dark .steps__item p, .steps--dark .muted { color: rgba(255,255,255,.7); }
+.option__more { width: auto !important; align-self: flex-start; justify-content: flex-start; }

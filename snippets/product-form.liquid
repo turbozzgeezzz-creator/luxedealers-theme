@@ -41,7 +41,7 @@
         assign is_color = false
       endif
     -%}
-    {%- assign many = false -%}{%- if option.values.size > 14 -%}{%- assign many = true -%}{%- endif -%}
+    {%- assign many = false -%}{%- assign lim = 14 -%}{%- if oname contains 'size' -%}{%- assign lim = 24 -%}{%- endif -%}{%- if option.values.size > lim -%}{%- assign many = true -%}{%- endif -%}
     <fieldset class="option{% if many %} option--many{% endif %}" data-option-index="{{ forloop.index0 }}"{% if many %} data-option-many{% endif %}>
       <legend class="option__legend">{{ option.name }}: <span data-option-label>{{ option.selected_value }}</span>
         {%- if size_page != blank and oname contains 'size' -%}<button type="button" class="option__guide" data-drawer-open="SizeGuide">{{ 'products.size_guide' | t }}</button>{%- endif -%}

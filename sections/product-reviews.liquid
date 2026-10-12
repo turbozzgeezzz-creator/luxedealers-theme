@@ -7,7 +7,7 @@
   assign jd = product.metafields.judgeme.review_widget_data.value
   assign count = jd.number_of_reviews | default: 0
   assign store_avg = shop.metafields.judgeme.all_reviews_rating.value | default: shop.metafields.judgeme.all_reviews_rating
-  assign store_total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count | default: 0
+  assign store_total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count | default: 0 | plus: 0
   assign need = 4 | minus: count
   if count == 0
     assign need = 4
