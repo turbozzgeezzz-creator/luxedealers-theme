@@ -54,6 +54,12 @@
     "scroll": "Scroll"
   },
   "products": {
+    "qty_title": "Buy more, save more",
+    "qty_one": "1 piece",
+    "qty_many": "{{ count }} pieces",
+    "qty_save": "Save {{ percent }}%",
+    "qty_each": "{{ price }} each",
+    "qty_note": "Any pieces count. The discount is applied automatically at checkout.",
     "show_all_options": "Show all {{ count }}",
     "show_fewer": "Show fewer",
     "no_reviews_yet": "No reviews for this piece yet. Here's what customers say about others.",
@@ -131,6 +137,15 @@
     "help_cta": "Ask us"
   },
   "cart": {
+    "qty_need": "Add {{ count }} more and save {{ percent }}%",
+    "qty_next": "You're saving {{ current }}%. Add {{ count }} more to save {{ percent }}%",
+    "qty_done": "You're saving {{ percent }}% on this order",
+    "you_save": "You save",
+    "code_toggle": "Have a discount code?",
+    "code_label": "Discount code",
+    "code_apply": "Apply",
+    "code_remove": "Remove {{ code }}",
+    "code_invalid": "That code can't be used with this bag.",
     "title": "Your bag",
     "added": "Added to your bag",
     "checkout": "Secure checkout",

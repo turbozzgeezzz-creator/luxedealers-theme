@@ -341,6 +341,44 @@
         "default": 10
       },
       {
+        "type": "header",
+        "content": "Buy more, save more"
+      },
+      {
+        "type": "paragraph",
+        "content": "Shows quantity offers on product pages and in the bag. Create matching automatic discounts in Discounts first (Amount off products, minimum quantity of items). Leave Pieces at 0 to hide."
+      },
+      {
+        "type": "number",
+        "id": "qty_1_count",
+        "label": "Offer 1: pieces",
+        "default": 0
+      },
+      {
+        "type": "number",
+        "id": "qty_1_percent",
+        "label": "Offer 1: % off",
+        "default": 10
+      },
+      {
+        "type": "number",
+        "id": "qty_2_count",
+        "label": "Offer 2: pieces",
+        "default": 0
+      },
+      {
+        "type": "number",
+        "id": "qty_2_percent",
+        "label": "Offer 2: % off",
+        "default": 15
+      },
+      {
+        "type": "checkbox",
+        "id": "cart_code_field",
+        "label": "Discount code box in the bag",
+        "default": true
+      },
+      {
         "type": "checkbox",
         "id": "cart_gift_note",
         "label": "Gift message box",

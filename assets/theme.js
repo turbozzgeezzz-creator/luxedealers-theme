@@ -307,6 +307,9 @@
         var max = track.scrollWidth - track.clientWidth;
         if (prev) prev.disabled = track.scrollLeft <= 2;
         if (next) next.disabled = track.scrollLeft >= max - 2;
+        rail.classList.toggle('at-start', track.scrollLeft <= 2);
+        rail.classList.toggle('at-end', track.scrollLeft >= max - 2);
+        rail.classList.toggle('no-scroll', max <= 2);
         if (bar) {
           var w = max > 0 ? track.clientWidth / track.scrollWidth : 1;
           bar.style.setProperty('--w', (w * 100) + '%');
@@ -316,6 +319,35 @@
       function visible() { return !rail.closest('[hidden]'); }
       on(prev, 'click', function () { if (visible()) track.scrollBy({ left: -step(), behavior: 'smooth' }); });
       on(next, 'click', function () { if (visible()) track.scrollBy({ left: step(), behavior: 'smooth' }); });
+      // Carousel arrows on the sides of the row
+      var sides = ['prev', 'next'].map(function (dir) {
+        var b = doc.createElement('button');
+        b.type = 'button'; b.className = 'rail__side rail__side--' + dir; b.tabIndex = -1;
+        b.setAttribute('aria-hidden', 'true');
+        b.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="' + (dir === 'prev' ? 'M15 5l-7 7 7 7' : 'M9 5l7 7-7 7') + '"/></svg>';
+        on(b, 'click', function () { track.scrollBy({ left: (dir === 'prev' ? -1 : 1) * step() * (window.innerWidth < 750 ? 1 : 2), behavior: 'smooth' }); });
+        rail.appendChild(b);
+        return b;
+      });
+      // Drag with the mouse, like a carousel (touch already swipes natively)
+      var drag = null, moved = false;
+      on(track, 'pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        drag = { x: e.clientX, left: track.scrollLeft }; moved = false;
+      });
+      on(window, 'pointermove', function (e) {
+        if (!drag) return;
+        var dx = e.clientX - drag.x;
+        if (!moved && Math.abs(dx) > 6) { moved = true; track.classList.add('is-dragging'); }
+        if (moved) { track.scrollLeft = drag.left - dx; e.preventDefault(); }
+      });
+      on(window, 'pointerup', function () {
+        if (!drag) return;
+        drag = null;
+        if (moved) { track.classList.remove('is-dragging'); var s = step(); track.scrollTo({ left: Math.round(track.scrollLeft / s) * s, behavior: 'smooth' }); }
+      });
+      on(track, 'click', function (e) { if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; } }, true);
+      on(track, 'dragstart', function (e) { e.preventDefault(); });
       on(track, 'scroll', debounce(update, 30), { passive: true });
       on(window, 'resize', debounce(update, 150));
       update();
@@ -787,6 +819,70 @@
       }).catch(function () {});
     });
   })();
+
+  /* ---------- Buy more, save more (product page) ---------- */
+  $$('[data-qty-breaks]').forEach(function (box) {
+    var form = doc.getElementById(box.dataset.form);
+    if (!form) return;
+    var qtyInput = $('input[name="quantity"]', form);
+    var json = $('[data-product-json]'), data = null;
+    try { data = json ? JSON.parse(json.textContent) : null; } catch (e) {}
+    function refresh(price) {
+      $$('input[type="radio"]', box).forEach(function (r) {
+        var n = parseInt(r.value, 10), pc = parseInt(r.dataset.pct, 10) || 0, lab = r.closest('.qtyb__opt');
+        var each = Math.round(price * (100 - pc) / 100);
+        var tot = $('[data-qtyb-total]', lab), was = $('[data-qtyb-was]', lab), sm = $('small', lab);
+        if (tot) tot.textContent = formatMoney(each * n);
+        if (was) was.textContent = formatMoney(price * n);
+        if (sm && n > 1) sm.textContent = sm.textContent.replace(/^[^ ]+/, formatMoney(each));
+      });
+    }
+    on(box, 'change', function (e) {
+      var r = e.target.closest('input[type="radio"]');
+      if (!r || !qtyInput) return;
+      qtyInput.value = r.value;
+      $$('.qtyb__opt', box).forEach(function (l) { l.classList.toggle('is-on', l.contains(r)); });
+    });
+    var first = $('input:checked', box); if (first) first.closest('.qtyb__opt').classList.add('is-on');
+    var idIn = $('input[name="id"]', form);
+    on(idIn, 'change', function () {
+      if (!data) return;
+      var v = data.variants.filter(function (x) { return String(x.id) === idIn.value; })[0];
+      if (v) refresh(v.price);
+    });
+  });
+
+  /* ---------- Discount codes in the bag ---------- */
+  function applyCodes(codes, input) {
+    var err = input ? $('[data-cart-code-error]', input.closest('[data-cart-code]')) : null;
+    return fetchJSON(L.routes.cartUpdate.replace(/\.js$/, '') + '.js', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ discount: codes.join(','), sections: cartSections(), sections_url: window.location.pathname }) })
+      .then(function (res) {
+        if (input) {
+          var c = input.value.trim().toUpperCase();
+          var hit = (res.discount_codes || []).filter(function (d) { return d.code.toUpperCase() === c && d.applicable; })[0];
+          if (!hit && c) { if (err) err.hidden = false; return; }
+        }
+        renderSections(res.sections);
+      }).catch(function () { if (err) err.hidden = false; });
+  }
+  function currentCodes() { return $$('[data-cart-code-remove]').map(function (b) { return b.dataset.cartCodeRemove; }).filter(function (v, i, a) { return a.indexOf(v) === i; }); }
+  on(doc, 'click', function (e) {
+    var ap = e.target.closest('[data-cart-code-apply]');
+    if (ap) {
+      var input = $('[data-cart-code-input]', ap.closest('[data-cart-code]'));
+      var code = input.value.trim();
+      if (!code) { input.focus(); return; }
+      ap.classList.add('is-loading');
+      applyCodes(currentCodes().concat([code]), input).finally(function () { ap.classList.remove('is-loading'); });
+      return;
+    }
+    var rm = e.target.closest('[data-cart-code-remove]');
+    if (rm) applyCodes(currentCodes().filter(function (c) { return c !== rm.dataset.cartCodeRemove; }));
+  });
+  on(doc, 'keydown', function (e) {
+    if (e.key === 'Enter' && e.target.matches && e.target.matches('[data-cart-code-input]')) { e.preventDefault(); var b = $('[data-cart-code-apply]', e.target.closest('[data-cart-code]')); if (b) b.click(); }
+  });
 
   /* ---------- Long option lists: two rows, then "Show all" ---------- */
   on(doc, 'click', function (e) {

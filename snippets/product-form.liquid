@@ -92,8 +92,10 @@
 {%- endif -%}
 <p class="{{ stock_class }}" data-stock data-threshold="{{ threshold }}" data-in="{{ 'products.in_stock' | t | escape }}" data-out="{{ 'products.sold_out' | t | escape }}" data-low="{{ low | escape }}" data-backorder="{{ 'products.backorder' | t | escape }}">{{ stock_text }}</p>
 
+{% render 'qty-breaks', product: product, form_id: form_id %}
 {%- form 'product', product, id: form_id, class: 'buy-buttons', data-product-form: '', novalidate: 'novalidate' -%}
   <input type="hidden" name="id" value="{{ current.id }}">
+  {%- unless show_qty -%}{%- if settings.qty_1_count > 1 -%}<input type="hidden" name="quantity" value="1" data-qty-hidden>{%- endif -%}{%- endunless -%}
   <div class="buy-buttons__row">
     {%- if show_qty -%}
       <div class="qty">

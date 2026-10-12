@@ -204,6 +204,17 @@
         <input type="hidden" name="type" value="product">
       </form>
       {%- if menu != blank -%}
+        <div class="mnav__depts">
+          {%- for link in menu.links -%}
+            {%- if link.type == 'collection_link' and link.links.size > 0 -%}
+              {%- assign dimg = link.object.featured_image | default: link.object.products.first.featured_media.preview_image -%}
+              <a class="mnav__dept" href="{{ link.url }}">
+                <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: '' }}{%- endif -%}</span>
+                <span class="mnav__dept-name">{{ link.title }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
         <p class="mnav__label">{{ 'header.shop' | t }}</p>
         <ul class="mnav__list" role="list">
           {%- for link in menu.links -%}
@@ -240,14 +251,17 @@
             {%- unless is_page -%}
               <li style="--i: {{ forloop.index0 }}">
                 {%- if link.links.size > 0 -%}
-                  <details class="mnav__group">
+                  <details class="mnav__group" name="mnav">
                     <summary class="mnav__row"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title }}</span>{% render 'icon', name: 'chevron-down', class: 'mnav__chev' %}</summary>
                     <div class="mnav__sub">
                       <a class="mnav__all" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
                       <div class="mnav__chips">
                         {%- for child in link.links -%}
-                          <a class="mnav__chip" href="{{ child.url }}">{{ child.title }}</a>
-                          {%- for g in child.links -%}<a class="mnav__chip mnav__chip--sub" href="{{ g.url }}">{{ g.title }}</a>{%- endfor -%}
+                          {%- assign ct = child.title | downcase -%}
+                          {%- unless ct contains 'shop all' or child.url == link.url -%}
+                            <a class="mnav__chip" href="{{ child.url }}">{{ child.title }}</a>
+                          {%- endunless -%}
+                          {%- for g in child.links -%}{%- assign gt = g.title | downcase -%}{%- unless gt contains 'shop all' -%}<a class="mnav__chip mnav__chip--sub" href="{{ g.url }}">{{ g.title }}</a>{%- endunless -%}{%- endfor -%}
                         {%- endfor -%}
                       </div>
                     </div>
