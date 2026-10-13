@@ -51,7 +51,7 @@ export async function subscribe(env, { email, firstName, source, page, ip }) {
       ON CONFLICT(email) DO UPDATE SET status = 'subscribed', first_name = COALESCE(excluded.first_name, subscribers.first_name),
         source = excluded.source, consent_text = excluded.consent_text, consent_page = excluded.consent_page,
         requested_at = excluded.requested_at, confirmed_at = excluded.confirmed_at, unsubscribed_at = NULL`)
-    .bind(email, firstName, source, source === 'account' ? 'Accepts marketing on their store account' : CONSENT_TEXT, page, now(), now()).run();
+    .bind(email, firstName, source, source === 'account' ? 'Accepts marketing on their store account' : source === 'checkout' ? 'Ticked "Email me with news and offers" at checkout' : CONSENT_TEXT, page, now(), now()).run();
   await env.DB.prepare('DELETE FROM suppressions WHERE email = ?').bind(email).run();
   // A returning subscriber gets a fresh welcome series (the dedupe keys include the sign-up day).
   const day = new Date(now() * 1000).toISOString().slice(0, 10);
@@ -154,7 +154,13 @@ export async function recordPixel(env, body) {
   const email = cleanEmail(body.e);
   if (!token) return;
   const items = pixelItems(body.items);
-  const member = email ? await subscriber(env, email) : null;
+  let member = email ? await subscriber(env, email) : null;
+  // Ticked "Email me with news and offers" at checkout: that's consent, so they join the list
+  // (and get checkout reminders) even if they never used a sign-up form.
+  if (email && body.am === true && body.t === 'checkout' && !(member && member.status === 'subscribed')) {
+    await subscribe(env, { email, firstName: str(body.fn, 60), source: 'checkout', page: '/checkout', ip: null });
+    member = await subscriber(env, email);
+  }
   const isMember = member && member.status === 'subscribed';
 
   if (body.t === 'checkout') {
