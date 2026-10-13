@@ -27,6 +27,8 @@ REPLY_TO = "support@luxedealers.com"
 ADMIN_EMAIL = "support@luxedealers.com"
 TIMEZONE_OFFSET_HOURS = "10"
 DAILY_SEND_LIMIT = "95"
+# Emails per 30-minute run; keeps each run under Cloudflare's free-plan limit of 50 outbound requests.
+BATCH_SIZE = "6"
 SHOPIFY_API_VERSION = "2025-10"
 VIP_SPEND_CENTS = "25000"
 LAPSED_DAYS = "60"

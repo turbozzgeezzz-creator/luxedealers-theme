@@ -669,7 +669,7 @@ export async function drainOutbox(env, { id } = {}) {
   const { results } = id
     ? await env.DB.prepare(`SELECT * FROM sends WHERE status = 'queued' AND id = ?`).bind(id).all()
     : await env.DB.prepare(`SELECT * FROM sends WHERE status = 'queued' AND created_at <= ? ORDER BY priority ASC, created_at ASC LIMIT ?`)
-      .bind(now(), Math.min(budget, 40)).all();
+      .bind(now(), Math.min(budget, Number(env.BATCH_SIZE || 6))).all();
   let sent = 0;
   for (const job of results) {
     const mark = (status, error = null) => env.DB.prepare('UPDATE sends SET status = ?, error = ?, sent_at = ? WHERE id = ?')
@@ -696,7 +696,10 @@ export async function drainOutbox(env, { id } = {}) {
       sent++;
       if (email.afterSend) await email.afterSend().catch((e) => console.error('afterSend', job.flow, e));
     } catch (err) {
-      await mark('error', String(err && err.message || err).slice(0, 500));
+      const msg = String(err && err.message || err);
+      // Cloudflare caps outbound requests per run: leave the job queued for the next run instead of failing it.
+      if (/too many subrequests/i.test(msg)) break;
+      await mark('error', msg.slice(0, 500));
     }
   }
   return { sent };

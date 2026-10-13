@@ -45,9 +45,9 @@ async function readBeacon(request) {
 /** The first time sending goes live, email one test of every email to ADMIN_EMAIL (placeholder codes, nothing real). */
 async function sendTestsOnce(env) {
   if (!(await sendingReady(env))) return;
-  const done = await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_sent').first();
-  if (done) return;
-  await env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, NULL)').bind('tests_sent', String(now())).run();
+  // Sent 5 per run (Cloudflare limits outbound requests per run); kv 'tests_next' remembers where it got to.
+  if (await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_sent').first()) return;
+  const next = Number((await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_next').first())?.v || 0);
   const until = new Date(Date.now() + 7 * 86400000).toISOString();
   const items = [{ handle: 'chan-luxury-handbags', qty: 1 }];
   const samples = [
@@ -61,7 +61,10 @@ async function sendTestsOnce(env) {
     ['journal', { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() }],
   ];
   const unsubUrl = await unsubscribeUrl(env, 'preview@example.com');
-  for (const [flow, sample] of samples) {
+  const save = (k, v) => env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, NULL)').bind(k, String(v)).run();
+  const end = Math.min(next + 5, samples.length);
+  await save(end >= samples.length ? 'tests_sent' : 'tests_next', end >= samples.length ? now() : end);
+  for (const [flow, sample] of samples.slice(next, end)) {
     try {
       const email = await builders[flow]({ ...env, PREVIEW: '1' }, 'preview@example.com', sample);
       if (email) await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: `[Test] ${email.subject}`, html: layout(env, { ...email, unsubUrl }), unsubUrl });
