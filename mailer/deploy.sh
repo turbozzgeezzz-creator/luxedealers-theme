@@ -46,10 +46,10 @@ echo "   live at $WORKER_URL"
 
 echo "== 3. Secrets"
 SECRETS_FILE="$(mktemp)"; chmod 600 "$SECRETS_FILE"; trap 'rm -f "$SECRETS_FILE"' EXIT
-node -e 'const e=process.env;require("fs").writeFileSync(process.argv[1],JSON.stringify({SHOPIFY_CLIENT_ID:e.MAIN_SHOPIFY_CLIENT_ID,SHOPIFY_CLIENT_SECRET:e.MAIN_SHOPIFY_CLIENT_SECRET,RESEND_API_KEY:e.RESEND_API_KEY,UNSUB_SECRET:e.UNSUB_SECRET}))' "$SECRETS_FILE"
+node -e 'const e=process.env;require("fs").writeFileSync(process.argv[1],JSON.stringify({SHOPIFY_CLIENT_ID:e.MAIN_SHOPIFY_CLIENT_ID,SHOPIFY_CLIENT_SECRET:e.MAIN_SHOPIFY_CLIENT_SECRET,UNSUB_SECRET:e.UNSUB_SECRET}))' "$SECRETS_FILE"
 $WRANGLER secret bulk "$SECRETS_FILE" >/dev/null
 rm -f "$SECRETS_FILE"
-echo "   4 secrets stored in Cloudflare"
+echo "   3 secrets stored in Cloudflare (RESEND_API_KEY is set by the owner in the Cloudflare dashboard and left alone)"
 
 echo "== 4. Theme tracking URL and custom pixel address"
 node lib/theme-endpoint.mjs "$WORKER_URL/t"
