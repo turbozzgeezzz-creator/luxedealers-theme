@@ -16,7 +16,8 @@ DNS records for mail.luxedealers.com (add in the luxedealers.com DNS):
 | TXT | resend._domainkey.mail | (DKIM key shown in Resend > Domains > mail.luxedealers.com) | |
 | MX | send.mail | feedback-smtp.us-east-1.amazonses.com | 10 |
 | TXT | send.mail | v=spf1 include:amazonses.com ~all | |
-| TXT | _dmarc.mail | v=DMARC1; p=none; | |
+| CNAME | rsend.mail | send.forge.rmta.net | |
+| TXT | _dmarc.mail (optional) | v=DMARC1; p=none; | |
 
 After that: switch off the SendWILL popup embed (Theme settings > App embeds) so LuxeMail's popup and welcome code take over,
 and paste `pixel.js` into Shopify admin > Settings > Customer events > Add custom pixel, then Connect.
