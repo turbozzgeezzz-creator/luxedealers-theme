@@ -3,15 +3,23 @@
 A Cloudflare Worker (free tier) with a D1 database, sending through Resend. Shopify ignores this folder; it isn't part of the theme.
 Live at `https://luxemail-main.turbozzgeezzz.workers.dev` (`/health` shows the status).
 
-## Status: built, sending OFF
+## Status: switched on, waiting for DNS
 
-`SENDING_ENABLED = "0"` in `wrangler.toml`. Sign-ups, browsing, carts and checkouts are recorded and emails are queued,
-but nothing is sent and no discount codes are created. To go live (owner approval needed):
+`SENDING_ENABLED = "1"`. Mail goes out from `hello@mail.luxedealers.com` (replies go to support@luxedealers.com) as soon as Resend
+shows `mail.luxedealers.com` as verified. The Worker checks every 20 minutes, so nothing else needs doing once the DNS records are in.
+Until then sign-ups, browsing and checkouts are recorded and emails wait in the queue; no discount codes are created.
 
-1. Add `luxedealers.com` (or `send.luxedealers.com`) as a domain in Resend and add its DNS records in Cloudflare.
-2. When Resend shows it as verified, set `SENDING_ENABLED = "1"` and run `./deploy.sh`.
-3. Switch off the SendWILL pop-up app embed (Theme settings > App embeds). LuxeMail's welcome email gives the 10% code instead.
-4. Paste `pixel.js` into Shopify admin > Settings > Customer events > Add custom pixel, then Connect.
+DNS records for mail.luxedealers.com (add in the luxedealers.com DNS):
+
+| Type | Name | Value | Priority |
+|---|---|---|---|
+| TXT | resend._domainkey.mail | (DKIM key shown in Resend > Domains > mail.luxedealers.com) | |
+| MX | send.mail | feedback-smtp.us-east-1.amazonses.com | 10 |
+| TXT | send.mail | v=spf1 include:amazonses.com ~all | |
+| TXT | _dmarc.mail | v=DMARC1; p=none; | |
+
+After that: switch off the SendWILL popup embed (Theme settings > App embeds) so LuxeMail's popup and welcome code take over,
+and paste `pixel.js` into Shopify admin > Settings > Customer events > Add custom pixel, then Connect.
 
 ## What LuxeMail may do in Shopify
 

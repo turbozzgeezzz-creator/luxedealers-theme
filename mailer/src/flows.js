@@ -2,7 +2,7 @@
 // LuxeMail keeps its own mailing list and doesn't rely on Shopify showing customer emails. Marketing email
 // only goes to addresses that ticked the consent box (or opted in on their Shopify account), checked again
 // right before every send.
-import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex } from './util.js';
+import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex, sendingReady } from './util.js';
 import {
   verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles,
 } from './shopify.js';
@@ -611,7 +611,7 @@ export const builders = {
  */
 export async function drainOutbox(env, { id } = {}) {
   // Master switch: until the sending domain is approved, jobs stay queued and nothing is sent.
-  if (env.SENDING_ENABLED !== '1') return { sent: 0, reason: 'sending disabled' };
+  if (!(await sendingReady(env))) return { sent: 0, reason: 'sending not live (switch off or domain not verified)' };
   const budget = Number(env.DAILY_SEND_LIMIT || 95) - (await sentTodayCount(env));
   if (budget <= 0) return { sent: 0, reason: 'daily limit reached' };
   const { results } = id
@@ -650,7 +650,7 @@ export async function drainOutbox(env, { id } = {}) {
 /* ======================= Weekly report ======================= */
 
 export async function weeklyReport(env) {
-  if (env.SENDING_ENABLED !== '1') return;
+  if (!(await sendingReady(env))) return;
   const { day, hour, ymd } = localParts(env);
   if (day !== 1 || hour < 9 || (await getKV(env, 'report_ran')) === ymd) return;
   await setKV(env, 'report_ran', ymd);

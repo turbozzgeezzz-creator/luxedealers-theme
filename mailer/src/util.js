@@ -45,3 +45,21 @@ export async function setKV(env, k, v) {
 export function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), { status, headers: { 'Content-Type': 'application/json', ...headers } });
 }
+
+/**
+ * Sending is live only when SENDING_ENABLED = "1" AND Resend reports the sending domain as verified.
+ * The domain status is checked at most every 20 minutes and cached, so mail starts by itself once DNS is in.
+ */
+export async function sendingReady(env) {
+  if (env.SENDING_ENABLED !== '1') return false;
+  if (!env.RESEND_DOMAIN_ID) return true;
+  const row = await env.DB.prepare('SELECT v, expires_at FROM kv WHERE k = ?').bind('resend_domain_status').first();
+  if (row && row.expires_at > now()) return row.v === 'verified';
+  let status = 'unknown';
+  try {
+    const r = await fetch(`https://api.resend.com/domains/${env.RESEND_DOMAIN_ID}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+    if (r.ok) status = (await r.json()).status || 'unknown';
+  } catch (_) {}
+  await env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, ?)').bind('resend_domain_status', status, now() + (status === 'verified' ? 6 * 3600 : 1200)).run();
+  return status === 'verified';
+}

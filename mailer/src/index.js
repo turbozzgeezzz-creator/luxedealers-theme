@@ -1,5 +1,5 @@
 // LuxeMail entry point: HTTP routes and the 30-minute scheduler.
-import { json, now, hmacHex, cleanEmail, esc } from './util.js';
+import { json, now, hmacHex, cleanEmail, esc, sendingReady } from './util.js';
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
@@ -141,7 +141,7 @@ export default {
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
-      return json({ ok: true, sending: env.SENDING_ENABLED === '1', ...row, ...todayCounts });
+      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', ...row, ...todayCounts });
     }
 
     return new Response('LuxeMail', { status: 404 });

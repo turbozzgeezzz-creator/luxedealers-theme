@@ -1,5 +1,5 @@
 // Email layout, components, sending through Resend, and the outbox that respects the daily send limit.
-import { esc, money, now, hmacHex, DAY } from './util.js';
+import { esc, money, now, hmacHex, DAY, sendingReady } from './util.js';
 
 const GOLD = '#D4AF37';
 const GOLD_TEXT = '#8C6D1F';
@@ -227,7 +227,7 @@ export async function embedImages(env, html, maxBytes = 1_500_000) {
 }
 
 export async function sendViaResend(env, { to, subject, html: rawHtml, unsubUrl }) {
-  if (env.SENDING_ENABLED !== '1') throw new Error('Sending is disabled');
+  if (!(await sendingReady(env))) throw new Error('Sending is not live yet');
   const { html, attachments } = await embedImages(env, rawHtml);
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',

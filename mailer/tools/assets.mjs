@@ -36,7 +36,7 @@ async function shot(html, w, h, file, { jpg = false, transparent = false } = {})
 
 // Header, 600x100 shown at 2x.
 await shot(`<div style="width:1200px;height:200px;background:#0D0B07;display:flex;align-items:center;justify-content:center;gap:26px;border-bottom:2px solid #3A2B12">
-<div style="width:84px;height:84px">${GEM}</div><div style="font-family:C;font-weight:600;font-size:58px;letter-spacing:4px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
+<img src="data:image/png;base64,${readFileSync(new URL('ld-mark.png', theme)).toString('base64')}" style="width:104px;height:104px;object-fit:contain"><div style="font-family:C;font-weight:600;font-size:58px;letter-spacing:4px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
 
 // Banners, 600x260 shown at 2x.
 const BANNERS = {

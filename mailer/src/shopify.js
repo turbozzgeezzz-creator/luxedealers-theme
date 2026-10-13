@@ -1,6 +1,6 @@
 // Shopify access for LuxeMail: client-credentials token, Admin GraphQL, order verification,
 // best-effort unsubscribe, one-off discount codes, and product, collection and blog data.
-import { now, randomCode } from './util.js';
+import { now, randomCode, sendingReady } from './util.js';
 
 export async function shopifyToken(env) {
   const cached = await env.DB.prepare('SELECT v, expires_at FROM kv WHERE k = ?').bind('shopify_token').first();
@@ -56,7 +56,7 @@ export async function unsubscribeInShopify() {}
 export async function createPersonalCode(env, { prefix, percent, days, title }) {
   const endsAt = new Date(Date.now() + days * 86400000).toISOString();
   if (env.PREVIEW) return { code: `${prefix}-PREVIEW`, endsAt }; // previews never create real codes
-  if (env.SENDING_ENABLED !== '1') throw new Error('Sending is disabled: no codes are created');
+  if (!(await sendingReady(env))) throw new Error('Sending is not live yet: no codes are created');
   const code = `${prefix}-${randomCode(5)}`;
   const data = await gql(env, `mutation($d: DiscountCodeBasicInput!){
       discountCodeBasicCreate(basicCodeDiscount:$d){ codeDiscountNode{ id } userErrors{ field message } } }`, {
@@ -84,7 +84,7 @@ export async function createPersonalCode(env, { prefix, percent, days, title }) 
 export async function createSharedCode(env, { prefix, percent, days, title, collection }) {
   const endsAt = new Date(Date.now() + days * 86400000).toISOString();
   if (env.PREVIEW) return { code: `${prefix}-PREVIEW`, endsAt };
-  if (env.SENDING_ENABLED !== '1') throw new Error('Sending is disabled: no codes are created');
+  if (!(await sendingReady(env))) throw new Error('Sending is not live yet: no codes are created');
   let items = { all: true };
   if (collection) {
     const c = await gql(env, `query($h: String!){ collectionByIdentifier(identifier: { handle: $h }){ id } }`, { h: collection });
