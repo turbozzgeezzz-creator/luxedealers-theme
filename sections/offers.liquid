@@ -37,7 +37,7 @@
         {%- if has_welcome -%}
           <li class="offer-item">
             <span class="offer-item__fig">10<small>%</small></span>
-            <span class="offer-item__label">{{ settings.welcome_offer }}</span>
+            <span class="offer-item__label">{{ 'sections.offers_first' | t }}</span>
             <button type="button" class="offer-item__link" data-open-popup>{{ 'sections.offers_join' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
           </li>
         {%- endif -%}
