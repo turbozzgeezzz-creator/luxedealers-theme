@@ -43,7 +43,7 @@
       <button type="submit">{{ label }} {% render 'icon', name: 'arrow-right' %}</button>
     </div>
     <input type="hidden" name="contact[accepts_marketing]" value="true">
-    <p class="newsletter__notice">{{ 'newsletter.notice' | t }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">{{ 'newsletter.privacy' | t }}</a></p>
+    <p class="newsletter__notice">{{ 'newsletter.notice' | t }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">{{ 'newsletter.privacy' | t }}</a> <span class="recaptcha-note">{{ 'general.recaptcha_html' | t }}</span></p>
     {%- if form.errors -%}
       <p class="form-message form-message--error" id="{{ id }}-error">{{ form.errors.translated_fields.email | capitalize }} {{ form.errors.messages.email }}</p>
     {%- endif -%}

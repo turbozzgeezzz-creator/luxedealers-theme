@@ -22,28 +22,28 @@
       <ul class="offers__list" role="list">
         {%- if c1 > 1 -%}
           <li class="offer-item">
-            <span class="offer-item__fig">{{ settings.qty_1_percent }}<small>%</small></span>
-            <span class="offer-item__label">{{ 'sections.offers_qty' | t: count: c1 }}</span>
-            <span class="offer-item__note">{{ 'sections.offers_auto' | t }}</span>
+            <span class="offer-item__when">{{ 'sections.offers_qty' | t: count: c1 }}</span>
+            <span class="offer-item__fig">{{ settings.qty_1_percent }}% <small>{{ 'sections.offers_off' | t }}</small></span>
+            <span class="offer-item__note">{{ 'sections.offers_auto' | t: count: c1 }}</span>
           </li>
           {%- if c2 > c1 -%}
             <li class="offer-item">
-              <span class="offer-item__fig">{{ settings.qty_2_percent }}<small>%</small></span>
-              <span class="offer-item__label">{{ 'sections.offers_qty_plus' | t: count: c2 }}</span>
+              <span class="offer-item__when">{{ 'sections.offers_qty_plus' | t: count: c2 }}</span>
+              <span class="offer-item__fig">{{ settings.qty_2_percent }}% <small>{{ 'sections.offers_off' | t }}</small></span>
               <span class="offer-item__note">{{ 'sections.offers_mix' | t }}</span>
             </li>
           {%- endif -%}
         {%- endif -%}
         {%- if has_welcome -%}
           <li class="offer-item">
-            <span class="offer-item__fig">10<small>%</small></span>
-            <span class="offer-item__label">{{ 'sections.offers_first' | t }}</span>
+            <span class="offer-item__when">{{ 'sections.offers_first' | t }}</span>
+            <span class="offer-item__fig">10% <small>{{ 'sections.offers_off' | t }}</small></span>
             <button type="button" class="offer-item__link" data-open-popup>{{ 'sections.offers_join' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
           </li>
         {%- endif -%}
         <li class="offer-item">
-          <span class="offer-item__fig offer-item__fig--word">{{ 'sections.offers_free' | t }}</span>
-          <span class="offer-item__label">{{ 'sections.offers_ship' | t }}</span>
+          <span class="offer-item__when">{{ 'sections.offers_ship' | t }}</span>
+          <span class="offer-item__fig">{{ 'sections.offers_free' | t }}</span>
           <span class="offer-item__note">{{ 'sections.offers_ship_note' | t }}</span>
         </li>
       </ul>
@@ -57,9 +57,9 @@
   "name": "Offers",
   "settings": [
     { "type": "paragraph", "content": "Figures come from Theme settings: Cart > Buy more, save more, and Welcome offer." },
-    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Member benefits" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Good things, built in" },
-    { "type": "text", "id": "text", "label": "Text", "default": "Mix and match any pieces. Savings apply at checkout, no code needed." },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Offers" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Buy more, save more" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Bundle savings come off automatically at checkout. No code needed." },
     { "type": "text", "id": "button", "label": "Button", "default": "Shop all" },
     { "type": "url", "id": "link", "label": "Button link" }
   ],

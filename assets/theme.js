@@ -566,7 +566,7 @@
       });
 
       if (sticky && addBtn && 'IntersectionObserver' in window) {
-        new IntersectionObserver(function (en) { sticky.classList.toggle('is-visible', !en[0].isIntersecting && en[0].boundingClientRect.top < 0); }).observe(addBtn);
+        new IntersectionObserver(function (en) { var on = !en[0].isIntersecting && en[0].boundingClientRect.top < 0; sticky.classList.toggle('is-visible', on); doc.documentElement.classList.toggle('atc-on', on); }).observe(addBtn);
         on($('[data-add-button]', sticky), 'click', function (e) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : addBtn.click(); });
       }
       initGallery(wrap);
@@ -958,6 +958,8 @@
       if (cp && cp.setTrackingConsent) cp.setTrackingConsent(payload, function () {});
       storeSet('luxe:consent', payload);
       hide();
+      window.luxeCookiePending = false;
+      doc.dispatchEvent(new CustomEvent('luxe:consent'));
     }
     on(box, 'click', function (e) {
       if (e.target.closest('[data-cookie-accept]')) return decide({ analytics: 1, marketing: 1, preferences: 1 });
@@ -975,7 +977,11 @@
       // Ask once. A saved choice (on this device or in Shopify) means we never pop up again by ourselves.
       if (storeGet('luxe:consent', null)) return;
       try { if (sessionStorage.getItem('luxe:cookie-seen')) return; sessionStorage.setItem('luxe:cookie-seen', '1'); } catch (e) {}
-      if (cp.shouldShowBanner && cp.shouldShowBanner()) setTimeout(function () { if (!$('.popup.is-open, .drawer.is-open')) show(false); }, 1500);
+      if (!(cp.shouldShowBanner && cp.shouldShowBanner())) return;
+      // Wait until the page has finished loading, then ask in the middle of the screen. The email popup waits for this choice.
+      window.luxeCookiePending = true;
+      var go = function () { setTimeout(function () { show(false); }, 800); };
+      if (doc.readyState === 'complete') go(); else window.addEventListener('load', go, { once: true });
     }
     if (window.Shopify && window.Shopify.loadFeatures) {
       window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }], function (err) { if (!err) init(); });
@@ -1105,6 +1111,9 @@
     var shown = false;
     function show() {
       if (shown || otherPopup() || $('.drawer.is-open, .popup.is-open, .search-overlay.is-open, .menu-overlay.is-open')) return;
+      // Never stack on the cookie question: wait for that choice, then give the visitor a while before asking.
+      var cookie = doc.getElementById('CookieBanner');
+      if (window.luxeCookiePending || (cookie && !cookie.hidden)) { doc.addEventListener('luxe:consent', function () { setTimeout(show, 15000); }, { once: true }); return; }
       shown = true; openDrawer('NewsletterPopup');
       storeSet('luxe:popup', { done: false, at: Date.now() });
     }

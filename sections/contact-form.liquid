@@ -39,6 +39,7 @@
         <div class="field"><label class="field__label" for="ContactOrder">{{ 'contact.order' | t }}</label><input class="field__input" id="ContactOrder" name="contact[order]" placeholder="#1001" value="{{ form.order }}"></div>
         <div class="field"><label class="field__label" for="ContactMessage">{{ 'contact.message' | t }} *</label><textarea class="field__input" id="ContactMessage" name="contact[body]" rows="6" required>{{ form.body }}</textarea></div>
         <button type="submit" class="btn btn--gold contact2__send">{% render 'icon', name: 'mail', class: 'icon--sm' %} {{ 'contact.send' | t }}</button>
+        <p class="recaptcha-note">{{ 'general.recaptcha_html' | t }}</p>
       {%- endform -%}
     </div>
   </div>

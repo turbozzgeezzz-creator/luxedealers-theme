@@ -1,5 +1,6 @@
 {
   "general": {
+    "recaptcha_html": "Protected by reCAPTCHA. Google's <a href=\"https://policies.google.com/privacy\" target=\"_blank\" rel=\"noopener\">Privacy Policy</a> and <a href=\"https://policies.google.com/terms\" target=\"_blank\" rel=\"noopener\">Terms</a> apply.",
     "skip": "Skip to content",
     "copied": "Copied",
     "close": "Close",
@@ -347,15 +348,16 @@
     "add_both": "Add both",
     "bundle_note": "Adds the first available option of each. Pick a different one on the product page.",
     "get_offer": "Get {{ offer }}",
-    "offers_qty": "When you buy {{ count }} pieces",
-    "offers_qty_plus": "When you buy {{ count }} or more",
-    "offers_auto": "Applied automatically at checkout",
+    "offers_qty": "Buy {{ count }} pieces",
+    "offers_qty_plus": "Buy {{ count }} or more",
+    "offers_auto": "Any {{ count }} pieces, taken off at checkout",
     "offers_mix": "Mix any pieces you like",
-    "offers_join": "Join the list",
-    "offers_first": "Off your first order",
+    "offers_join": "Join the list for your code",
+    "offers_first": "Your first order",
+    "offers_off": "off",
     "offers_free": "Free",
-    "offers_ship": "Tracked shipping worldwide",
-    "offers_ship_note": "On every order, no minimum"
+    "offers_ship": "Every order",
+    "offers_ship_note": "Tracked shipping, worldwide"
   },
   "wishlist": {
     "note": "Your saved pieces are kept on this device.",
