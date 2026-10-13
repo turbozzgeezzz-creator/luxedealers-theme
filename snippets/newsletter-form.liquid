@@ -14,7 +14,7 @@
 {%- form 'customer', id: id, class: 'newsletter__form', data-newsletter: source -%}
   <input type="hidden" name="contact[tags]" value="{{ tags }}">
   {%- if form.posted_successfully? -%}
-    <div class="offer-reveal" role="status" tabindex="-1" data-autofocus>
+    <div class="offer-reveal{% if settings.welcome_personal %} offer-reveal--compact{% endif %}" role="status" tabindex="-1" data-autofocus>
       <strong class="h4">{{ 'newsletter.thanks' | t }}</strong>
       {%- if settings.welcome_code != blank -%}
         <span class="muted">{{ settings.welcome_offer }}. {{ 'newsletter.your_code' | t }}</span>
@@ -26,11 +26,9 @@
       {%- elsif settings.welcome_personal and code_box != false -%}
         <span class="muted" data-welcome-wait>{{ 'newsletter.code_coming' | t: offer: settings.welcome_offer }}</span>
         <div class="offer-reveal__personal" data-welcome-code hidden>
-          <button type="button" class="offer-reveal__code" data-copy=""><span data-popup-code-value></span></button>
-          <span class="muted" data-popup-code-note></span>
-          <div class="offer-reveal__actions">
-            <a class="btn btn--sm" href="{{ routes.all_products_collection_url }}" data-popup-code-shop>{{ 'newsletter.apply' | t }}</a>
-          </div>
+          <button type="button" class="offer-chip" data-copy="" aria-label="{{ 'newsletter.copy' | t }}"><span data-popup-code-value></span> {% render 'icon', name: 'tag', class: 'icon--sm' %}</button>
+          <span class="offer-reveal__note" data-popup-code-note></span>
+          <a class="btn btn--sm btn--gold" href="{{ routes.all_products_collection_url }}">{{ 'newsletter.keep_shopping' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
         </div>
       {%- else -%}
         <span class="muted">{{ 'newsletter.thanks_sub' | t }}</span>

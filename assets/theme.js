@@ -1127,12 +1127,12 @@
   })();
   on(doc, 'click', function (e) { var b = e.target.closest('[data-open-popup]'); if (b) { e.preventDefault(); openDrawer('NewsletterPopup', b); } });
   // After signing up in the popup: show the subscriber's own welcome code from LuxeMail, when it's sending.
+  // After sign-up: fetch the subscriber's own code once, apply it to their bag in the background
+  // (so it's waiting at checkout), then show it everywhere a code box is on the page.
   function showWelcomeCode() {
-    $$('[data-popup-code], [data-welcome-code]').forEach(fillWelcomeCode);
-  }
-  function fillWelcomeCode(box) {
+    var boxes = $$('[data-popup-code], [data-welcome-code]');
     var email = storeGet('luxe:signup-email', null);
-    if (!box || !email || !L.mail || !L.mail.endpoint) return;
+    if (!boxes.length || !email || !L.mail || !L.mail.endpoint) return;
     var url = L.mail.endpoint.replace(/\/t\/?$/, '') + '/welcome-code';
     var tries = 0;
     (function ask() {
@@ -1140,14 +1140,17 @@
         .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
         .then(function (d) {
           if (!d || !d.code) return;
-          $('[data-popup-code-value]', box).textContent = d.code;
-          var copyBtn = $('[data-copy]', box); if (copyBtn) copyBtn.dataset.copy = d.code;
-          var wait = box.parentNode && $('[data-welcome-wait]', box.parentNode); if (wait) wait.hidden = true;
-          var note = $('[data-popup-code-note]', box);
+          fetch(L.routes.root.replace(/\/$/, '') + '/discount/' + encodeURIComponent(d.code), { credentials: 'same-origin' }).catch(function () {});
           var when = d.endsAt ? new Date(d.endsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : '';
-          note.textContent = (L.strings.codeNote || '').replace('[date]', when);
-          var shop = $('[data-popup-code-shop]', box); shop.href = L.routes.root.replace(/\/$/, '') + '/discount/' + encodeURIComponent(d.code) + '?redirect=/collections/all';
-          box.hidden = false;
+          boxes.forEach(function (box) {
+            $('[data-popup-code-value]', box).textContent = d.code;
+            var copyBtn = $('[data-copy]', box); if (copyBtn) copyBtn.dataset.copy = d.code;
+            var wait = box.parentNode && $('[data-welcome-wait]', box.parentNode); if (wait) wait.hidden = true;
+            var note = $('[data-popup-code-note]', box);
+            if (note) note.textContent = (L.strings.codeNote || '').replace('[date]', when);
+            box.hidden = false;
+            var pop = box.closest('.popup__body'); if (pop) pop.classList.add('has-code');
+          });
         })
         .catch(function (s) { if (s === 404 && ++tries < 3) setTimeout(ask, 1500); });
     })();

@@ -28,10 +28,10 @@
       {%- if section.settings.text != blank -%}<div class="rte muted">{{ section.settings.text }}</div>{%- endif -%}
       {% render 'newsletter-form', id: 'NewsletterPopupForm', source: 'popup', code_box: false %}
       <div class="popup__code" data-popup-code hidden>
-        <p class="popup__code-label">{{ 'newsletter.your_code' | t }}</p>
-        <button type="button" class="popup__code-box" data-copy=""><strong data-popup-code-value></strong> {% render 'icon', name: 'tag', class: 'icon--sm' %}</button>
+        <p class="popup__code-title">{% render 'icon', name: 'check', class: 'icon--sm' %} {{ 'newsletter.code_ready' | t }}</p>
+        <button type="button" class="popup__code-box" data-copy="" aria-label="{{ 'newsletter.copy' | t }}"><strong data-popup-code-value></strong> {% render 'icon', name: 'tag', class: 'icon--sm' %}</button>
         <p class="muted popup__code-note" data-popup-code-note></p>
-        <a class="btn btn--gold btn--block" href="{{ routes.all_products_collection_url }}" data-popup-code-shop>{{ 'newsletter.start_shopping' | t }}</a>
+        <button type="button" class="btn btn--gold btn--block" data-drawer-close>{{ 'newsletter.keep_shopping' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</button>
       </div>
       <button type="button" class="link popup__skip" data-drawer-close>{{ 'newsletter.no_thanks' | t }}</button>
     </div>

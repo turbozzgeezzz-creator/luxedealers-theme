@@ -2000,3 +2000,28 @@ html[data-theme="dark"] body .pdp__trust > .pdp__trust-item .icon { background: 
   .promo__tile .btn { min-height: 32px !important; padding: 0 12px !important; font-size: 12px !important; }
   .promo__tile .btn .icon { display: none; }
 }
+
+/* ===== After sign-up: one short confirmation, code already applied, easy way back to shopping ===== */
+.popup__body.has-code .offer-reveal, .popup__body.has-code > .rte, .popup__body.has-code .popup__skip, .popup__body.has-code .newsletter__notice { display: none !important; }
+.popup__code { gap: 10px; padding: 16px; border-style: solid; border-color: #EAD9A6; }
+.popup__code-title { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 700; color: var(--c-ink); }
+.popup__code-title .icon { width: 20px; height: 20px; padding: 3px; border-radius: 50%; background: var(--c-gold); color: #111; box-sizing: border-box; }
+.popup__code-box { padding: 10px 12px; font-size: 16px; letter-spacing: .08em; }
+.popup__code-note { font-size: 12.5px; line-height: 1.5; }
+.offer-reveal--compact { align-items: flex-start; gap: 8px; padding: 14px 16px; border-style: solid; border-color: #EAD9A6; border-radius: 14px; text-align: left; }
+.offer-reveal--compact .h4 { font-size: 15px; }
+.offer-reveal__personal { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; width: 100%; }
+.offer-reveal__personal[hidden] { display: none; }
+.offer-chip { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 10px; background: #fff; border: 1px dashed var(--c-gold); font-weight: 700; font-size: 15px; letter-spacing: .06em; color: #111; cursor: pointer; }
+.offer-chip .icon { color: var(--c-gold-text); }
+.offer-reveal__note { font-size: 12.5px; line-height: 1.5; color: var(--c-muted); }
+.offer-reveal--compact .btn { min-height: 40px; }
+html[data-theme="dark"] .offer-reveal--compact, html[data-theme="dark"] .popup__code { background: #1A1712; border-color: rgba(212,175,55,.3); }
+html[data-theme="dark"] .offer-chip { background: #0F0D0A; color: #F6F3EC; }
+html[data-theme="dark"] .popup__code-title, html[data-theme="dark"] .offer-reveal--compact .h4 { color: #F6F3EC; }
+.site-footer .offer-reveal--compact { background: rgba(255,255,255,.04); border-color: rgba(212,175,55,.3); }
+.site-footer .offer-reveal--compact .h4 { color: #fff; }
+.site-footer .offer-reveal__note { color: rgba(255,255,255,.65); }
+.site-footer .offer-chip { background: #0F0D0A; color: #F6F3EC; }
+/* Buy-more card label stays on one line */
+.qtyb__save { white-space: nowrap; }
