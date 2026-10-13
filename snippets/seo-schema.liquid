@@ -8,7 +8,10 @@
       "@context": "https://schema.org",
       "@type": "Organization",
       "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }}
+      "url": {{ request.origin | append: routes.root_url | json }},
+      "logo": {{ 'ld-mark.png' | asset_url | prepend: 'https:' | json }},
+      "email": {{ settings.support_email | default: shop.email | json }},
+      "sameAs": ["https://www.instagram.com/_luxedealers/", "https://www.tiktok.com/@luxe.dealers", "https://www.facebook.com/people/LuxeDealers/61586243374554/"]
     }
   </script>
   <script type="application/ld+json">
@@ -16,7 +19,12 @@
       "@context": "https://schema.org",
       "@type": "WebSite",
       "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }}
+      "url": {{ request.origin | append: routes.root_url | json }},
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "{{ request.origin }}/search?type=product&q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
     }
   </script>
 {%- endif -%}
@@ -28,7 +36,7 @@
       "@type": "Product",
       "name": {{ product.title | json }},
       "url": {{ request.origin | append: product.url | json }},
-      {%- if product.featured_media -%}"image": [{{ product.featured_media | image_url: width: 1600 | prepend: 'https:' | json }}],{%- endif -%}
+      {%- if product.featured_media -%}"image": [{%- for m in product.media limit: 4 -%}{{ m.preview_image | image_url: width: 1600 | prepend: 'https:' | json }}{% unless forloop.last %},{% endunless %}{%- endfor -%}],{%- endif -%}
       "description": {{ product.description | strip_html | strip_newlines | truncate: 500 | json }},
       {%- if v.sku != blank -%}"sku": {{ v.sku | json }},{%- endif -%}
       {%- if v.barcode != blank -%}"gtin": {{ v.barcode | json }},{%- endif -%}
@@ -41,23 +49,20 @@
         "ratingCount": {{ product.metafields.reviews.rating_count.value | json }}
       },
       {%- endif -%}
-      "offers": [
-        {%- for variant in product.variants -%}
-        {
-          "@type": "Offer",
-          "name": {{ variant.title | json }},
-                    "availability": "http://schema.org/{% if variant.available %}InStock{% else %}OutOfStock{% endif %}",
-          "price": {{ variant.price | divided_by: 100.0 | json }},
-          "priceCurrency": {{ cart.currency.iso_code | json }},
-          "url": {{ request.origin | append: variant.url | json }}
-          {%- if variant.sku != blank -%},"sku": {{ variant.sku | json }}{%- endif %}
-        }{% unless forloop.last %},{% endunless %}
-        {%- endfor -%}
-      ]
+      "offers": {
+        "@type": "AggregateOffer",
+        "priceCurrency": {{ cart.currency.iso_code | json }},
+        "lowPrice": {{ product.price_min | divided_by: 100.0 | json }},
+        "highPrice": {{ product.price_max | divided_by: 100.0 | json }},
+        "offerCount": {{ product.variants.size }},
+        "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
+        "url": {{ request.origin | append: product.url | json }},
+        "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+      }
     }
   </script>
 {%- endif -%}
-{%- if request.page_type == 'collection' or request.page_type == 'product' -%}
+{%- if request.page_type == 'collection' or request.page_type == 'product' or request.page_type == 'article' -%}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -67,10 +72,49 @@
         {%- if collection -%},
         { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
         {%- endif -%}
+        {%- if article -%},
+        { "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ request.origin | append: blog.url | json }} },
+        { "@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ request.origin | append: article.url | json }} }
+        {%- endif -%}
         {%- if product -%},
         { "@type": "ListItem", "position": {% if collection %}3{% else %}2{% endif %}, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
         {%- endif %}
       ]
+    }
+  </script>
+{%- endif -%}
+
+{%- if request.page_type == 'article' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BlogPosting",
+      "headline": {{ article.title | truncate: 110 | json }},
+      "description": {{ article.excerpt_or_content | strip_html | strip_newlines | truncate: 200 | json }},
+      {%- if article.image -%}"image": [{{ article.image | image_url: width: 1600 | prepend: 'https:' | json }}],{%- endif -%}
+      "datePublished": {{ article.published_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+      "dateModified": {{ article.updated_at | date: '%Y-%m-%dT%H:%M:%SZ' | json }},
+      "author": { "@type": "Person", "name": {{ article.author | json }} },
+      "publisher": { "@type": "Organization", "name": {{ shop.name | json }}, "logo": { "@type": "ImageObject", "url": {{ 'ld-mark.png' | asset_url | prepend: 'https:' | json }} } },
+      "mainEntityOfPage": {{ request.origin | append: article.url | json }}
+    }
+  </script>
+{%- endif -%}
+{%- if request.page_type == 'collection' and collection.products.size > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": {{ collection.title | json }},
+      "url": {{ request.origin | append: collection.url | json }},
+      "mainEntity": {
+        "@type": "ItemList",
+        "itemListElement": [
+          {%- for p in collection.products limit: 12 -%}
+          { "@type": "ListItem", "position": {{ forloop.index }}, "url": {{ request.origin | append: p.url | json }}, "name": {{ p.title | json }} }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
+      }
     }
   </script>
 {%- endif -%}

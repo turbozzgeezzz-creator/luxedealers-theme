@@ -35,9 +35,24 @@
       {%- unless seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
     <meta name="description" content="{{ seo_desc | escape }}">
-    {%- if request.page_type == 'search' or request.page_type == 'cart' or template.suffix == 'wishlist' -%}
-      <meta name="robots" content="noindex, follow">
-    {%- endif -%}
+    {%- liquid
+      assign noindex = false
+      if request.page_type == 'search' or request.page_type == 'cart' or template.suffix == 'wishlist' or request.page_type == 'customers/account' or request.page_type == 'customers/order'
+        assign noindex = true
+      endif
+      # Filtered or re-sorted collection pages are near-duplicates of the main page: keep them out of Google.
+      if request.page_type == 'collection'
+        if collection.sort_by != blank and collection.sort_by != collection.default_sort_by
+          assign noindex = true
+        endif
+        for f in collection.filters
+          if f.active_values.size > 0 or f.min_value.value != nil or f.max_value.value != nil
+            assign noindex = true
+          endif
+        endfor
+      endif
+    -%}
+    {%- if noindex -%}<meta name="robots" content="noindex, follow">{%- endif -%}
 
     {% render 'meta-tags', seo_title: seo_title, seo_desc: seo_desc, product: product %}
     {% render 'seo-schema', product: product, collection: collection %}
@@ -97,6 +112,7 @@
     {% sections 'header-group' %}
 
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
+      {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ settings.seo_home_title | default: shop.name }}</h1>{%- endif -%}
       {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ shop.name | escape }}: clothing, shoes, bags and accessories</h1>{%- endif -%}
       {{ content_for_layout }}
     </main>
