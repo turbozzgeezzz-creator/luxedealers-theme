@@ -2091,3 +2091,10 @@ html[data-theme="dark"] .facet-cat:hover { background: rgba(212,175,55,.1); }
   .coll-hero--search .search-hero { width: 100%; }
   .coll-hero--search .coll-hero__art { display: none !important; }
 }
+/* Bundle bar: total after the buy-more saving, with the original price and the saving spelled out */
+.bset__sum { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.bset__prices { display: inline-flex; align-items: baseline; gap: 8px; }
+.bset__prices s { font-size: 14px; color: rgba(255,255,255,.5); }
+.bset__sum strong { margin-left: 0; }
+.bset__save { flex-basis: 100%; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #8FD3A6; }
+.bset__save::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }

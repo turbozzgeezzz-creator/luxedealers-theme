@@ -1325,7 +1325,17 @@
           var item = c.closest('[data-set-item]'); if (item) item.classList.toggle('is-on', c.checked);
           if (c.checked) { t += parseInt(c.dataset.price, 10) || 0; n++; }
         });
-        total.textContent = formatMoney(t);
+        // Show the buy-more saving these pieces unlock (the same automatic discount Shopify applies at checkout).
+        var bar = $('.bset__bar', set), pct = 0;
+        if (bar) {
+          var q1 = +bar.dataset.q1, p1 = +bar.dataset.p1, q2 = +bar.dataset.q2, p2 = +bar.dataset.p2;
+          if (q2 > 1 && n >= q2) pct = p2; else if (q1 > 1 && n >= q1) pct = p1;
+        }
+        var save = Math.round(t * pct / 100);
+        total.textContent = formatMoney(t - save);
+        var was = $('[data-set-was]', set), saveEl = $('[data-set-save]', set);
+        if (was) { was.hidden = !save; was.textContent = formatMoney(t); }
+        if (saveEl) { saveEl.hidden = !save; saveEl.textContent = (saveEl.dataset.text || '').replace('[pct]', pct).replace('[amt]', formatMoney(save)); }
         if (count) count.textContent = n;
         if (btn) { btn.disabled = n < 2; if (label) label.textContent = (n < 2 ? label.dataset.one : label.dataset.many).replace('[n]', n); }
       }

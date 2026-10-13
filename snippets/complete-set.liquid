@@ -70,8 +70,13 @@
     {%- endcapture -%}
     {{ cards }}
   </div>
-  <div class="bset__bar">
-    <div class="bset__sum"><span data-set-count>1</span> {{ 'bundle.selected' | t }} <strong data-set-total>{{ current.price | money }}</strong></div>
+  {%- comment -%} The saving shown is the store's buy-more discount (Theme settings > Cart), applied automatically at checkout. {%- endcomment -%}
+  <div class="bset__bar" data-q1="{{ settings.qty_1_count | default: 0 }}" data-p1="{{ settings.qty_1_percent | default: 0 }}" data-q2="{{ settings.qty_2_count | default: 0 }}" data-p2="{{ settings.qty_2_percent | default: 0 }}">
+    <div class="bset__sum">
+      <span class="bset__count"><span data-set-count>1</span> {{ 'bundle.selected' | t }}</span>
+      <span class="bset__prices"><s data-set-was hidden></s> <strong data-set-total>{{ current.price | money }}</strong></span>
+      <span class="bset__save" data-set-save data-text="{{ 'bundle.you_save' | t: percent: '[pct]', amount: '[amt]' | escape }}" hidden></span>
+    </div>
     <button type="button" class="btn btn--gold" data-set-add disabled>{% render 'icon', name: 'bag', class: 'icon--sm' %} <span data-set-label data-one="{{ 'bundle.add_one' | t | escape }}" data-many="{{ 'bundle.add_many' | t | escape }}">{{ 'bundle.add_one' | t }}</span></button>
   </div>
 </div>

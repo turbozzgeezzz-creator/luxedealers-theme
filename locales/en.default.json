@@ -502,6 +502,7 @@
     "help_text": "Tracking not working after 48 hours, or something not right? Email us with your order number."
   },
   "bundle": {
+    "you_save": "You save {{ percent }}% ({{ amount }}), applied at checkout",
     "eyebrow": "Build your set",
     "intro": "Tap the pieces you want, choose an option, and add them all at once.",
     "this_item": "This item",
