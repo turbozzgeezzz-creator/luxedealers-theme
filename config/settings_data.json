@@ -65,6 +65,10 @@
           "enable_cwtracks_listener": true
         }
       }
-    }
+    },
+    "qty_1_count": 2,
+    "qty_1_percent": 10,
+    "qty_2_count": 3,
+    "qty_2_percent": 15
   }
 }
