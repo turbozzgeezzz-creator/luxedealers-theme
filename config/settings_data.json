@@ -26,7 +26,7 @@
         "settings": {
           "enabled": true,
           "trigger": "delay",
-          "delay": 12,
+          "delay": 25,
           "repeat_days": 0,
           "art": "gift",
           "show_offer": true,

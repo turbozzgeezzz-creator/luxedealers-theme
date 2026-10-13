@@ -490,9 +490,9 @@
     "offers": {
       "type": "offers",
       "settings": {
-        "eyebrow": "Member benefits",
-        "heading": "Good things, built in",
-        "text": "Mix and match any pieces. Savings apply at checkout, no code needed.",
+        "eyebrow": "Offers",
+        "heading": "Buy more, save more",
+        "text": "Bundle savings come off automatically at checkout. No code needed.",
         "button": "Shop all",
         "link": "/collections/shop-all"
       }
