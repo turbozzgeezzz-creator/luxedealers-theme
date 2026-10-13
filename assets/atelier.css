@@ -2086,3 +2086,8 @@ html[data-theme="dark"] .search-hero input { color: #F6F3EC; }
 .facet-cat--sub { font-size: 12.5px; color: var(--c-muted); }
 html[data-theme="dark"] .facet-cat { color: #F6F3EC; border-color: rgba(255,255,255,.14); }
 html[data-theme="dark"] .facet-cat:hover { background: rgba(212,175,55,.1); }
+@media (max-width: 749px) {
+  .coll-hero--search .tile__text { width: 100%; max-width: none !important; }
+  .coll-hero--search .search-hero { width: 100%; }
+  .coll-hero--search .coll-hero__art { display: none !important; }
+}
