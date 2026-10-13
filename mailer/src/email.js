@@ -200,12 +200,11 @@ export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reas
 ${bannerImg}
 <tr><td class="px" style="background:#FFFFFF;padding:32px 32px 30px;">${body}</td></tr>
 ${plain ? '' : `<tr><td class="px" style="background:%%SOFT%%;padding:22px 26px;">${trustRow(env)}</td></tr>`}
-<tr><td class="px" align="center" bgcolor="${INK}" style="background-color:${INK};background-image:linear-gradient(${INK},${INK});padding:30px 24px 32px;text-align:center;font-size:0;line-height:0;">
+<tr><td class="px" align="center" bgcolor="${INK}" background="${env.PUBLIC_URL}/footer/bg.png" style="background-color:${INK};background-image:url('${env.PUBLIC_URL}/footer/bg.png');background-repeat:repeat;padding:30px 24px 32px;text-align:center;font-size:0;line-height:0;">
 <p style="margin:0 0 18px;">${social('instagram', 'https://www.instagram.com/_luxedealers/', 'Instagram')}${social('tiktok', 'https://www.tiktok.com/@luxe.dealers', 'TikTok')}${social('facebook', 'https://www.facebook.com/people/LuxeDealers/61586243374554/', 'Facebook')}</p>
-<p style="margin:0 0 14px;font-size:13px;line-height:20px;font-family:Arial,sans-serif;"><a href="${env.STORE_URL}/collections/new-arrivals" style="color:#E6C463;text-decoration:none;font-weight:700;">New in</a><span style="color:#5C5446;">&nbsp;&nbsp;·&nbsp;&nbsp;</span><a href="${env.STORE_URL}/collections/handbags" style="color:#E6C463;text-decoration:none;font-weight:700;">Bags</a><span style="color:#5C5446;">&nbsp;&nbsp;·&nbsp;&nbsp;</span><a href="${env.STORE_URL}/collections/shop-all" style="color:#E6C463;text-decoration:none;font-weight:700;">Shop all</a></p>
-<p style="margin:0 0 12px;font-size:13px;line-height:20px;color:#CFC6B4;font-family:Arial,sans-serif;">Questions? Just reply, or email <a href="mailto:${env.REPLY_TO}" style="color:#FFFFFF;">${esc(env.REPLY_TO)}</a></p>
-<p style="margin:0;font-size:12px;line-height:18px;color:#8A8270;font-family:Arial,sans-serif;">${esc(reason || "You're getting this because you signed up for LuxeDealers emails.")}</p>
-<p style="margin:6px 0 0;font-size:12px;line-height:18px;font-family:Arial,sans-serif;"><a href="${esc(unsubUrl)}" style="color:#CFC6B4;text-decoration:underline;">Unsubscribe</a></p>
+<p style="margin:0 0 14px;">${part('new-in', 45, 20, 'New in', `${env.STORE_URL}/collections/new-arrivals`)}${part('dot', 22, 20, '·')}${part('bags', 34, 20, 'Bags', `${env.STORE_URL}/collections/handbags`)}${part('dot', 22, 20, '·')}${part('shop-all', 54, 20, 'Shop all', `${env.STORE_URL}/collections/shop-all`)}</p>
+<p style="margin:0 0 10px;">${part('help', 288, 20, `Questions? Email ${env.REPLY_TO}`, `mailto:${env.REPLY_TO}`)}</p>
+<p style="margin:0;">${part('unsub', 291, 18, `${reason || 'Signed up for LuxeDealers emails'} · Unsubscribe`, unsubUrl)}</p>
 </td></tr></table></td></tr></table></body></html>`
     .replace(/%%A%%/g, T.a).replace(/%%AI%%/g, T.ai).replace(/%%AT%%/g, T.at).replace(/%%SOFT%%/g, T.soft).replace(/%%LINE%%/g, T.line)
     .replace(/%%PAGE%%/g, T.page).replace(/%%DEEP2%%/g, T.deep2).replace(/%%DEEP%%/g, T.deep).replace(/%%GLOW%%/g, T.glow);
