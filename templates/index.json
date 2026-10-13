@@ -175,12 +175,19 @@
           "settings": {
             "text": "Prices in your currency"
           }
+        },
+        "m6": {
+          "type": "text",
+          "settings": {
+            "text": "Buy 2, save 10% · 3+, save 15%"
+          }
         }
       },
       "block_order": [
         "m0",
         "m1",
         "m2",
+        "m6",
         "m3",
         "m4",
         "m5"
@@ -479,6 +486,16 @@
         "link_label": "All reviews",
         "link": "/pages/reviews"
       }
+    },
+    "offers": {
+      "type": "offers",
+      "settings": {
+        "eyebrow": "Member benefits",
+        "heading": "Good things, built in",
+        "text": "Mix and match any pieces. Savings apply at checkout, no code needed.",
+        "button": "Shop all",
+        "link": "/collections/shop-all"
+      }
     }
   },
   "order": [
@@ -487,6 +504,7 @@
     "reviews",
     "depts",
     "latest",
+    "offers",
     "deals",
     "budget",
     "why",

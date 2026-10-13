@@ -29,7 +29,7 @@
           "delay": 12,
           "repeat_days": 0,
           "art": "gift",
-          "show_offer": false,
+          "show_offer": true,
           "offer": "10% off your first order",
           "eyebrow": "The private list",
           "heading": "First to know, first to own",
@@ -104,9 +104,12 @@
         }
       }
     },
+    "cart_gift_note": false,
     "qty_1_count": 2,
     "qty_1_percent": 10,
     "qty_2_count": 3,
-    "qty_2_percent": 15
+    "qty_2_percent": 15,
+    "welcome_personal": true,
+    "welcome_offer": "10% off your first order"
   }
 }

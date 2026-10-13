@@ -65,13 +65,25 @@
             "needs_code": false,
             "needs_tiers": true
           }
+        },
+        "m6": {
+          "type": "message",
+          "settings": {
+            "icon": "tag",
+            "text": "Buy 2, save 10% · Buy 3+, save 15%",
+            "link": "/collections/shop-all",
+            "opens_popup": false,
+            "needs_code": false,
+            "needs_qty": true
+          }
         }
       },
       "block_order": [
         "m0",
-        "m5",
-        "m1",
+        "m6",
         "m2",
+        "m1",
+        "m5",
         "m3",
         "m4"
       ],
