@@ -203,6 +203,8 @@ html[data-theme="dark"] .badge--sale { color: #F6F3EC; }
 html[data-theme="dark"] .newsletter__row button { color: #F6F3EC; }
 html[data-theme="dark"] .size-cta { background: #15130F; }
 @media (max-width: 749px) { html[data-theme="dark"] .drawer--sheet .sheet__grab span { background: #242019; } }
+html[data-theme="dark"] .card { background: #15130F; border-color: #2E2921; }
+html[data-theme="dark"] .card:hover { border-color: #2E2921; }
 
 /* Hand tweaks */
 .theme-toggle__sun { display: none; }
@@ -258,6 +260,14 @@ html[data-theme="dark"] .badge--new { background: #D4AF37 !important; color: #11
 html[data-theme="dark"] .search-pop { background: #15130F; border-color: rgba(212,175,55,.2); }
 html[data-theme="dark"] .search-pop__products a:hover { background: #1F1B14; }
 html[data-theme="dark"] .sheet__grab span { background: #4A4337; }
+/* Collection toolbar and filter sidebar: no stray boxes */
+html[data-theme="dark"] .toolbar, html[data-theme="dark"] .toolbar__left, html[data-theme="dark"] .toolbar__right, html[data-theme="dark"] .drawer--sidebar .drawer__panel, html[data-theme="dark"] .drawer--sidebar .drawer__body, html[data-theme="dark"] .drawer--sidebar .drawer__head, html[data-theme="dark"] .facets, html[data-theme="dark"] .facets form, html[data-theme="dark"] .coll__main, html[data-theme="dark"] .active-filters { background: transparent !important; box-shadow: none !important; }
+html[data-theme="dark"] .toolbar { border-color: rgba(212,175,55,.18) !important; }
+html[data-theme="dark"] .select, html[data-theme="dark"] .toolbar select { background-color: #15130F !important; color: #F6F3EC !important; border-color: rgba(212,175,55,.3) !important; }
+html[data-theme="dark"] .facets summary, html[data-theme="dark"] .facets label { color: #F6F3EC; }
+html[data-theme="dark"] .facets details { border-color: rgba(212,175,55,.16) !important; }
+/* Search page box */
+html[data-theme="dark"] .search-hero input { background: rgba(255,255,255,.06) !important; color: #fff !important; border: 1px solid rgba(212,175,55,.35) !important; }
 html[data-theme="dark"] .card__title, html[data-theme="dark"] .card__title a, html[data-theme="dark"] .card .price, html[data-theme="dark"] .card .price__current, html[data-theme="dark"] .card__meta { color: #FFFFFF !important; }
 html[data-theme="dark"] .card .price__compare { color: rgba(255,255,255,.5) !important; }
 html[data-theme="dark"] .btn::after { background: linear-gradient(110deg, transparent 30%, rgba(255,240,200,.35) 50%, transparent 70%); }

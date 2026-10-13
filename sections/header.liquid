@@ -203,22 +203,12 @@
     <div class="mnav__body">
       <form action="{{ routes.search_url }}" method="get" role="search" class="mnav__search">
         <label class="visually-hidden" for="MenuSearch">{{ 'header.search' | t }}</label>
-        {% render 'icon', name: 'search', class: 'icon--sm' %}
-        <input id="MenuSearch" type="search" name="q" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off">
+        <input id="MenuSearch" type="search" name="q" placeholder="{{ 'header.search_placeholder' | t }}" autocomplete="off" enterkeyhint="search">
         <input type="hidden" name="type" value="product">
+        <input type="hidden" name="options[prefix]" value="last">
+        <button type="submit" class="mnav__search-btn" aria-label="{{ 'header.search' | t }}">{% render 'icon', name: 'search', class: 'icon--sm' %}</button>
       </form>
       {%- if menu != blank -%}
-        <div class="mnav__depts">
-          {%- for link in menu.links -%}
-            {%- if link.type == 'collection_link' and link.links.size > 0 -%}
-              {%- assign dimg = link.object.featured_image | default: link.object.products.first.featured_media.preview_image -%}
-              <a class="mnav__dept" href="{{ link.url }}">
-                <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: '' }}{%- endif -%}</span>
-                <span class="mnav__dept-name">{{ link.title }}</span>
-              </a>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
         <p class="mnav__label">{{ 'header.shop' | t }}</p>
         <ul class="mnav__list" role="list">
           {%- for link in menu.links -%}
@@ -277,6 +267,18 @@
             {%- endunless -%}
           {%- endfor -%}
         </ul>
+        <p class="mnav__label">{{ 'header.departments' | t }}</p>
+        <div class="mnav__depts">
+          {%- for link in menu.links -%}
+            {%- if link.type == 'collection_link' and link.links.size > 0 -%}
+              {%- assign dimg = link.object.featured_image | default: link.object.products.first.featured_media.preview_image -%}
+              <a class="mnav__dept" href="{{ link.url }}">
+                <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: '' }}{%- endif -%}</span>
+                <span class="mnav__dept-name">{{ link.title }}</span>
+              </a>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
         <div class="mnav__promo">
           <span class="mnav__promo-ico">{% render 'icon', name: 'truck' %}</span>
           <div><strong>{{ 'products.free_shipping' | t }}</strong><span>{{ 'products.refund_reship' | t }}</span></div>

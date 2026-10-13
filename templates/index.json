@@ -474,7 +474,7 @@
         "eyebrow": "Reviews",
         "heading": "Real reviews from real customers",
         "collection": "shop-all",
-        "limit": 10,
+        "limit": 12,
         "min_rating": 1,
         "link_label": "All reviews",
         "link": "/pages/reviews"

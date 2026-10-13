@@ -9,17 +9,24 @@
   assign total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count
   assign shown = 0
 -%}
-{%- comment -%} Order: photo reviews from verified buyers, other photo reviews, verified text reviews, then the rest. One per product. {%- endcomment -%}
-{%- assign used = ',' -%}
+{%- comment -%}
+  Store reviews and product reviews together. Order: photo reviews from verified buyers, other photo reviews,
+  verified written reviews, then the rest. Store reviews come first within each group. One review per product.
+{%- endcomment -%}
+{%- liquid
+  assign wd = shop.metafields.judgeme.all_reviews_widget_v2025_data.value
+  assign store_revs = wd.shop_reviews
+  assign used = ','
+  assign store_label = 'reviews.store_review' | t
+-%}
 {%- capture cards -%}
   {%- for pass in (1..4) -%}
-    {%- for p in c.products limit: 40 -%}
-      {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
-      {%- assign key = ',' | append: p.id | append: ',' -%}
-      {%- if used contains key -%}{%- continue -%}{%- endif -%}
-      {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
-      {%- if jd.number_of_reviews > 0 -%}
-        {%- for review in jd.reviews limit: 1 -%}
+    {%- for src in (1..2) -%}
+      {%- if src == 1 -%}
+        {%- for review in store_revs -%}
+          {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
+          {%- assign key = ',s' | append: review.uuid | append: ',' -%}
+          {%- if used contains key -%}{%- continue -%}{%- endif -%}
           {%- liquid
             assign pic = false
             if review.pictures_urls.size > 0
@@ -48,9 +55,52 @@
             endif
           -%}
           {%- if ok -%}
-            {% render 'review-card', review: review, product_title: p.title, product_url: p.url, hero: true %}
+            {% render 'review-card', review: review, product_title: store_label, product_url: s.link, hero: true %}
             {%- assign shown = shown | plus: 1 -%}
-            {%- assign used = used | append: p.id | append: ',' -%}
+            {%- assign used = used | append: 's' | append: review.uuid | append: ',' -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for p in c.products limit: 40 -%}
+          {%- if shown >= s.limit -%}{%- break -%}{%- endif -%}
+          {%- assign key = ',' | append: p.id | append: ',' -%}
+          {%- if used contains key -%}{%- continue -%}{%- endif -%}
+          {%- assign jd = p.metafields.judgeme.review_widget_data.value -%}
+          {%- if jd.number_of_reviews > 0 -%}
+            {%- for review in jd.reviews limit: 1 -%}
+              {%- liquid
+                assign pic = false
+                if review.pictures_urls.size > 0
+                  assign pic = true
+                endif
+                assign ok = false
+                if review.rating >= s.min_rating
+                  case pass
+                    when 1
+                      if pic and review.verified_buyer
+                        assign ok = true
+                      endif
+                    when 2
+                      if pic
+                        assign ok = true
+                      endif
+                    when 3
+                      if pic == false and review.body != blank and review.verified_buyer
+                        assign ok = true
+                      endif
+                    else
+                      if pic == false and review.body != blank
+                        assign ok = true
+                      endif
+                  endcase
+                endif
+              -%}
+              {%- if ok -%}
+                {% render 'review-card', review: review, product_title: p.title, product_url: p.url, hero: true %}
+                {%- assign shown = shown | plus: 1 -%}
+                {%- assign used = used | append: p.id | append: ',' -%}
+              {%- endif -%}
+            {%- endfor -%}
           {%- endif -%}
         {%- endfor -%}
       {%- endif -%}

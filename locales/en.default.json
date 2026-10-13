@@ -30,6 +30,7 @@
     "signed_in": "Signed in",
     "hello": "Hi {{ name }}",
     "shop": "Shop",
+    "departments": "Departments",
     "theme_toggle": "Switch light or dark mode",
     "dark_mode": "Dark mode",
     "light_mode": "Light mode",
@@ -449,6 +450,7 @@
     "unsure_text": "Compare the length column with your best-fitting pair: it's more reliable than the tag. Or email us and we'll help."
   },
   "reviews": {
+    "store_review": "Store review",
     "verified": "Verified buyer",
     "from_count": "from {{ count }} reviews",
     "photo_alt": "Customer photo"

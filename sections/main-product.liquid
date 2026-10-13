@@ -19,6 +19,17 @@
       assign chart = 'apparel'
     endif
   endfor
+  if chart == 'all'
+    if ptitle contains 'shoe' or ptitle contains 'sneaker' or ptitle contains 'trainer' or ptitle contains 'slide' or ptitle contains 'boot' or ptitle contains 'heel'
+      assign chart = 'shoes'
+    elsif ptitle contains 'hoodie' or ptitle contains 'jacket' or ptitle contains 'tee' or ptitle contains 't-shirt' or ptitle contains 'shirt' or ptitle contains 'tracksuit' or ptitle contains 'pants' or ptitle contains 'shorts' or ptitle contains 'jersey' or ptitle contains 'sweater' or ptitle contains 'coat'
+      assign chart = 'apparel'
+    endif
+  endif
+  # Only clothing and shoes get a size guide. Bags, accessories, jewellery and fragrances don't need one.
+  if chart == 'all'
+    assign has_size = false
+  endif
   assign jd = product.metafields.judgeme.review_widget_data.value
   assign rcount = product.metafields.reviews.rating_count.value | default: 0
 -%}
