@@ -44,16 +44,6 @@
             "needs_code": false
           }
         },
-        "m3": {
-          "type": "message",
-          "settings": {
-            "icon": "lock",
-            "text": "Secure checkout: PayPal, Shop Pay, cards",
-            "link": "",
-            "opens_popup": false,
-            "needs_code": false
-          }
-        },
         "m4": {
           "type": "message",
           "settings": {
@@ -93,7 +83,6 @@
         "m2",
         "m1",
         "m5",
-        "m3",
         "m4"
       ],
       "settings": {
