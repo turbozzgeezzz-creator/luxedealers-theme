@@ -7,6 +7,8 @@
   assign slides = section.blocks | where: 'type', 'slide'
   assign sides = section.blocks | where: 'type', 'side'
   assign tiles = section.blocks | where: 'type', 'tile'
+  assign avg = shop.metafields.judgeme.all_reviews_rating.value | default: shop.metafields.judgeme.all_reviews_rating
+  assign total = shop.metafields.judgeme.all_reviews_count.value | default: shop.metafields.judgeme.all_reviews_count | plus: 0
 -%}
 <section class="section promo{% if section.settings.flush %} section--flush-top{% endif %}">
   <div class="container">
@@ -25,7 +27,11 @@
                   {%- if b.button != blank -%}<a class="btn btn--gold" href="{{ b.link | default: b.collection.url }}">{{ b.button }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>{%- endif -%}
                   {%- if b.button_2 != blank -%}<a class="btn btn--ghost-light" href="{{ b.link_2 }}">{{ b.button_2 }}</a>{%- endif -%}
                 </div>
+                {%- if section.settings.show_rating and total > 0 -%}
+                  <p class="promo-proof">{%- render 'icon', name: 'star', class: 'icon--sm' -%}<strong>{{ avg | round: 2 }}</strong><span>{{ 'sections.hero_rating' | t: count: total }}</span><span class="promo-proof__sep" aria-hidden="true">·</span><span>{{ 'sections.hero_ship' | t }}</span></p>
+                {%- endif -%}
               </div>
+              <span class="promo-count" aria-hidden="true">{{ forloop.index | prepend: '0' | slice: -2, 2 }} <i>/</i> {{ slides.size | prepend: '0' | slice: -2, 2 }}</span>
               <div class="tile__art">{% render 'illustration', name: b.illustration, image: b.image, sizes: '(min-width: 990px) 40vw, 80vw', class: 'tile__img', eager: forloop.first %}</div>
             </div>
           {%- endfor -%}
@@ -77,7 +83,8 @@
   "class": "section-promo",
   "settings": [
     { "type": "checkbox", "id": "flush", "label": "Less space above", "default": true },
-    { "type": "range", "id": "speed", "label": "Seconds per slide", "min": 3, "max": 12, "step": 1, "default": 6 }
+    { "type": "range", "id": "speed", "label": "Seconds per slide", "min": 3, "max": 12, "step": 1, "default": 6 },
+    { "type": "checkbox", "id": "show_rating", "label": "Show store rating under the buttons", "default": true, "info": "From Judge.me. Hidden when there are no reviews." }
   ],
   "blocks": [
     {

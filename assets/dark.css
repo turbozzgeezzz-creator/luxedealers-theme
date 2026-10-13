@@ -226,7 +226,7 @@ html[data-theme="dark"] body { background: radial-gradient(1100px 520px at 50% -
 html[data-theme="dark"] .site-header, html[data-theme="dark"] .header__nav { border-bottom-color: rgba(212,175,55,.2) !important; }
 html[data-theme="dark"] .card, html[data-theme="dark"] .product-card, html[data-theme="dark"] .bag-up, html[data-theme="dark"] .faqc__q, html[data-theme="dark"] .contact2__card, html[data-theme="dark"] .steps__item, html[data-theme="dark"] .review-card, html[data-theme="dark"] .post-card, html[data-theme="dark"] .bset__item, html[data-theme="dark"] .qtyb__opt, html[data-theme="dark"] .page-body__card, html[data-theme="dark"] .shopify-policy__body { border-color: rgba(212,175,55,.16) !important; }
 html[data-theme="dark"] .card:hover, html[data-theme="dark"] .faqc__q[open], html[data-theme="dark"] a.contact2__card:hover { border-color: rgba(212,175,55,.45) !important; box-shadow: 0 20px 50px -30px rgba(212,175,55,.35); }
-html[data-theme="dark"] .price__current, html[data-theme="dark"] .card .price, html[data-theme="dark"] .bag-up__price { color: #F1D27A; }
+html[data-theme="dark"] .price__current, html[data-theme="dark"] .card .price, html[data-theme="dark"] .bag-up__price { color: #F6F3EC; }
 html[data-theme="dark"] .search-chip.is-active, html[data-theme="dark"] .faqc__tab.is-active, html[data-theme="dark"] .option__values input:checked + .pill, html[data-theme="dark"] .contact2__topics input:checked + label { background: linear-gradient(135deg, #F1D27A, #D4AF37); color: #111; border-color: transparent; }
 html[data-theme="dark"] .search-chip, html[data-theme="dark"] .pill, html[data-theme="dark"] .mnav__chip { background: #1A1712; border-color: rgba(212,175,55,.18); color: #ECE6D9; }
 html[data-theme="dark"] .rte a, html[data-theme="dark"] .link { color: #F1D27A; }
@@ -284,3 +284,5 @@ html[data-theme="dark"] .wish-btn { background: rgba(21,19,15,.85); color: #ECE6
 html[data-theme="dark"] .cookies__card { background: #15130F; border-color: #2E2921; }
 html[data-theme="dark"] .cookies__opt { background: #1C1914; }
 html[data-theme="dark"] img.brandmark__mark { filter: drop-shadow(0 2px 6px rgba(0,0,0,.6)); }
+html[data-theme="dark"] :is(.price, .price__current, .price__sale, .product__price, .qtyb__price strong, [data-qtyb-total], .sticky-atc__sub .price, .cart-line__price, .cart-totals--total strong, .bag-up__price, .card .price, .offer-card__price, .money) { color: #F6F3EC !important; }
+html[data-theme="dark"] :is(.price__compare, .qtyb__price s, s.price) { color: rgba(246,243,236,.5) !important; }
