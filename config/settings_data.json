@@ -1,47 +1,51 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "current": {
+    "luxemail_endpoint": "https://luxemail-main.turbozzgeezzz.workers.dev/t",
     "seo_home_title": "LuxeDealers | Premium 1:1 Inspired Bags, Shoes, Clothing & Accessories",
     "seo_home_description": "Shop premium 1:1 inspired handbags, sneakers, clothing, jewellery and accessories. Every order hand-checked, free tracked shipping worldwide, and a refund or reship guarantee.",
-    "luxemail_endpoint": "https://luxemail-main.turbozzgeezzz.workers.dev/t",
+    "sections": {
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {
+          "upsell_collection": "",
+          "upsell_title": "Complete the look",
+          "empty_link": ""
+        }
+      },
+      "newsletter-popup": {
+        "type": "newsletter-popup",
+        "settings": {
+          "enabled": true,
+          "trigger": "delay",
+          "delay": 12,
+          "repeat_days": 0,
+          "art": "gift",
+          "show_offer": false,
+          "offer": "10% off your first order",
+          "eyebrow": "The private list",
+          "heading": "First to know, first to own",
+          "text": "<p>Join the list for new arrivals, restocks and subscriber-only offers. Unsubscribe any time.</p>"
+        }
+      }
+    },
+    "content_for_index": [],
     "blocks": {
       "14060646107696862457": {
         "type": "shopify://apps/judge-me-reviews/blocks/judgeme_core/61ccd3b1-a9f2-4160-9fe9-4fec8413e5d8",
         "disabled": false,
         "settings": {}
       },
-      "15351435345818755577": {
-        "type": "shopify://apps/pandectes-gdpr/blocks/banner/58c0baa2-6cc1-480c-9ea6-38d6d559556a",
-        "disabled": false,
-        "settings": {}
-      },
-      "15683396631634586217": {
-        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
-        "disabled": false,
-        "settings": {
-          "greeting_message": "",
-          "show_featured_products": true,
-          "featured_products": [],
-          "background_color": "#ffffff",
-          "font_color": "#000000",
-          "button_color": "#000000",
-          "secondary_color": "#ffffff",
-          "ternary_color": "#6a6a6a",
-          "button_icon": "chat_bubble",
-          "button_text": "chat_with_us",
-          "button_horizontal_position": "bottom_right",
-          "button_vertical_position": "higher",
-          "agent_inherit_fonts": true,
-          "agent_font": "system_ui_n4",
-          "agent_border_radius": 24
-        }
-      },
       "13768625480086291342": {
         "type": "shopify://apps/forms/blocks/forms/8744a304-fcb1-4347-b211-bb6b4759a76a",
-        "disabled": false,
-        "settings": {}
-      },
-      "8605505498557855500": {
-        "type": "shopify://apps/bogos-io-free-gift/blocks/app-embed/0432bba6-720a-4e95-be5a-b868386f7aa6",
         "disabled": false,
         "settings": {}
       },
@@ -57,12 +61,46 @@
           "ref": true
         }
       },
+      "15351435345818755577": {
+        "type": "shopify://apps/pandectes-gdpr/blocks/banner/58c0baa2-6cc1-480c-9ea6-38d6d559556a",
+        "disabled": true,
+        "settings": {
+          "fast_load": false
+        }
+      },
+      "8605505498557855500": {
+        "type": "shopify://apps/bogos-io-free-gift/blocks/app-embed/0432bba6-720a-4e95-be5a-b868386f7aa6",
+        "disabled": true,
+        "settings": {}
+      },
       "4015264832934714879": {
-        "type": "shopify://apps/sendwillcwill-popup-email/blocks/app/a5670cf8-5705-4b01-ad9e-447033feae26",
-        "disabled": false,
+        "type": "shopify://apps/cwillsendwill-popup-email/blocks/app/a5670cf8-5705-4b01-ad9e-447033feae26",
+        "disabled": true,
         "settings": {
           "enable_gdpr_mode": false,
           "enable_cwtracks_listener": true
+        }
+      },
+      "15683396631634586217": {
+        "type": "shopify://apps/inbox/blocks/chat/841fc607-4181-4ad1-842d-e24d7f8bad6b",
+        "disabled": false,
+        "settings": {
+          "greeting_message": "",
+          "show_featured_products": true,
+          "featured_products": [],
+          "background_color": "#ffffff",
+          "font_color": "#000000",
+          "agent_invert_activator_colors": true,
+          "button_color": "#000000",
+          "button_icon": "chat_bubble",
+          "button_text": "chat_with_us",
+          "button_horizontal_position": "bottom_right",
+          "button_vertical_position": "lowest",
+          "agent_inherit_fonts": true,
+          "agent_font": "system_ui_n4",
+          "agent_font_size": 14,
+          "agent_activator_font_size": 16,
+          "agent_border_radius": 24
         }
       }
     },
