@@ -3,21 +3,12 @@
 A Cloudflare Worker (free tier) with a D1 database, sending through Resend. Shopify ignores this folder; it isn't part of the theme.
 Live at `https://luxemail-main.turbozzgeezzz.workers.dev` (`/health` shows the status).
 
-## Status: switched on, waiting for DNS
+## Status: live
 
-`SENDING_ENABLED = "1"`. Mail goes out from `hello@mail.luxedealers.com` (replies go to support@luxedealers.com) as soon as Resend
-shows `mail.luxedealers.com` as verified. The Worker checks every 20 minutes, so nothing else needs doing once the DNS records are in.
-Until then sign-ups, browsing and checkouts are recorded and emails wait in the queue; no discount codes are created.
-
-DNS records for mail.luxedealers.com (add in the luxedealers.com DNS):
-
-| Type | Name | Value | Priority |
-|---|---|---|---|
-| TXT | resend._domainkey.mail | (DKIM key shown in Resend > Domains > mail.luxedealers.com) | |
-| MX | send.mail | feedback-smtp.us-east-1.amazonses.com | 10 |
-| TXT | send.mail | v=spf1 include:amazonses.com ~all | |
-| CNAME | rsend.mail | send.forge.rmta.net | |
-| TXT | _dmarc.mail (optional) | v=DMARC1; p=none; | |
+Mail goes out from `noreply@luxedealers.com` (replies go to support@luxedealers.com) through the luxedealers Resend account
+(free plan: 3,000 a month, 100 a day; LuxeMail sends at most `DAILY_SEND_LIMIT` = 95 a day, `BATCH_SIZE` = 6 per 30-minute run).
+The Resend key is set by the owner in Cloudflare (luxemail-main > Settings > Variables and Secrets > RESEND_API_KEY);
+`deploy.sh` leaves it alone. No extra DNS records are needed (the domain is verified in that Resend account).
 
 After that: switch off the SendWILL popup embed (Theme settings > App embeds) so LuxeMail's popup and welcome code take over,
 and paste `pixel.js` into Shopify admin > Settings > Customer events > Add custom pixel, then Connect.

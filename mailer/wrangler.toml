@@ -22,7 +22,7 @@ STORE_URL = "https://luxedealers.com"
 # Set by deploy.sh to the Worker's address.
 PUBLIC_URL = "https://luxemail-main.turbozzgeezzz.workers.dev"
 BRAND = "LuxeDealers"
-FROM_EMAIL = "LuxeDealers <hello@mail.luxedealers.com>"
+FROM_EMAIL = "LuxeDealers <noreply@luxedealers.com>"
 REPLY_TO = "support@luxedealers.com"
 ADMIN_EMAIL = "support@luxedealers.com"
 TIMEZONE_OFFSET_HOURS = "10"
@@ -33,7 +33,7 @@ SHOPIFY_API_VERSION = "2025-10"
 VIP_SPEND_CENTS = "25000"
 LAPSED_DAYS = "60"
 # Sending domain in Resend (mail.luxedealers.com). Mail only goes out once Resend shows it as verified.
-RESEND_DOMAIN_ID = "4e6f275e-1d9b-4a46-966c-1452d295e315"
+RESEND_DOMAIN_ID = ""
 # Master switch. "0": sign-ups, browsing and checkouts are recorded and emails are queued, but nothing is sent
 # and no discount codes are created. Set to "1" once the luxedealers.com sending domain is verified in Resend.
 SENDING_ENABLED = "1"
