@@ -39,34 +39,44 @@ await shot(`<div style="width:1200px;height:200px;background:#0D0B07;display:fle
 <img src="data:image/png;base64,${readFileSync(new URL('ld-mark.png', theme)).toString('base64')}" style="width:104px;height:104px;object-fit:contain"><div style="font-family:C;font-weight:600;font-size:58px;letter-spacing:4px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
 
 // Banners, 600x260 shown at 2x.
-const BANNERS = {
-  'banner-welcome': ['Welcome gift', '10% off', 'your first order', 'gift'],
-  'banner-reminder': ['A little extra', 'Here\'s 5% off', 'to finish up', 'coupon'],
-  'banner-last-call': ['3 days only', 'Last call:', '15% off', 'diamond'],
-  'banner-checkout': ['Saved for you', 'Your bag', 'is waiting', 'bag'],
-  'banner-browse': ['Still thinking?', 'You looked,', 'we noticed', 'watch'],
-  'banner-wishlist': ['Your wishlist', 'Your saved', 'picks', 'tote'],
-  'banner-next-order': ['Thank you', '10% off', 'your next order', 'parcel'],
-  'banner-next-reminder': ['Still yours', 'Your 10% is', 'still waiting', 'coupon'],
-  'banner-vip': ['VIP', 'You\'re one of', 'our best', 'ring'],
-  'banner-winback': ['It\'s been a while', 'We miss', 'you', 'perfume'],
-  'banner-new-arrivals': ['Just landed', 'New', 'arrivals', 'sneaker'],
-  'banner-best-sellers': ['This fortnight', 'Top picks', 'right now', 'watch'],
-  'banner-blog': ['The journal', 'Stories', 'worth a read', 'necklace'],
-  'banner-picks-everyone': ['Picked for you', 'Fresh picks', 'for you', 'sunglasses'],
-  'banner-picks-bags': ['Picked for you', 'Bags', 'for you', 'bag'],
-  'banner-picks-shoes': ['Picked for you', 'Shoes', 'for you', 'heel'],
-  'banner-picks-clothing': ['Picked for you', 'Clothing', 'for you', 'hoodie'],
-  'banner-picks-accessories': ['Picked for you', 'Accessories', 'for you', 'sunglasses'],
+// Each email has its own colour scheme (matches TONES in src/email.js): [dark, mid, light accent].
+const TONES = {
+  gold: ['#0D0B07', '#3A2B12', '#F1D27A'], rose: ['#1A0C0A', '#5A2E2A', '#F4C2B4'], emerald: ['#06120E', '#14473A', '#9FE0C2'],
+  sapphire: ['#080C18', '#1D2E5E', '#B4C8F7'], burgundy: ['#12060A', '#511520', '#F2A9B3'], onyx: ['#050505', '#2C2C2C', '#F1D27A'],
+  champagne: ['#120E08', '#4A3C25', '#EBD5A8'], plum: ['#0E060C', '#43203A', '#E6B3DC'],
 };
-for (const [name, [eyebrow, l1, l2, ill]] of Object.entries(BANNERS)) {
-  await shot(`<div style="position:relative;width:1200px;height:520px;overflow:hidden;background:radial-gradient(ellipse at 78% 50%,#3A2B12 0%,#1A140A 38%,#0D0B07 70%)">
-<div style="position:absolute;inset:22px;border:1.5px solid rgba(212,175,55,.35);border-radius:22px"></div>
+const BANNERS = {
+  'b-welcome1': ['Welcome gift', '10% off', 'your first order', 'gift', 'gold'],
+  'b-welcome2': ['Still yours', 'Your 10%', 'is waiting', 'coupon', 'rose'],
+  'b-welcome3': ['3 days only', 'Last call:', '15% off', 'diamond', 'burgundy'],
+  'b-checkout1': ['Saved for you', 'Your order', 'is waiting', 'bag', 'onyx'],
+  'b-checkout2': ['A little extra', '5% off to', 'finish up', 'coupon', 'sapphire'],
+  'b-cart1': ['In your bag', 'Still', 'thinking it over?', 'tote', 'emerald'],
+  'b-cart2': ['Just for you', '5% off', 'your bag', 'coupon', 'plum'],
+  'b-browse': ['Still looking?', 'You looked,', 'we noticed', 'watch', 'champagne'],
+  'b-wishlist': ['Your wishlist', 'Your saved', 'picks', 'heel', 'rose'],
+  'b-postpurchase': ['Thank you', '10% off', 'your next order', 'parcel', 'emerald'],
+  'b-nextreminder': ['Still yours', 'Your 10% is', 'still waiting', 'ring', 'sapphire'],
+  'b-vip': ['VIP', "You're one of", 'our best', 'diamond', 'onyx'],
+  'b-winback': ["It's been a while", 'We miss', 'you', 'perfume', 'plum'],
+  'b-new': ['Just landed', 'New', 'arrivals', 'sneaker', 'gold'],
+  'b-best': ['This fortnight', 'Top picks', 'right now', 'watch', 'burgundy'],
+  'b-journal': ['The journal', 'Stories', 'worth a read', 'necklace', 'sapphire'],
+  'banner-picks-everyone': ['Picked for you', 'Fresh picks', 'for you', 'sunglasses', 'champagne'],
+  'banner-picks-bags': ['Picked for you', 'Bags', 'for you', 'bag', 'champagne'],
+  'banner-picks-shoes': ['Picked for you', 'Shoes', 'for you', 'heel', 'champagne'],
+  'banner-picks-clothing': ['Picked for you', 'Clothing', 'for you', 'hoodie', 'champagne'],
+  'banner-picks-accessories': ['Picked for you', 'Accessories', 'for you', 'sunglasses', 'champagne'],
+};
+for (const [name, [eyebrow, l1, l2, ill, tone]] of Object.entries(BANNERS)) {
+  const [dark, mid, light] = TONES[tone];
+  await shot(`<div style="position:relative;width:1200px;height:520px;overflow:hidden;background:radial-gradient(ellipse at 78% 50%,${mid} 0%,${dark} 72%)">
+<div style="position:absolute;inset:22px;border:1.5px solid ${light}55;border-radius:22px"></div>
 <div style="position:absolute;right:40px;top:30px;width:460px;height:460px;background:url(${art(ill)}) center/contain no-repeat;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))"></div>
 <div style="position:absolute;left:84px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;justify-content:center">
-<div style="font-family:P;font-weight:500;font-size:24px;letter-spacing:7px;text-transform:uppercase;color:#E6C463">${esc(eyebrow)}</div>
-<div style="width:64px;height:2px;background:#D4AF37;margin:26px 0 28px"></div>
-<div style="font-family:C;font-weight:700;font-size:80px;line-height:1.04;color:#FFFFFF">${esc(l1)}<br><span style="${WORD}">${esc(l2)}</span></div></div></div>`, 1200, 520, out(`public/banners/${name}.jpg`), { jpg: true });
+<div style="font-family:P;font-weight:500;font-size:24px;letter-spacing:7px;text-transform:uppercase;color:${light}">${esc(eyebrow)}</div>
+<div style="width:64px;height:2px;background:${light};margin:26px 0 28px"></div>
+<div style="font-family:C;font-weight:700;font-size:80px;line-height:1.04;color:#FFFFFF">${esc(l1)}<br><span style="color:${light}">${esc(l2)}</span></div></div></div>`, 1200, 520, out(`public/banners/${name}.jpg`), { jpg: true });
 }
 
 // Icons, 96x96 transparent (shown at 44-48px).

@@ -7,7 +7,7 @@ import {
   verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles,
 } from './shopify.js';
 import {
-  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend,
+  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
   unsubscribeUrl, sentTodayCount,
 } from './email.js';
 
@@ -640,6 +640,21 @@ export const builders = {
 
 };
 
+// Each email gets its own colour scheme and banner (see TONES in email.js and tools/assets.mjs).
+const FLOW_BANNERS = {
+  welcome1: 'b-welcome1.jpg', welcome2: 'b-welcome2.jpg', welcome3: 'b-welcome3.jpg', checkout1: 'b-checkout1.jpg', checkout2: 'b-checkout2.jpg',
+  cart1: 'b-cart1.jpg', cart2: 'b-cart2.jpg', browse: 'b-browse.jpg', wishlist: 'b-wishlist.jpg', postpurchase: 'b-postpurchase.jpg',
+  nextreminder: 'b-nextreminder.jpg', vip: 'b-vip.jpg', winback: 'b-winback.jpg', 'fortnight:new': 'b-new.jpg', 'fortnight:best': 'b-best.jpg', journal: 'b-journal.jpg',
+};
+for (const [key, build] of Object.entries(builders)) {
+  builders[key] = async (env, email, d) => {
+    const out = await build(env, email, d);
+    if (!out) return out;
+    const k = key === 'fortnight' ? `fortnight:${d.theme}` : key;
+    return { ...out, tone: toneFor(key, key === 'fortnight' ? d.theme : null), banner: FLOW_BANNERS[k] || out.banner };
+  };
+}
+
 /* ======================= Outbox ======================= */
 
 /**
@@ -669,12 +684,15 @@ export async function drainOutbox(env, { id } = {}) {
         continue;
       }
       const builder = builders[job.flow];
-      const email = builder ? await builder(env, job.email, JSON.parse(job.payload || '{}')) : null;
+      const { results: seenRows } = await env.DB.prepare('SELECT DISTINCT handle FROM shown WHERE email = ? AND at > ?').bind(job.email, now() - 60 * DAY).all();
+      const jobEnv = { ...env, _who: job.email, _seen: new Set(seenRows.map((r) => r.handle)), _shown: [] };
+      const email = builder ? await builder(jobEnv, job.email, JSON.parse(job.payload || '{}')) : null;
       if (!email) { await mark('skipped', 'nothing to send'); continue; }
       const unsubUrl = await unsubscribeUrl(env, job.email);
       await sendViaResend(env, { to: job.email, subject: email.subject, unsubUrl,
         html: layout(env, { ...email, unsubUrl }) });
       await mark('sent');
+      for (const h of jobEnv._shown.slice(0, 12)) await env.DB.prepare('INSERT INTO shown (email, handle, at) VALUES (?, ?, ?)').bind(job.email, h, now()).run();
       sent++;
       if (email.afterSend) await email.afterSend().catch((e) => console.error('afterSend', job.flow, e));
     } catch (err) {

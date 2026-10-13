@@ -137,11 +137,31 @@ export async function productByHandle(env, handle) {
   return normaliseProduct(env, data.productByIdentifier);
 }
 
+/**
+ * Picks products a subscriber hasn't been shown lately. env._seen holds handles from their emails in the last
+ * 60 days, env._shown collects what this email uses (saved after it sends), and the starting point rotates by
+ * day and person, so two people, or two weeks in a row, get different products. Falls back to seen ones if needed.
+ */
+export function pickFresh(env, list, limit) {
+  const seen = env._seen || new Set();
+  const shown = env._shown || [];
+  const pool = list.filter((p) => p && p.available && !shown.includes(p.handle));
+  if (!pool.length) return [];
+  const day = Math.floor(Date.now() / 86400000);
+  let h = day; for (const ch of String(env._who || '')) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  const start = env._who ? h % pool.length : 0;
+  const rotated = pool.slice(start).concat(pool.slice(0, start));
+  const fresh = rotated.filter((p) => !seen.has(p.handle));
+  const out = fresh.concat(rotated.filter((p) => seen.has(p.handle))).slice(0, limit);
+  if (env._shown) out.forEach((p) => env._shown.push(p.handle));
+  return out;
+}
+
 /** "You might also like": other products from the same collections (skipping the catch-all ones). */
 export async function recommendations(env, productId, limit = 4) {
   const data = await gql(env, `query($id: ID!, $n: Int!){ product(id: $id){ handle collections(first: 5){ nodes{ handle
       products(first: $n, sortKey: COLLECTION_DEFAULT){ nodes{ ${PRODUCT_FIELDS} } } } } } }`,
-    { id: `gid://shopify/Product/${String(productId).replace(/\D/g, '')}`, n: limit + 4 });
+    { id: `gid://shopify/Product/${String(productId).replace(/\D/g, '')}`, n: Math.min(30, limit * 5) });
   if (!data.product) return [];
   const generic = ['all', 'frontpage', 'shop-all', 'new-arrivals', 'best-sellers'];
   const cols = [...data.product.collections.nodes].sort((a, b) => generic.includes(a.handle) - generic.includes(b.handle));
@@ -153,14 +173,14 @@ export async function recommendations(env, productId, limit = 4) {
       if (p && p.available && !seen.has(p.handle)) { seen.add(p.handle); out.push(p); }
     }
   }
-  return out.slice(0, limit);
+  return pickFresh(env, out, limit);
 }
 
 export async function collectionProducts(env, handle, limit = 6) {
   const data = await gql(env, `query($h: String!, $n: Int!){ collectionByIdentifier(identifier: { handle: $h }){
-      products(first: $n, sortKey: COLLECTION_DEFAULT){ nodes{ ${PRODUCT_FIELDS} } } } }`, { h: handle, n: limit + 4 });
+      products(first: $n, sortKey: COLLECTION_DEFAULT){ nodes{ ${PRODUCT_FIELDS} } } } }`, { h: handle, n: Math.min(48, limit * 8) });
   if (!data.collectionByIdentifier) return [];
-  return data.collectionByIdentifier.products.nodes.map((n) => normaliseProduct(env, n)).filter((p) => p && p.available).slice(0, limit);
+  return pickFresh(env, data.collectionByIdentifier.products.nodes.map((n) => normaliseProduct(env, n)), limit);
 }
 
 export async function latestArticles(env, limit = 3, sinceIso = null) {

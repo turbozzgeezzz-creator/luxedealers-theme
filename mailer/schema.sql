@@ -24,3 +24,7 @@ CREATE TABLE IF NOT EXISTS suppressions (email TEXT PRIMARY KEY, reason TEXT, at
 -- One personal welcome code per address (shown on the site after sign-up and in the welcome emails).
 -- code is NULL for a moment while it's being created, so two requests never make two codes.
 CREATE TABLE IF NOT EXISTS welcome_codes (email TEXT PRIMARY KEY, code TEXT, ends_at TEXT, created_at INTEGER);
+
+-- Products each subscriber has been shown, so the next emails show different ones.
+CREATE TABLE IF NOT EXISTS shown (email TEXT NOT NULL, handle TEXT NOT NULL, at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS shown_email ON shown (email, at);
