@@ -173,7 +173,7 @@ export async function latestArticles(env, limit = 3, sinceIso = null) {
     title: a.title,
     url: `${env.STORE_URL}/blogs/${a.blog.handle}/${a.handle}`,
     summary: strip(a.summary).slice(0, 160),
-    image: a.image ? a.image.url + (a.image.url.includes('?') ? '&' : '?') + 'width=560' : null,
+    image: a.image ? a.image.url + (a.image.url.includes('?') ? '&' : '?') + 'width=1096&height=616&crop=center' : null,
     publishedAt: a.publishedAt,
   }));
 }
