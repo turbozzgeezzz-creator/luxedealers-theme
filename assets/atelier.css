@@ -1892,3 +1892,4 @@ html[data-theme="dark"] body .sticky-atc { background: #15130F; }
 .offer-item__when { font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--c-gold); }
 .offer-item__fig { margin-top: 2px; }
 .offer-item__fig small { font-family: var(--font-body, inherit); font-size: .42em; font-weight: 600; letter-spacing: .02em; margin-left: 2px; }
+.offer-item__link { text-align: left; white-space: nowrap; }

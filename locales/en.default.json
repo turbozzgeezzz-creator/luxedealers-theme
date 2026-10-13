@@ -352,7 +352,7 @@
     "offers_qty_plus": "Buy {{ count }} or more",
     "offers_auto": "Any {{ count }} pieces, taken off at checkout",
     "offers_mix": "Mix any pieces you like",
-    "offers_join": "Join the list for your code",
+    "offers_join": "Join the list to get it",
     "offers_first": "Your first order",
     "offers_off": "off",
     "offers_free": "Free",
