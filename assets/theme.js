@@ -1152,7 +1152,20 @@
             var pop = box.closest('.popup__body'); if (pop) pop.classList.add('has-code');
           });
         })
-        .catch(function (s) { if (s === 404 && ++tries < 3) setTimeout(ask, 1500); });
+        .catch(function (s) {
+          if (s === 404 && ++tries < 3) return setTimeout(ask, 1500);
+          if (s !== 409) return;
+          // Already a customer: the first-order code isn't for them, so say so kindly and let them carry on.
+          boxes.forEach(function (box) {
+            var v = $('[data-popup-code-value]', box), chip = v && v.closest('[data-copy]');
+            if (chip) chip.hidden = true;
+            var t = $('.popup__code-title', box); if (t) t.lastChild.textContent = ' ' + (L.strings.welcomeBack || '');
+            var note = $('[data-popup-code-note]', box); if (note) note.textContent = L.strings.welcomeBackNote || '';
+            var wait = box.parentNode && $('[data-welcome-wait]', box.parentNode); if (wait) wait.hidden = true;
+            box.hidden = false;
+            var pop = box.closest('.popup__body'); if (pop) pop.classList.add('has-code');
+          });
+        });
     })();
   }
 

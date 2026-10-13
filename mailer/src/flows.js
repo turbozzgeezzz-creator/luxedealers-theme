@@ -4,7 +4,7 @@
 // right before every send.
 import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex, sendingReady } from './util.js';
 import {
-  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles,
+  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders,
 } from './shopify.js';
 import {
   enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
@@ -68,11 +68,20 @@ export async function subscribe(env, { email, firstName, source, page, ip }) {
  * The site's sign-up message and the welcome emails both use it. If two requests arrive together,
  * only the one that claims the row creates the code; the other waits for it.
  */
+/** Someone who has bought before: the first-order welcome code isn't for them. */
+export async function isReturningCustomer(env, email) {
+  const row = await env.DB.prepare('SELECT id FROM orders WHERE email = ? LIMIT 1').bind(email).first();
+  return !!row || (await shopifyHasOrders(env, email));
+}
+
 export async function welcomeCodeFor(env, email) {
   if (env.PREVIEW) return createPersonalCode(env, { prefix: 'WELCOME10', percent: 10, days: 30, title: 'Welcome 10%' });
   const read = () => env.DB.prepare('SELECT code, ends_at FROM welcome_codes WHERE email = ?').bind(email).first();
   let row = await read();
   if (row && row.code) return { code: row.code, endsAt: row.ends_at };
+  if (!row && (await isReturningCustomer(env, email))) {
+    const e = new Error('Returning customer: no first-order code'); e.returning = true; throw e;
+  }
   const claim = await env.DB.prepare('INSERT OR IGNORE INTO welcome_codes (email, code, ends_at, created_at) VALUES (?, NULL, NULL, ?)').bind(email, now()).run();
   if (claim.meta && claim.meta.changes) {
     try {
@@ -404,8 +413,19 @@ function cartLink(env, items, code) {
 
 export const builders = {
   async welcome1(env, email, d) {
-    const { code, endsAt } = await welcomeCodeFor(env, email);
+    const wc = await welcomeCodeFor(env, email).catch((e) => { if (e.returning) return null; throw e; });
     const picks = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
+    if (!wc) {
+      return {
+        subject: `You're on the ${env.BRAND} list`,
+        preheader: 'New arrivals, restocks and subscriber-only offers, straight to your inbox.',
+        banner: 'banner-welcome.jpg', bannerAlt: 'Welcome to the list',
+        body: heading('Welcome back') + para(`${hi(d.firstName)} thanks for joining the list, and for shopping with us before. You'll be first to hear about new arrivals, restocks and subscriber-only offers.`)
+          + button('Shop new arrivals', `${env.STORE_URL}/collections/new-arrivals`)
+          + productGrid(picks, { heading: 'Top picks right now' }),
+      };
+    }
+    const { code, endsAt } = wc;
     return {
       subject: `Welcome to ${env.BRAND}: here's 10% off`,
       preheader: `Your code ${code} is inside, plus a few of our most-loved picks.`,
@@ -419,7 +439,9 @@ export const builders = {
   },
   async welcome2(env, email, d) {
     if (await orderedSince(env, email, 0)) return null;
-    const { code, endsAt } = await welcomeCodeFor(env, email);
+    const wc = await welcomeCodeFor(env, email).catch((e) => { if (e.returning) return null; throw e; });
+    if (!wc) return null;
+    const { code, endsAt } = wc;
     if (Date.parse(endsAt) < Date.now() + DAY * 1000) return null;
     const picks = await collectionProducts(env, 'new-arrivals', 4);
     return {
@@ -435,6 +457,7 @@ export const builders = {
   },
   async welcome3(env, email, d) {
     if (await orderedSince(env, email, 0)) return null;
+    if (!env.PREVIEW && (await isReturningCustomer(env, email))) return null;
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'WELCOME15', percent: 15, days: 3, title: 'Welcome last call 15%' });
     const picks = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
     return {

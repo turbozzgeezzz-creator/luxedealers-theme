@@ -104,6 +104,7 @@ export default {
         const { code, endsAt } = await welcomeCodeFor(env, email);
         return new Response(JSON.stringify({ code, endsAt }), { headers });
       } catch (e) {
+        if (e.returning) return new Response(JSON.stringify({ error: 'returning' }), { status: 409, headers });
         console.error('welcome-code', e);
         return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503, headers });
       }

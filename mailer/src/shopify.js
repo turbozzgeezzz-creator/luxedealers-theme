@@ -107,6 +107,17 @@ export async function createSharedCode(env, { prefix, percent, days, title, coll
   return { code, endsAt };
 }
 
+/** True when Shopify has an order for this email (read-only; Shopify searches recent orders). */
+export async function shopifyHasOrders(env, email) {
+  try {
+    const d = await gql(env, `query($q: String!){ orders(first: 1, query: $q){ nodes { id } } }`, { q: `email:"${String(email).replace(/["\\]/g, '')}"` });
+    return !!(d.orders && d.orders.nodes.length);
+  } catch (e) {
+    console.error('order lookup', e);
+    return false;
+  }
+}
+
 /* ---------- Products, collections and blog posts (Admin API) ---------- */
 // The storefront's public JSON (/products/x.js etc.) refuses requests from Cloudflare Workers,
 // so product data comes from the Admin API, which this app can read (read_products, read_content).
