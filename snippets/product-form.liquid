@@ -1,6 +1,7 @@
 {%- comment -%}
   Variant picker, price, stock line and buttons.
-  Params: product, form_id, show_dynamic (bool), show_qty (bool), threshold, size_page
+  Params: product, form_id, show_dynamic (bool), show_qty (bool), threshold, size_page, breaks (false hides Buy more, save more)
+  Add to bag sits straight after the options so it stays close to the photos; the quantity offers follow it.
   Stock lines use real tracked inventory only.
 {%- endcomment -%}
 {%- liquid
@@ -95,7 +96,6 @@
 {%- endif -%}
 <p class="{{ stock_class }}" data-stock data-threshold="{{ threshold }}" data-in="{{ 'products.in_stock' | t | escape }}" data-out="{{ 'products.sold_out' | t | escape }}" data-low="{{ low | escape }}" data-backorder="{{ 'products.backorder' | t | escape }}">{{ stock_text }}</p>
 
-{% render 'qty-breaks', product: product, form_id: form_id %}
 {%- form 'product', product, id: form_id, class: 'buy-buttons', data-product-form: '', novalidate: 'novalidate' -%}
   <input type="hidden" name="id" value="{{ current.id }}">
   {%- unless show_qty -%}{%- if settings.qty_1_count > 1 -%}<input type="hidden" name="quantity" value="1" data-qty-hidden>{%- endif -%}{%- endunless -%}
@@ -117,3 +117,4 @@
   </div>
   {%- if show_dynamic -%}{{ form | payment_button }}{%- endif -%}
 {%- endform -%}
+{%- unless breaks == false -%}{% render 'qty-breaks', product: product, form_id: form_id %}{%- endunless -%}

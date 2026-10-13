@@ -1893,3 +1893,46 @@ html[data-theme="dark"] body .sticky-atc { background: #15130F; }
 .offer-item__fig { margin-top: 2px; }
 .offer-item__fig small { font-family: var(--font-body, inherit); font-size: .42em; font-weight: 600; letter-spacing: .02em; margin-left: 2px; }
 .offer-item__link { text-align: left; white-space: nowrap; }
+
+/* ===== Buy box: big Add to bag right after the options; quantity offers as one compact row below ===== */
+.buy-buttons { margin-top: 4px; }
+.buy-buttons__row { align-items: stretch; }
+.buy-buttons__row .btn { min-height: 60px; font-size: 17px; font-weight: 700; letter-spacing: .01em; }
+.buy-buttons__row .qty { flex: none; width: 118px; }
+.buy-buttons__row .wish-inline { flex: none; width: 60px; }
+@media (max-width: 749px) {
+  .buy-buttons__row .btn { min-height: 58px; }
+  .buy-buttons__row .qty { width: 104px; }
+  .buy-buttons__row .wish-inline { width: 54px; }
+}
+.qtyb { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 14px 0 6px; }
+.qtyb__title { grid-column: 1 / -1; margin-bottom: 2px; font-size: 12px; }
+.qtyb__opt { flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 12px; border-radius: 12px; min-width: 0; }
+.qtyb__radio { display: none; }
+.qtyb__main { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; font-size: 13.5px; }
+.qtyb__main small { display: none; }
+.qtyb__save { font-size: 10.5px; padding: 2px 7px; }
+.qtyb__price { align-items: flex-start; font-size: 13px; margin-top: auto; }
+.qtyb__price s { font-size: 11px; }
+.qtyb__note { grid-column: 1 / -1; font-size: 11.5px; }
+
+/* Quick view ("Choose options"): short and tidy — photo, name, price, options, one big button. */
+.quick-view .popup__card { width: min(880px, 100%); max-height: min(88vh, 760px); overflow: hidden; }
+@media (min-width: 750px) { .quick-view .popup__card { grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); } }
+.quick-view__media { aspect-ratio: auto; min-height: 100%; }
+.quick-view__body { padding: 28px 28px 24px; gap: 12px; overflow-y: auto; max-height: min(88vh, 760px); }
+.quick-view__title { font-size: 22px !important; line-height: 1.2; text-transform: none; padding-right: 44px; }
+.quick-view__body .product__price { font-size: 20px; }
+.quick-view__body .product__divider { margin: 2px 0; }
+.quick-view__body .option { margin-bottom: 12px; }
+.quick-view__body .buy-buttons__row .btn { min-height: 56px; }
+.quick-view__more { align-self: center; font-size: 13.5px; }
+@media (max-width: 749px) {
+  .quick-view .popup__card { max-height: 92vh; overflow-y: auto; }
+  .quick-view__media { aspect-ratio: 1; min-height: 0; max-height: 42vh; }
+  .quick-view__body { padding: 18px 18px 20px; max-height: none; overflow: visible; }
+  .quick-view__title { font-size: 19px !important; }
+}
+.buy-buttons__row .qty, .buy-buttons__row .wish-inline { height: auto; }
+.buy-buttons__row .qty button { width: 34px; }
+.buy-buttons__row .qty input { width: 100%; min-width: 0; text-align: center; }
