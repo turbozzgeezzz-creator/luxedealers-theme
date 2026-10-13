@@ -14,7 +14,7 @@
         {%- if s.eyebrow != blank -%}<span class="eyebrow" data-reveal>{{ s.eyebrow }}</span>{%- endif -%}
         {%- if s.heading != blank -%}<h2 class="h2" data-split>{{ s.heading | newline_to_br }}</h2>{%- endif -%}
         {%- if s.text != blank -%}<div class="rte newsletter__text" data-reveal>{{ s.text }}</div>{%- endif -%}
-        {%- if settings.welcome_code != blank and settings.welcome_offer != blank and s.show_offer -%}<p data-reveal><strong class="gold-text" style="font-size: 18px; letter-spacing: .06em">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
+        {%- if s.show_offer and settings.welcome_offer != blank and settings.welcome_code != blank or settings.welcome_personal -%}<p data-reveal><strong class="gold-text" style="font-size: 18px; letter-spacing: .06em">{{ settings.welcome_offer }}</strong></p>{%- endif -%}
         <div style="width: 100%" data-reveal>{% render 'newsletter-form', id: 'NewsletterSection', source: 'homepage' %}</div>
       </div>
       {%- if img != blank -%}

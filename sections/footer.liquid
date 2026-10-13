@@ -46,7 +46,7 @@
         {%- when 'newsletter' -%}
           <div class="footer__col footer__signup newsletter" {{ block.shopify_attributes }}>
             <span class="footer__signup-title">{{ block.settings.title }}</span>
-            <p class="footer__about">{% if settings.welcome_code != blank and settings.welcome_offer != blank %}{{ 'footer.signup_offer' | t: offer: settings.welcome_offer }}{% else %}{{ block.settings.text }}{% endif %}</p>
+            <p class="footer__about">{% if settings.welcome_offer != blank and settings.welcome_code != blank or settings.welcome_personal %}{{ 'footer.signup_offer' | t: offer: settings.welcome_offer }}{% else %}{{ block.settings.text }}{% endif %}</p>
             {% render 'newsletter-form', id: 'FooterNewsletter', source: 'footer' %}
             {% render 'social-links' %}
           </div>

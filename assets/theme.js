@@ -1094,6 +1094,7 @@
     var popup = doc.getElementById('NewsletterPopup');
     if (!popup) return;
     if (window.location.search.indexOf('customer_posted=true') > -1 && window.location.hash.indexOf('PopupForm') > -1) { openDrawer('NewsletterPopup'); showWelcomeCode(); return; }
+    if (window.location.search.indexOf('customer_posted=true') > -1) showWelcomeCode();
     var state = storeGet('luxe:popup', null);
     var days = parseInt(popup.dataset.repeatDays, 10) || 0;
     if (state && (state.done || !days || Date.now() - state.at < days * 864e5)) return;
@@ -1118,7 +1119,10 @@
   on(doc, 'click', function (e) { var b = e.target.closest('[data-open-popup]'); if (b) { e.preventDefault(); openDrawer('NewsletterPopup', b); } });
   // After signing up in the popup: show the subscriber's own welcome code from LuxeMail, when it's sending.
   function showWelcomeCode() {
-    var box = $('[data-popup-code]'), email = storeGet('luxe:signup-email', null);
+    $$('[data-popup-code], [data-welcome-code]').forEach(fillWelcomeCode);
+  }
+  function fillWelcomeCode(box) {
+    var email = storeGet('luxe:signup-email', null);
     if (!box || !email || !L.mail || !L.mail.endpoint) return;
     var url = L.mail.endpoint.replace(/\/t\/?$/, '') + '/welcome-code';
     var tries = 0;
@@ -1128,7 +1132,8 @@
         .then(function (d) {
           if (!d || !d.code) return;
           $('[data-popup-code-value]', box).textContent = d.code;
-          $('.popup__code-box', box).dataset.copy = d.code;
+          var copyBtn = $('[data-copy]', box); if (copyBtn) copyBtn.dataset.copy = d.code;
+          var wait = box.parentNode && $('[data-welcome-wait]', box.parentNode); if (wait) wait.hidden = true;
           var note = $('[data-popup-code-note]', box);
           var when = d.endsAt ? new Date(d.endsAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long' }) : '';
           note.textContent = (L.strings.codeNote || '').replace('[date]', when);

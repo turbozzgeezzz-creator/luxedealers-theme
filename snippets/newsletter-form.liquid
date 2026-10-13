@@ -1,7 +1,7 @@
 {%- comment -%}
   Shopify customer newsletter form. Submitting it is the sign-up: the notice
   under the field says the visitor is subscribing to marketing emails and can
-  unsubscribe any time (Spam Act / GDPR clear affirmative action). Params: id (unique), source (tag), button_label
+  unsubscribe any time (Spam Act / GDPR clear affirmative action). Params: id (unique), source (tag), button_label, code_box (false = the popup shows the code itself)
   After a successful sign-up the welcome code (if set) is revealed.
 {%- endcomment -%}
 {%- liquid
@@ -22,6 +22,15 @@
         <div class="offer-reveal__actions">
           <button type="button" class="btn btn--sm btn--outline" data-copy="{{ settings.welcome_code | escape }}">{{ 'newsletter.copy' | t }}</button>
           <a class="btn btn--sm" href="/discount/{{ settings.welcome_code | url_encode }}?redirect={{ routes.all_products_collection_url | url_encode }}">{{ 'newsletter.apply' | t }}</a>
+        </div>
+      {%- elsif settings.welcome_personal and code_box != false -%}
+        <span class="muted" data-welcome-wait>{{ 'newsletter.code_coming' | t: offer: settings.welcome_offer }}</span>
+        <div class="offer-reveal__personal" data-welcome-code hidden>
+          <button type="button" class="offer-reveal__code" data-copy=""><span data-popup-code-value></span></button>
+          <span class="muted" data-popup-code-note></span>
+          <div class="offer-reveal__actions">
+            <a class="btn btn--sm" href="{{ routes.all_products_collection_url }}" data-popup-code-shop>{{ 'newsletter.apply' | t }}</a>
+          </div>
         </div>
       {%- else -%}
         <span class="muted">{{ 'newsletter.thanks_sub' | t }}</span>

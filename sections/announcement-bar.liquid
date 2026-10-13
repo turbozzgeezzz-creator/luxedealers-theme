@@ -8,10 +8,13 @@
 {%- liquid
   assign shown = 0
   for block in section.blocks
-    if block.settings.needs_code and settings.welcome_code == blank
+    if block.settings.needs_code and settings.welcome_code == blank and settings.welcome_personal != true
       continue
     endif
     if block.settings.needs_tiers and settings.tier_1_spend == 0
+      continue
+    endif
+    if block.settings.needs_qty and settings.qty_1_count < 2
       continue
     endif
     assign shown = shown | plus: 1
@@ -22,8 +25,9 @@
   <div class="container announcement__inner">
     <ul class="usp-list" role="list" data-rotator="{{ section.settings.speed }}">
       {%- for block in section.blocks -%}
-        {%- if block.settings.needs_code and settings.welcome_code == blank -%}{%- continue -%}{%- endif -%}
+        {%- if block.settings.needs_code and settings.welcome_code == blank and settings.welcome_personal != true -%}{%- continue -%}{%- endif -%}
         {%- if block.settings.needs_tiers and settings.tier_1_spend == 0 -%}{%- continue -%}{%- endif -%}
+        {%- if block.settings.needs_qty and settings.qty_1_count < 2 -%}{%- continue -%}{%- endif -%}
         <li class="usp announcement__msg{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
           {%- capture inner -%}{% render 'icon', name: block.settings.icon, class: 'icon--sm' %}<span>{{ block.settings.text }}</span>{%- endcapture -%}
           {%- if block.settings.link != blank -%}
@@ -78,6 +82,7 @@
         { "type": "url", "id": "link", "label": "Link" },
         { "type": "checkbox", "id": "opens_popup", "label": "Opens the email popup", "default": false },
         { "type": "checkbox", "id": "needs_code", "label": "Needs welcome code", "default": false, "info": "Hide this message until a code is set in Theme settings > Welcome offer." },
+        { "type": "checkbox", "id": "needs_qty", "label": "Needs buy-more-save-more", "default": false, "info": "Hide this message unless Theme settings > Cart > Buy more, save more is set." },
         { "type": "checkbox", "id": "needs_tiers", "label": "Needs spend and save", "default": false, "info": "Hide this message until tiers are set in Theme settings > Cart." }
       ]
     }

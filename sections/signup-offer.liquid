@@ -4,7 +4,7 @@
 {%- endcomment -%}
 {%- assign s = section.settings -%}
 {%- assign has_offer = false -%}
-{%- if settings.welcome_code != blank and settings.welcome_offer != blank -%}{%- assign has_offer = true -%}{%- endif -%}
+{%- if settings.welcome_offer != blank and settings.welcome_code != blank or settings.welcome_personal -%}{%- assign has_offer = true -%}{%- endif -%}
 <section class="section signup">
   <div class="container">
     <div class="signup__band">

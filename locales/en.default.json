@@ -241,6 +241,7 @@
     "consent_error": "Please tick the box to confirm you'd like to receive our emails.",
     "thanks": "You're on the list",
     "thanks_sub": "Look out for our next email.",
+    "code_coming": "Your {{ offer }} code is on its way to your inbox.",
     "your_code": "Your code:",
     "copy": "Copy code",
     "apply": "Apply and shop",
@@ -345,7 +346,15 @@
     "together": "Together",
     "add_both": "Add both",
     "bundle_note": "Adds the first available option of each. Pick a different one on the product page.",
-    "get_offer": "Get {{ offer }}"
+    "get_offer": "Get {{ offer }}",
+    "offers_qty": "When you buy {{ count }} pieces",
+    "offers_qty_plus": "When you buy {{ count }} or more",
+    "offers_auto": "Applied automatically at checkout",
+    "offers_mix": "Mix any pieces you like",
+    "offers_join": "Join the list",
+    "offers_free": "Free",
+    "offers_ship": "Tracked shipping worldwide",
+    "offers_ship_note": "On every order, no minimum"
   },
   "wishlist": {
     "note": "Your saved pieces are kept on this device.",

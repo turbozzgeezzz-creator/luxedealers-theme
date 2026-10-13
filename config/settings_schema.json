@@ -393,7 +393,7 @@
         "type": "checkbox",
         "id": "cart_gift_note",
         "label": "Gift message box",
-        "default": true
+        "default": false
       },
       {
         "type": "richtext",
@@ -411,6 +411,13 @@
         "id": "welcome_code",
         "label": "Discount code",
         "info": "Shown after someone subscribes. Create the same code in Discounts first. Leave empty to show no offer."
+      },
+      {
+        "type": "checkbox",
+        "id": "welcome_personal",
+        "label": "LuxeMail gives each subscriber their own code",
+        "default": false,
+        "info": "Shows the welcome offer around the site without a shared code. The code appears after sign-up and is emailed too."
       },
       {
         "type": "text",

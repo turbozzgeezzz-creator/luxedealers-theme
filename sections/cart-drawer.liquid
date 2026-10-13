@@ -7,7 +7,6 @@
         <button type="button" class="bag__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
       </div>
       {%- if cart.item_count > 0 -%}
-        <div class="bag__perk">{% render 'icon', name: 'truck', class: 'icon--sm' %} <span>{{ 'cart.free_shipping_on' | t }}</span> {% render 'icon', name: 'check', class: 'icon--sm bag__perk-check' %}</div>
         <div class="drawer__body bag__body">
           <form action="{{ routes.cart_url }}" method="post" id="CartForm-drawer" class="bag__lines" novalidate>
             {%- for item in cart.items -%}{% render 'cart-line', item: item, ctx: 'drawer' %}{%- endfor -%}

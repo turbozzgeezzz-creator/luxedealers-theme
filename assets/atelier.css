@@ -1810,3 +1810,34 @@ input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; a
 .mnav__depts { margin-top: 4px; }
 html[data-theme="dark"] .mnav__search { background: #1A1712; border-color: rgba(212,175,55,.25); }
 html[data-theme="dark"] .mnav__search:focus-within { background: #15130F; }
+
+/* Bag footer kept calm: the quantity offer is one quiet line with a thin bar, no boxed panel. */
+.bag__foot .tier-bar { gap: 6px; padding: 0; border-radius: 0; background: none; }
+.bag__foot .tier-bar__msg { font-size: 12.5px; font-weight: 600; color: var(--c-gold-text, #6B5320); }
+.bag__foot .tier-bar__track { height: 3px; margin: 0; }
+.bag__foot .tier-bar__mark { display: none; }
+.bag__foot .tier-bar--qty { margin-top: 0; }
+html[data-theme="dark"] .bag__foot .tier-bar { background: none; }
+
+/* Offers band (sections/offers.liquid): dark panel, gold figures, four quiet columns. */
+.offers { position: relative; isolation: isolate; overflow: hidden; border-radius: 22px; padding: 30px 22px; display: grid; gap: 24px; color: #fff; }
+.offers__head { display: grid; gap: 6px; max-width: 46ch; }
+.offers__eyebrow { color: var(--c-gold); }
+.offers__title { font-family: var(--font-heading); font-size: clamp(24px, 4vw, 34px); line-height: 1.12; font-weight: 600; color: #fff; text-wrap: balance; }
+.offers__text { color: rgba(255,255,255,.72); font-size: 14px; }
+.offers__list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 16px; }
+.offer-item { display: flex; flex-direction: column; gap: 4px; padding-top: 14px; border-top: 1px solid rgba(212,175,55,.35); min-width: 0; }
+.offer-item__fig { font-family: var(--font-heading); font-size: 40px; line-height: 1; font-weight: 600; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.offer-item__fig small { font-size: .55em; margin-left: 2px; }
+.offer-item__fig--word { font-size: 32px; }
+.offer-item__label { font-size: 14px; font-weight: 600; color: #fff; }
+.offer-item__note { font-size: 12.5px; color: rgba(255,255,255,.62); }
+.offer-item__link { align-self: flex-start; display: inline-flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; color: var(--c-gold); font: inherit; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+.offer-item__link:hover, .offer-item__link:focus-visible { text-decoration: underline; }
+.offers__cta { justify-self: start; }
+@media (min-width: 990px) {
+  .offers { grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr); align-items: center; padding: 40px 44px; gap: 18px 48px; }
+  .offers__list { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; }
+  .offer-item__fig { font-size: 48px; }
+  .offers__cta { grid-column: 1; }
+}

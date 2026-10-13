@@ -15,7 +15,7 @@
       <div class="deal deal--offer tile tile--noir">
         <div class="tile__art">{% render 'illustration', name: s.offer_illustration, sizes: '30vw', class: 'tile__img' %}</div>
         <div class="tile__text">
-          {%- if settings.welcome_code != blank -%}
+          {%- if settings.welcome_code != blank or settings.welcome_personal -%}
             <span class="tile__eyebrow">{{ s.offer_eyebrow }}</span>
             <h3 class="tile__title tile__title--lg">{{ settings.welcome_offer }}</h3>
             <p class="tile__copy">{{ s.offer_text }}</p>

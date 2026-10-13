@@ -26,7 +26,7 @@
       <span class="eyebrow">{{ section.settings.eyebrow }}</span>
       <h2 class="h2" id="PopupTitle">{%- if section.settings.show_offer and section.settings.offer != blank -%}{{ section.settings.offer }}{%- else -%}{{ section.settings.heading }}{%- endif -%}</h2>
       {%- if section.settings.text != blank -%}<div class="rte muted">{{ section.settings.text }}</div>{%- endif -%}
-      {% render 'newsletter-form', id: 'NewsletterPopupForm', source: 'popup' %}
+      {% render 'newsletter-form', id: 'NewsletterPopupForm', source: 'popup', code_box: false %}
       <div class="popup__code" data-popup-code hidden>
         <p class="popup__code-label">{{ 'newsletter.your_code' | t }}</p>
         <button type="button" class="popup__code-box" data-copy=""><strong data-popup-code-value></strong> {% render 'icon', name: 'tag', class: 'icon--sm' %}</button>
