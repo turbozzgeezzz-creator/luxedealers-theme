@@ -61,7 +61,7 @@ curl -fsS "$WORKER_URL/health"; echo
 echo "== 6. Every email builds (previews only: placeholder codes, nothing sent)"
 FAILED=0
 for flow in welcome1 welcome2 welcome3 checkout1 checkout2 cart1 cart2 browse wishlist postpurchase nextreminder vip winback \
-            "fortnight&theme=new" "fortnight&theme=picks" "fortnight&theme=best" "fortnight&theme=blog"; do
+            "fortnight&theme=new" "fortnight&theme=picks" "fortnight&theme=best" journal; do
   CODE="$(curl -s -o /dev/null -w '%{http_code}' "$WORKER_URL/preview?flow=$flow&key=$UNSUB_SECRET")"
   printf '   %-22s %s\n' "$flow" "$([ "$CODE" = 200 ] && echo ok || echo "FAILED ($CODE)")"
   [ "$CODE" = 200 ] || FAILED=1

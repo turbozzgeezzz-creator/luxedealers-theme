@@ -3,7 +3,7 @@ import { json, now, hmacHex, cleanEmail, esc, sendingReady } from './util.js';
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
-  scanFortnightly, drainOutbox, weeklyReport, builders,
+  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders,
 } from './flows.js';
 
 function cors(env, request) {
@@ -40,6 +40,33 @@ async function readBeacon(request) {
   const text = await request.text();
   if (text.length > 16000) return null;
   try { return JSON.parse(text); } catch (_) { return null; }
+}
+
+/** The first time sending goes live, email one test of every email to ADMIN_EMAIL (placeholder codes, nothing real). */
+async function sendTestsOnce(env) {
+  if (!(await sendingReady(env))) return;
+  const done = await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_sent').first();
+  if (done) return;
+  await env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, NULL)').bind('tests_sent', String(now())).run();
+  const until = new Date(Date.now() + 7 * 86400000).toISOString();
+  const items = [{ handle: 'chan-luxury-handbags', qty: 1 }];
+  const samples = [
+    ['welcome1', { firstName: 'Sam' }], ['welcome2', { firstName: 'Sam' }], ['welcome3', { firstName: 'Sam' }],
+    ['checkout1', { token: 'preview', items, firstName: 'Sam' }], ['checkout2', { token: 'preview', items, firstName: 'Sam' }],
+    ['cart1', { handles: ['chan-luxury-handbags'] }], ['cart2', { handles: ['chan-luxury-handbags'] }],
+    ['browse', { handle: 'chan-luxury-handbags' }], ['wishlist', { handles: ['chan-luxury-handbags'] }],
+    ['postpurchase', { firstName: 'Sam', handles: ['chan-luxury-handbags'] }], ['nextreminder', { firstName: 'Sam', code: 'NEXT10-PREVIEW', endsAt: until, since: 0 }],
+    ['vip', { firstName: 'Sam' }], ['winback', { firstName: 'Sam' }],
+    ['fortnight', { theme: 'new', firstName: 'Sam', offer: { code: 'NEWIN10-PREVIEW', endsAt: until } }], ['fortnight', { theme: 'picks', firstName: 'Sam' }], ['fortnight', { theme: 'best', firstName: 'Sam' }],
+    ['journal', { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() }],
+  ];
+  const unsubUrl = await unsubscribeUrl(env, 'preview@example.com');
+  for (const [flow, sample] of samples) {
+    try {
+      const email = await builders[flow]({ ...env, PREVIEW: '1' }, 'preview@example.com', sample);
+      if (email) await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: `[Test] ${email.subject}`, html: layout(env, { ...email, unsubUrl }), unsubUrl });
+    } catch (e) { console.error('test send', flow, e); }
+  }
 }
 
 export default {
@@ -114,8 +141,9 @@ export default {
         browse: { handle: url.searchParams.get('h') || 'chan-luxury-handbags' },
         cart1: { handles: ['chan-luxury-handbags'] }, wishlist: { handles: ['chan-luxury-handbags'] },
         fortnight: { theme: url.searchParams.get('theme') || 'new', firstName: 'Sam' },
+        journal: { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() },
       }[flow];
-      if (!sample) return new Response('Preview supports: welcome1, welcome2, welcome3, checkout1, checkout2, cart1, cart2, browse, wishlist, postpurchase, nextreminder, vip, winback, fortnight (theme=new|picks|best|blog)', { status: 400 });
+      if (!sample) return new Response('Preview supports: journal, welcome1, welcome2, welcome3, checkout1, checkout2, cart1, cart2, browse, wishlist, postpurchase, nextreminder, vip, winback, fortnight (theme=new|picks|best|blog)', { status: 400 });
       if (flow === 'fortnight' && ['new', 'blog'].includes(sample.theme)) {
         sample.offer = { code: sample.theme === 'new' ? 'NEWIN10-PREVIEW' : 'INSIDER10-PREVIEW', endsAt: new Date(Date.now() + 7 * 86400000).toISOString() };
       }
@@ -148,7 +176,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [scanAbandonment, scanDaily, scanFortnightly, weeklyReport, drainOutbox];
+    const steps = [scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }

@@ -49,7 +49,8 @@ Every email says why they're getting it and has a one-click unsubscribe. Consent
 | nextreminder | A week before that code ends, if no new order | The same code |
 | vip | Verified orders total VIP_SPEND_CENTS+ | Unique VIP15-XXXXX: 15%, 30 days |
 | winback | Last order LAPSED_DAYS+ ago; once a quarter | Unique COMEBACK15-XXXXX: 15%, 14 days |
-| fortnight | Every second Tuesday evening, whole list, rotating: new arrivals (NEWIN10 shared code), picked for you, top picks, journal (INSIDER10 shared code) | |
+| fortnight | Every second Tuesday evening, whole list, rotating: new arrivals (NEWIN10 shared code), picked for you, top picks | |
+| journal | Sundays from 10 am: the week's new blog posts in one email (skipped if none) | none |
 | weekly report | Mondays to ADMIN_EMAIL | |
 
 Rules: one email per person per 20 hours; at most DAILY_SEND_LIMIT a day; every code is a real Shopify discount whose

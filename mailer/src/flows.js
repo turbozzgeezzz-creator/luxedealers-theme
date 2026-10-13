@@ -296,7 +296,7 @@ export async function scanDaily(env) {
   }
 }
 
-const THEMES = ['new', 'picks', 'best', 'blog'];
+const THEMES = ['new', 'picks', 'best'];
 
 /** Every second Tuesday from 6:30 pm Sydney time: the fortnightly email to the whole list, rotating 4 themes. */
 export async function scanFortnightly(env) {
@@ -322,6 +322,24 @@ export async function scanFortnightly(env) {
   for (const m of results) {
     await enqueue(env, { email: m.email, flow: 'fortnight', dedupe: `fortnight:${ymd}:${m.email}`, priority: 6,
       data: { theme, firstName: m.first_name, offer } });
+  }
+}
+
+/**
+ * Weekly journal: every Sunday from 10 am, one email with the week's new blog posts (we post daily, so this
+ * replaces seven emails with one). Skipped if nothing new was published. Same consent rules as everything else.
+ */
+export async function scanWeeklyJournal(env) {
+  const { day, hour, ymd } = localParts(env);
+  if (day !== 0 || hour < 10) return;
+  if ((await getKV(env, 'journal_last')) === ymd) return;
+  await setKV(env, 'journal_last', ymd);
+  const since = new Date(Date.now() - 7 * DAY * 1000).toISOString();
+  const articles = await latestArticles(env, 6, since);
+  if (!articles.length) return;
+  const { results } = await env.DB.prepare(`SELECT email, first_name FROM subscribers WHERE status = 'subscribed'`).all();
+  for (const m of results) {
+    await enqueue(env, { email: m.email, flow: 'journal', dedupe: `journal:${ymd}:${m.email}`, priority: 6, data: { firstName: m.first_name, since } });
   }
 }
 
@@ -572,6 +590,19 @@ export const builders = {
           fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
         + productGrid(picks, { heading: 'New since your last visit' })
         + button('Use my 15%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`),
+    };
+  },
+  async journal(env, email, d) {
+    const articles = await latestArticles(env, 6, d.since || new Date(Date.now() - 7 * DAY * 1000).toISOString());
+    if (!articles.length) return null;
+    const p = await personalPicks(env, email, 2);
+    const lead = articles[0];
+    return {
+      subject: articles.length > 1 ? `This week in the journal: ${lead.title}` : lead.title,
+      preheader: `${articles.length} new ${articles.length === 1 ? 'story' : 'stories'} from the style desk this week.`,
+      banner: 'banner-blog.jpg', bannerAlt: 'This week in the journal',
+      body: heading('This week in the journal') + para(`${hi(d.firstName)} here's everything new from the style desk this week: buying tips, style notes and what to look for.`)
+        + articleList(articles) + productGrid(p, { heading: 'Picked for you' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
     };
   },
   async fortnight(env, email, d) {

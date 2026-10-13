@@ -163,14 +163,17 @@ export async function collectionProducts(env, handle, limit = 6) {
   return data.collectionByIdentifier.products.nodes.map((n) => normaliseProduct(env, n)).filter((p) => p && p.available).slice(0, limit);
 }
 
-export async function latestArticles(env, limit = 3) {
-  const data = await gql(env, `query($n: Int!){ articles(first: $n, sortKey: PUBLISHED_AT, reverse: true, query: "published_status:published"){
-      nodes{ title handle summary blog{ handle } } } }`, { n: limit });
+export async function latestArticles(env, limit = 3, sinceIso = null) {
+  const q = 'published_status:published' + (sinceIso ? ` AND published_at:>'${sinceIso}'` : '');
+  const data = await gql(env, `query($n: Int!, $q: String!){ articles(first: $n, sortKey: PUBLISHED_AT, reverse: true, query: $q){
+      nodes{ title handle summary publishedAt image{ url } blog{ handle } } } }`, { n: limit, q });
   const strip = (h) => String(h || '').replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&')
     .replace(/&#39;|&apos;/g, "'").replace(/&quot;/g, '"').replace(/\s+/g, ' ').trim();
   return data.articles.nodes.map((a) => ({
     title: a.title,
     url: `${env.STORE_URL}/blogs/${a.blog.handle}/${a.handle}`,
     summary: strip(a.summary).slice(0, 160),
+    image: a.image ? a.image.url + (a.image.url.includes('?') ? '&' : '?') + 'width=560' : null,
+    publishedAt: a.publishedAt,
   }));
 }

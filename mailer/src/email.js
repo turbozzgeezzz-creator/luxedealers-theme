@@ -123,10 +123,10 @@ ${p.image ? `<img src="${esc(p.image)}" width="254" alt="${esc(shortTitle(p.titl
 
 export function articleList(articles) {
   if (!articles.length) return '';
-  return articles.map((a) => `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;"><tr><td style="padding:18px 20px;border-radius:16px;background:#FBF8F2;border-left:4px solid ${GOLD};">
+  return articles.map((a) => `${a.image ? `<a href="${esc(a.url)}" style="display:block;margin:0 0 -6px;"><img src="${esc(a.image)}" width="548" alt="" style="display:block;width:100%;max-width:548px;height:auto;border-radius:16px 16px 0 0;border:0;"></a>` : ''}<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 16px;"><tr><td style="padding:18px 20px;border-radius:${a.image ? '0 0 16px 16px' : '16px'};background:#FBF8F2;border-left:4px solid ${GOLD};">
 <a href="${esc(a.url)}" style="text-decoration:none;color:${INK};"><span style="display:block;font-size:17px;font-weight:800;line-height:1.3;">${esc(a.title)}</span>
 ${a.summary ? `<span style="display:block;margin-top:6px;font-size:14px;line-height:1.5;color:${MUTED};">${esc(a.summary)}</span>` : ''}
-<span style="display:block;margin-top:8px;font-size:14px;font-weight:800;color:${VIOLET};">Read the guide &rarr;</span></a></td></tr></table>`).join('');
+<span style="display:block;margin-top:8px;font-size:14px;font-weight:800;color:${VIOLET};">Read the story &rarr;</span></a></td></tr></table>`).join('');
 }
 
 function shortTitle(t) {
