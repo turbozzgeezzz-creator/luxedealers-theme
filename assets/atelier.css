@@ -2114,3 +2114,4 @@ html[data-theme="dark"] .facet-cat:hover { background: rgba(212,175,55,.1); }
   .wb-modal__body > .link { font-size: 13.5px; }
   .wb-modal .popup__close { top: 10px; right: 10px; width: 36px; height: 36px; }
 }
+.wb-modal__body .h2 { text-wrap: balance; }
