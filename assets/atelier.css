@@ -2098,3 +2098,19 @@ html[data-theme="dark"] .facet-cat:hover { background: rgba(212,175,55,.1); }
 .bset__sum strong { margin-left: 0; }
 .bset__save { flex-basis: 100%; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; font-weight: 600; color: #8FD3A6; }
 .bset__save::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+/* Welcome back on phones: compact card, small photo beside the name, stock and price */
+@media (max-width: 749px) {
+  .wb-modal__card { width: calc(100% - 24px); }
+  .wb-modal__body { gap: 10px; padding: 26px 18px 18px; }
+  .wb-modal__body .eyebrow { font-size: 11px; }
+  .wb-modal__body .h2 { font-size: 22px; padding: 0 28px; }
+  .wb-card { width: 100%; display: grid; grid-template-columns: 92px minmax(0, 1fr); grid-template-areas: "media title" "media stock" "media price" "btn btn"; column-gap: 14px; row-gap: 2px; align-items: center; padding: 12px; border-radius: 16px; text-align: left; }
+  .wb-card__media { grid-area: media; width: 92px; height: 92px; aspect-ratio: auto; border-radius: 12px; align-self: start; }
+  .wb-card__title { grid-area: title; font-size: 14px; align-self: end; }
+  .wb-card__stock { grid-area: stock; font-size: 12px; }
+  .wb-card__price { grid-area: price; font-size: 19px; align-self: start; }
+  .wb-card .btn { grid-area: btn; margin-top: 12px; min-height: 50px; }
+  .wb-modal__body > .link { font-size: 13.5px; }
+  .wb-modal .popup__close { top: 10px; right: 10px; width: 36px; height: 36px; }
+}
