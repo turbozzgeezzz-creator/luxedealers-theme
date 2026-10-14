@@ -1,9 +1,9 @@
 // LuxeMail entry point: HTTP routes and the 30-minute scheduler.
-import { json, now, hmacHex, cleanEmail, esc, sendingReady } from './util.js';
+import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util.js';
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
-  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders,
+  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders, syncShopifySubscribers,
 } from './flows.js';
 
 function cors(env, request) {
@@ -173,14 +173,14 @@ export default {
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
-      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', ...row, ...todayCounts });
+      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', shopify_subscriber_sync: await getKV(env, 'customer_sync'), ...row, ...todayCounts });
     }
 
     return new Response('LuxeMail', { status: 404 });
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
+    const steps = [syncShopifySubscribers, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }

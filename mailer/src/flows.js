@@ -68,6 +68,61 @@ export async function subscribe(env, { email, firstName, source, page, ip }) {
  * The site's sign-up message and the welcome emails both use it. If two requests arrive together,
  * only the one that claims the row creates the code; the other waits for it.
  */
+/**
+ * People who subscribe outside the website (Facebook and Instagram sign-ups, the Shop app, checkout on another
+ * channel, or added in Shopify admin) only exist as Shopify customers marked "subscribed". Every 30 minutes this
+ * copies them onto LuxeMail's list. Needs the app's read_customers permission; until then it records why and stops.
+ * The first run welcomes people who subscribed in the last 30 days and adds older subscribers quietly; later runs
+ * welcome every new sign-up, just like the website forms.
+ * Anyone who unsubscribed through LuxeMail is never re-added from here.
+ */
+export async function syncShopifySubscribers(env) {
+  if (!(await sendingReady(env))) return;
+  const since = await getKV(env, 'cust_sync_at');
+  const first = !since;
+  let cursor = null, last = since, added = 0;
+  for (let page = 0; page < 3; page++) {
+    let data;
+    try {
+      data = await gql(env, `query($q: String!, $after: String){ customers(first: 100, after: $after, sortKey: UPDATED_AT, query: $q){
+          nodes { email firstName updatedAt emailMarketingConsent { marketingState consentUpdatedAt } }
+          pageInfo { hasNextPage endCursor } } }`,
+        { q: `email_marketing_state:SUBSCRIBED${since ? ` updated_at:>'${since}'` : ''}`, after: cursor });
+    } catch (e) {
+      const msg = String(e && e.message || e);
+      await setKV(env, 'customer_sync', /access|read_customers|denied/i.test(msg) ? 'needs read_customers permission' : 'error: ' + msg.slice(0, 120));
+      return;
+    }
+    const conn = data.customers;
+    for (const c of conn.nodes) {
+      last = c.updatedAt;
+      const email = cleanEmail(c.email);
+      if (!email || !c.emailMarketingConsent || c.emailMarketingConsent.marketingState !== 'SUBSCRIBED') continue;
+      if (await env.DB.prepare('SELECT 1 FROM suppressions WHERE email = ?').bind(email).first()) continue;
+      if (await subscriber(env, email)) continue;
+      await env.DB.prepare(`INSERT OR IGNORE INTO subscribers (email, first_name, status, source, consent_text, consent_page, requested_at, confirmed_at)
+          VALUES (?, ?, 'subscribed', 'shopify', ?, NULL, ?, ?)`)
+        .bind(email, c.firstName || null, 'Subscribed to email marketing in Shopify (e.g. Facebook, Instagram or Shop sign-up)', now(), now()).run();
+      added++;
+      // Welcome everyone new; on the first run only those who subscribed in the last 30 days (older subscribers join quietly).
+      const optedAt = Date.parse(c.emailMarketingConsent.consentUpdatedAt || c.updatedAt || 0) / 1000;
+      if (!first || optedAt > now() - 30 * DAY) {
+        const day = new Date(now() * 1000).toISOString().slice(0, 10);
+        const d = { firstName: c.firstName || null };
+        await enqueue(env, { email, flow: 'welcome1', dedupe: `welcome1:${email}:${day}`, priority: 1, data: d });
+        await enqueue(env, { email, flow: 'welcome2', dedupe: `welcome2:${email}:${day}`, priority: 4, data: d, sendAfter: now() + 3 * DAY });
+        await enqueue(env, { email, flow: 'welcome3', dedupe: `welcome3:${email}`, priority: 4, data: d, sendAfter: now() + 7 * DAY });
+      }
+    }
+    cursor = conn.pageInfo.endCursor;
+    if (!conn.pageInfo.hasNextPage) { cursor = null; break; }
+  }
+  // Only move the start point forward once a full pass has finished, so a long first import resumes where it left off.
+  if (!cursor) await setKV(env, 'cust_sync_at', last || new Date().toISOString());
+  else if (last) await setKV(env, 'cust_sync_at', last);
+  await setKV(env, 'customer_sync', `ok, ${added} added ${new Date().toISOString().slice(0, 16)}`);
+}
+
 /** Someone who has bought before: the first-order welcome code isn't for them. */
 export async function isReturningCustomer(env, email) {
   const row = await env.DB.prepare('SELECT id FROM orders WHERE email = ? LIMIT 1').bind(email).first();
