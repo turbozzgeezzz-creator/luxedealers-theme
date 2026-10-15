@@ -15,14 +15,16 @@ const MUTED = '#5B6474';
  * page: background around the email, deep/deep2: offer card gradient, glow: big numbers on the offer card.
  */
 export const TONES = {
-  gold:      { a: '#F4C430', ai: '#14213D', at: '#1E4FA8', soft: '#F3F6FA', line: '#DCE4F0', page: '#EEF2F8', deep: '#0F3479', deep2: '#2E66C6', glow: '#FFD966' },
-  rose:      { a: '#C2557A', ai: '#FFFFFF', at: '#A8436A', soft: '#FCEFF4', line: '#F4D6E1', page: '#F8EDF2', deep: '#3A0F27', deep2: '#B0476B', glow: '#FFC2D6' },
-  emerald:   { a: '#1F6B52', ai: '#FFFFFF', at: '#1F6B52', soft: '#ECF5F0', line: '#D3E7DD', page: '#E7F0EB', deep: '#06120E', deep2: '#14473A', glow: '#9FE0C2' },
-  sapphire:  { a: '#2457B8', ai: '#FFFFFF', at: '#2457B8', soft: '#EEF3FC', line: '#D6E0F2', page: '#E9EEF7', deep: '#0B1E4A', deep2: '#2457B8', glow: '#B4C8F7' },
-  burgundy:  { a: '#7A1F2B', ai: '#FFFFFF', at: '#7A1F2B', soft: '#F8EDEF', line: '#EDD4D8', page: '#F2E8EA', deep: '#12060A', deep2: '#511520', glow: '#F2A9B3' },
-  onyx:      { a: '#1E4FA8', ai: '#FFD966', at: '#1E4FA8', soft: '#EEF3FC', line: '#D6E0F2', page: '#E9EEF7', deep: '#0B2559', deep2: '#1E4FA8', glow: '#FFD966' },
-  champagne: { a: '#3C7BE0', ai: '#FFFFFF', at: '#2457B8', soft: '#EEF5FF', line: '#D3E3FA', page: '#EAF1FC', deep: '#0E2F6E', deep2: '#3C7BE0', glow: '#BFD8FF' },
-  plum:      { a: '#5B2A4E', ai: '#FFFFFF', at: '#5B2A4E', soft: '#F5EDF3', line: '#E6D5E1', page: '#EFE7EE', deep: '#0E060C', deep2: '#43203A', glow: '#E6B3DC' },
+  // Bright gradients that sit well with the white header and luxury blue footer. deep -> deep2 is the banner/offer
+  // gradient; fg/fgs are the text colours on it; glow is the big number on the offer card.
+  gold:      { a: '#F4C430', ai: '#14213D', at: '#1E4FA8', soft: '#FFF7DB', line: '#F3E2A6', page: '#F4F6FA', deep: '#F2B91E', deep2: '#FFE27A', glow: '#14213D', fg: '#14213D', fgs: 'rgba(20,33,61,0.75)' },
+  rose:      { a: '#D63E77', ai: '#FFFFFF', at: '#C0306A', soft: '#FDEEF4', line: '#F7D3E1', page: '#F4F6FA', deep: '#D63E77', deep2: '#FF8FB4', glow: '#FFFFFF', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.85)' },
+  emerald:   { a: '#0E8A63', ai: '#FFFFFF', at: '#0E8A63', soft: '#E9F7F1', line: '#CBEBDD', page: '#F4F6FA', deep: '#0E8A63', deep2: '#3CC799', glow: '#FFFFFF', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.85)' },
+  sapphire:  { a: '#1E4FA8', ai: '#FFFFFF', at: '#1E4FA8', soft: '#EEF3FC', line: '#D6E0F2', page: '#F4F6FA', deep: '#1E4FA8', deep2: '#5B8DE0', glow: '#FFD966', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.85)' },
+  burgundy:  { a: '#C0263F', ai: '#FFFFFF', at: '#C0263F', soft: '#FDEDEF', line: '#F6D2D8', page: '#F4F6FA', deep: '#C0263F', deep2: '#FF6B7A', glow: '#FFFFFF', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.85)' },
+  onyx:      { a: '#14306E', ai: '#FFD966', at: '#14306E', soft: '#EEF2FA', line: '#D3DCEE', page: '#F4F6FA', deep: '#14306E', deep2: '#2B63C9', glow: '#FFD966', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.82)' },
+  champagne: { a: '#2F80ED', ai: '#FFFFFF', at: '#1F6AD1', soft: '#EDF5FF', line: '#CFE2FB', page: '#F4F6FA', deep: '#2F80ED', deep2: '#8EC5FF', glow: '#FFFFFF', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.88)' },
+  plum:      { a: '#6A3FD8', ai: '#FFFFFF', at: '#5B33C4', soft: '#F2EEFD', line: '#DED4FA', page: '#F4F6FA', deep: '#6A3FD8', deep2: '#A98BFF', glow: '#FFFFFF', fg: '#FFFFFF', fgs: 'rgba(255,255,255,0.85)' },
 };
 const FLOW_TONES = {
   welcome1: 'gold', welcome2: 'rose', welcome3: 'burgundy', checkout1: 'onyx', checkout2: 'sapphire', cart1: 'emerald', cart2: 'plum',
@@ -78,8 +80,8 @@ const OFFER_THEMES = {
  * `fine` must state every real condition (first order only, expiry, single use, doesn't combine).
  */
 export function offerCard(env, { theme, big, unit, title, code, fine }) {
-  const t = { ...OFFER_THEMES[theme], bg: '%%DEEP%%', grad: 'linear-gradient(135deg,%%DEEP2%% 0%,%%DEEP%% 100%)', accent: '%%GLOW%%', text: '#FFFFFF', soft: 'rgba(255,255,255,0.78)' };
-  const codeHtml = code ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:12px 0 0;"><tr><td style="padding:10px 16px;border:2px dashed ${t.accent};border-radius:12px;background:rgba(255,255,255,0.08);">
+  const t = { ...OFFER_THEMES[theme], bg: '%%DEEP%%', grad: 'radial-gradient(circle at 90% 0%,rgba(255,255,255,0.35) 0%,rgba(255,255,255,0) 55%),linear-gradient(135deg,%%DEEP%% 0%,%%DEEP2%% 100%)', accent: '%%GLOW%%', text: '%%FG%%', soft: '%%FGS%%' };
+  const codeHtml = code ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:12px 0 0;"><tr><td style="padding:10px 16px;border:2px dashed ${t.accent};border-radius:12px;background:rgba(255,255,255,0.18);">
 <span style="font-family:'Courier New',monospace;font-size:22px;font-weight:700;letter-spacing:2px;color:${t.text};">${esc(code)}</span></td></tr></table>` : '';
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:22px 0 8px;border-radius:20px;background:${t.bg};background-image:${t.grad};"><tr>
 <td class="stack offer-big" width="150" valign="middle" align="center" style="padding:26px 10px 26px 22px;">
@@ -174,7 +176,7 @@ function trustRow(env) {
 export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reason, plain, tone }) {
   const T = TONES[tone] || TONES.gold;
   const bannerImg = banner
-    ? `<tr><td style="padding:0;background:#15110A;"><img src="${env.PUBLIC_URL}/banners/${banner}" width="600" height="260" alt="${esc(bannerAlt || '')}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:#15110A;color:#FFFFFF;font-size:22px;font-weight:800;line-height:1.3;text-align:center;"></td></tr>`
+    ? `<tr><td style="padding:0;background:%%DEEP%%;"><img src="${env.PUBLIC_URL}/banners/${banner}" width="600" height="260" alt="${esc(bannerAlt || '')}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:%%DEEP%%;color:%%FG%%;font-size:22px;font-weight:800;line-height:1.3;text-align:center;"></td></tr>`
     : '';
   // Footer text is drawn as images (tools/footer.mjs): dark-mode recolouring can't touch them. Alt text is the same words.
   const part = (name, w, h, alt, href) => {
@@ -197,7 +199,7 @@ export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reas
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(preheader || '')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:%%PAGE%%;"><tr><td class="outer" align="center" style="padding:24px 12px;">
 <table role="presentation" class="wrap card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;border-radius:22px;overflow:hidden;background:#FFFFFF;">
-<tr><td style="padding:0;background:${BRAND};"><a href="${env.STORE_URL}" style="display:block;text-decoration:none;"><img src="${env.PUBLIC_URL}/brand/header.png" width="600" height="100" alt="${esc(env.BRAND)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:${BRAND};color:#FFFFFF;font-size:22px;font-weight:900;font-style:italic;text-align:center;"></a></td></tr>
+<tr><td style="padding:0;background:#FFFFFF;border-bottom:1px solid #E3E8EF;"><a href="${env.STORE_URL}" style="display:block;text-decoration:none;"><img src="${env.PUBLIC_URL}/brand/header.png" width="600" height="100" alt="${esc(env.BRAND)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:#FFFFFF;color:#B8892E;font-size:22px;font-weight:900;font-style:italic;text-align:center;"></a></td></tr>
 ${bannerImg}
 <tr><td class="px" style="background:#FFFFFF;padding:32px 32px 30px;">${body}</td></tr>
 ${plain ? '' : `<tr><td class="px" style="background:%%SOFT%%;padding:22px 26px;">${trustRow(env)}</td></tr>`}
@@ -208,7 +210,7 @@ ${plain ? '' : `<tr><td class="px" style="background:%%SOFT%%;padding:22px 26px;
 <p style="margin:0;">${part('unsub', 291, 18, `${reason || 'Signed up for LuxeDealers emails'} · Unsubscribe`, unsubUrl)}</p>
 </td></tr></table></td></tr></table></body></html>`
     .replace(/%%A%%/g, T.a).replace(/%%AI%%/g, T.ai).replace(/%%AT%%/g, T.at).replace(/%%SOFT%%/g, T.soft).replace(/%%LINE%%/g, T.line)
-    .replace(/%%PAGE%%/g, T.page).replace(/%%DEEP2%%/g, T.deep2).replace(/%%DEEP%%/g, T.deep).replace(/%%GLOW%%/g, T.glow);
+    .replace(/%%PAGE%%/g, T.page).replace(/%%DEEP2%%/g, T.deep2).replace(/%%DEEP%%/g, T.deep).replace(/%%GLOW%%/g, T.glow).replace(/%%FGS%%/g, T.fgs).replace(/%%FG%%/g, T.fg);
 }
 
 /* ---------- Sending ---------- */

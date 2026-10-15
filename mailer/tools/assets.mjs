@@ -34,17 +34,17 @@ async function shot(html, w, h, file, { jpg = false, transparent = false } = {})
   console.log('  ', file.split('/public/')[1]);
 }
 
-// Header, 600x100 shown at 2x: the gold LUXEDEALERS lettering on the luxury blue gradient (no LD mark).
-await shot(`<div style="width:1200px;height:200px;display:flex;align-items:center;justify-content:center;
-background:radial-gradient(70% 140% at 88% 0%,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),linear-gradient(135deg,#0F3479 0%,#1E4FA8 45%,#2E66C6 75%,#6F98E0 100%)">
+// Header, 600x100 shown at 2x: the gold LUXEDEALERS lettering on white, like the website header.
+await shot(`<div style="width:1200px;height:200px;display:flex;align-items:center;justify-content:center;background:#FFFFFF">
 <div style="font-family:C;font-weight:600;font-size:66px;letter-spacing:5px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
 
 // Banners, 600x260 shown at 2x.
 // Each email has its own colour scheme (matches TONES in src/email.js): [dark, mid, light accent].
 const TONES = {
-  gold: ['#0F3479', '#2E66C6', '#FFD966'], rose: ['#3A0F27', '#B0476B', '#FFC2D6'], emerald: ['#06120E', '#14473A', '#9FE0C2'],
-  sapphire: ['#0B1E4A', '#2457B8', '#B4C8F7'], burgundy: ['#12060A', '#511520', '#F2A9B3'], onyx: ['#0B2559', '#1E4FA8', '#FFD966'],
-  champagne: ['#0E2F6E', '#3C7BE0', '#BFD8FF'], plum: ['#0E060C', '#43203A', '#E6B3DC'],
+  // [deep, deep2, text] - bright gradients matching TONES in src/email.js.
+  gold: ['#F2B91E', '#FFE27A', '#14213D'], rose: ['#D63E77', '#FF8FB4', '#FFFFFF'], emerald: ['#0E8A63', '#3CC799', '#FFFFFF'],
+  sapphire: ['#1E4FA8', '#5B8DE0', '#FFFFFF'], burgundy: ['#C0263F', '#FF6B7A', '#FFFFFF'], onyx: ['#14306E', '#2B63C9', '#FFFFFF'],
+  champagne: ['#2F80ED', '#8EC5FF', '#FFFFFF'], plum: ['#6A3FD8', '#A98BFF', '#FFFFFF'],
 };
 const BANNERS = {
   'b-welcome1': ['Welcome gift', '10% off', 'your first order', 'gift', 'gold'],
@@ -70,15 +70,16 @@ const BANNERS = {
   'banner-picks-accessories': ['Picked for you', 'Accessories', 'for you', 'sunglasses', 'champagne'],
 };
 for (const [name, [eyebrow, l1, l2, ill, tone]] of Object.entries(BANNERS)) {
-  const [dark, mid, light] = TONES[tone];
-  await shot(`<div style="position:relative;width:1200px;height:520px;overflow:hidden;background:radial-gradient(ellipse at 78% 50%,${mid} 0%,${dark} 72%)">
-<div style="position:absolute;inset:22px;border:1.5px solid ${light}55;border-radius:22px"></div>
-<div style="position:absolute;right:40px;top:30px;width:460px;height:460px;background:url(${art(ill)}) center/contain no-repeat;filter:drop-shadow(0 18px 30px rgba(0,0,0,.5))"></div>
+  const [deep, deep2, fg] = TONES[tone];
+  await shot(`<div style="position:relative;width:1200px;height:520px;overflow:hidden;background:radial-gradient(70% 90% at 92% 0%,rgba(255,255,255,.38),rgba(255,255,255,0) 60%),linear-gradient(135deg,${deep} 0%,${deep2} 100%)">
+<div style="position:absolute;inset:22px;border:1.5px solid ${fg}40;border-radius:22px"></div>
+<div style="position:absolute;right:40px;top:30px;width:460px;height:460px;background:url(${art(ill)}) center/contain no-repeat;filter:drop-shadow(0 18px 28px rgba(0,0,0,.28))"></div>
 <div style="position:absolute;left:84px;top:0;bottom:0;width:640px;display:flex;flex-direction:column;justify-content:center">
-<div style="font-family:P;font-weight:500;font-size:24px;letter-spacing:7px;text-transform:uppercase;color:${light}">${esc(eyebrow)}</div>
-<div style="width:64px;height:2px;background:${light};margin:26px 0 28px"></div>
-<div style="font-family:C;font-weight:700;font-size:80px;line-height:1.04;color:#FFFFFF">${esc(l1)}<br><span style="color:${light}">${esc(l2)}</span></div></div></div>`, 1200, 520, out(`public/banners/${name}.jpg`), { jpg: true });
+<div style="font-family:P;font-weight:600;font-size:24px;letter-spacing:7px;text-transform:uppercase;color:${fg};opacity:.85">${esc(eyebrow)}</div>
+<div style="width:64px;height:3px;border-radius:2px;background:${fg};margin:26px 0 28px;opacity:.9"></div>
+<div style="font-family:C;font-weight:700;font-size:80px;line-height:1.04;color:${fg}">${esc(l1)}<br>${esc(l2)}</div></div></div>`, 1200, 520, out(`public/banners/${name}.jpg`), { jpg: true });
 }
+
 
 // Icons, 96x96 transparent (shown at 44-48px).
 const stroke = (c) => `fill="none" stroke="${c}" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"`;
