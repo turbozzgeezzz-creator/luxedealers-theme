@@ -2199,3 +2199,8 @@ html[data-theme="dark"] .brandmark__word { color: transparent !important; }
   .usp-list { flex-wrap: wrap; height: 40px; overflow: hidden; justify-content: center; row-gap: 40px; }
   .usp { line-height: 40px; }
 }
+/* Search button and selected options in luxury blue */
+.header__search-btn, .search-hero .btn:not(.btn--gold) { background: var(--blue) !important; border-color: var(--blue) !important; }
+.header__search-btn .icon { color: var(--yellow) !important; }
+.option__values input:checked + .pill { background: var(--blue); border-color: var(--blue); color: #fff; }
+.option__values input:checked + .img-pill { border-color: var(--yellow); }
