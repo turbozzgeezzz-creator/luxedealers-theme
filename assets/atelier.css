@@ -2204,3 +2204,14 @@ html[data-theme="dark"] .brandmark__word { color: transparent !important; }
 .header__search-btn .icon { color: var(--yellow) !important; }
 .option__values input:checked + .pill { background: var(--blue); border-color: var(--blue); color: #fff; }
 .option__values input:checked + .img-pill { border-color: var(--yellow); }
+
+/* ===================== Luxury blue gradient with a touch of white ===================== */
+:root {
+  --blue-grad: radial-gradient(120% 90% at 88% 8%, rgba(255,255,255,.30) 0%, rgba(255,255,255,0) 42%),
+               linear-gradient(135deg, #0F3479 0%, #1E4FA8 42%, #2E66C6 72%, #6F98E0 100%);
+  --blue-bar: linear-gradient(90deg, #163F8F 0%, #2457B8 40%, #5C8BDA 50%, #2457B8 60%, #163F8F 100%);
+}
+.tile--noir, .tile--onyx, .offers, .signup__band, .section--ink, .deal--offer { background: var(--blue-grad) !important; }
+.announcement--usp, .marquee--ink, .ribbon { background: var(--blue-bar) !important; }
+.site-footer { background: radial-gradient(90% 60% at 85% 0%, rgba(255,255,255,.16), rgba(255,255,255,0) 50%), linear-gradient(180deg, #1E4FA8 0%, #163F8F 55%, #0F3479 100%) !important; }
+.footer__promises { background: linear-gradient(90deg, #2457B8, #1E4FA8 45%, #4F7FD2 50%, #1E4FA8 55%, #163F8F) !important; }
