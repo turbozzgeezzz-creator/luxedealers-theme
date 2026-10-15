@@ -86,6 +86,11 @@
     {%- if settings.card_vendor and product.vendor != blank -%}<span class="card__vendor">{{ product.vendor }}</span>{%- endif -%}
     <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
     {% render 'price', product: product, show_from: true %}
+    {%- comment -%} The real buy-more price (automatic discount at checkout), to encourage a few pieces per order. {%- endcomment -%}
+    {%- if settings.qty_2_count > 1 and settings.qty_2_percent > 0 and product.available -%}
+      {%- assign each3 = 100 | minus: settings.qty_2_percent | times: product.price | divided_by: 100 | money -%}
+      <p class="card__multi">{{ 'sections.ribbon_each' | t: price: each3, count: settings.qty_2_count }}</p>
+    {%- endif -%}
 
     <div class="card__meta">
       {%- capture rating -%}{%- render 'rating', product: product -%}{%- endcapture -%}

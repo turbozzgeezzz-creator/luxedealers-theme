@@ -1,13 +1,12 @@
 {%- comment -%}
-  Header logo: the uploaded logo (Theme settings > Logo), or the LuxeDealers
-  mark: the gold LD monogram with its blue diamond, beside the LUXEDEALERS wordmark. Header only.
+  Header logo: the uploaded logo (Theme settings > Logo), or the LUXEDEALERS wordmark on its own
+  (navy, with a yellow accent). Header only.
 {%- endcomment -%}
 {%- if settings.logo != blank -%}
   {%- assign h2x = settings.logo_height | times: 2 -%}
   {{ settings.logo | image_url: height: h2x | image_tag: height: settings.logo_height, alt: shop.name, loading: 'eager', fetchpriority: 'high' }}
 {%- else -%}
   <span class="brandmark" aria-label="{{ shop.name | escape }}">
-    <img class="brandmark__gem brandmark__mark" src="{{ 'ld-mark.png' | asset_url }}" alt="" width="120" height="120" fetchpriority="high">
     <span class="brandmark__word"><span class="brandmark__luxe">LUXE</span><span class="brandmark__dealers">DEALERS</span></span>
   </span>
 {%- endif -%}

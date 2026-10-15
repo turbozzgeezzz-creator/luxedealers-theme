@@ -48,39 +48,39 @@
         "id": "color_subtle",
         "label": "Soft panels",
         "info": "Image backgrounds and quiet bands.",
-        "default": "#F5F3EF"
+        "default": "#F3F6FA"
       },
       {
         "type": "color",
         "id": "color_ink",
         "label": "Text and dark buttons",
-        "default": "#0D0D0D"
+        "default": "#0F1E3D"
       },
       {
         "type": "color",
         "id": "color_muted",
         "label": "Secondary text",
-        "default": "#6B6862"
+        "default": "#5B6474"
       },
       {
         "type": "color",
         "id": "color_border",
         "label": "Lines and borders",
-        "default": "#E7E4DE"
+        "default": "#E3E8EF"
       },
       {
         "type": "color",
         "id": "color_gold",
         "label": "Gold",
         "info": "Taken from the logo. Used for accents, sale prices and highlights.",
-        "default": "#D4AF37"
+        "default": "#F4C430"
       },
       {
         "type": "color",
         "id": "color_gold_text",
         "label": "Gold text",
         "info": "A deeper gold that stays readable on white.",
-        "default": "#8C6D1F"
+        "default": "#1F3B73"
       },
       {
         "type": "color",
