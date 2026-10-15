@@ -4,7 +4,7 @@
 // right before every send.
 import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex, sendingReady } from './util.js';
 import {
-  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince,
+  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince,
 } from './shopify.js';
 import {
   enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
@@ -153,6 +153,55 @@ export async function syncShopifyCheckouts(env) {
         c.subtotalPriceSet ? String(c.subtotalPriceSet.shopMoney.amount) : null, JSON.stringify(items),
         started, Math.floor(Date.parse(c.updatedAt) / 1000), completed, c.abandonedCheckoutUrl || null).run();
   }
+}
+
+/**
+ * New orders from Shopify (every channel): recorded for subscribers (stops reminders, builds VIP and win-back
+ * history) and their thank-you email is queued. The quiet period below holds it until the order has arrived.
+ */
+export async function syncShopifyOrders(env) {
+  if (!(await sendingReady(env))) return;
+  let list;
+  try { list = await ordersSince(env, new Date((now() - 2 * DAY) * 1000).toISOString()); } catch (e) { console.error('orders sync', e); return; }
+  for (const o of list) {
+    const email = cleanEmail(o.email);
+    if (!email || o.cancelledAt) continue;
+    const member = await subscriber(env, email);
+    if (!member || member.status !== 'subscribed') continue;
+    const orderId = String(o.id).replace(/\D/g, '');
+    const handles = o.lineItems.nodes.map((l) => l.product && l.product.handle).filter(Boolean);
+    const firstName = (o.customer && o.customer.firstName) || member.first_name || null;
+    const totalCents = o.totalPriceSet ? Math.round(parseFloat(o.totalPriceSet.shopMoney.amount) * 100) : null;
+    await env.DB.prepare(`INSERT INTO orders (id, email, first_name, total_cents, handles, verified, created_at) VALUES (?, ?, ?, ?, ?, 1, ?)
+        ON CONFLICT(id) DO UPDATE SET verified = 1, total_cents = COALESCE(excluded.total_cents, orders.total_cents)`)
+      .bind(orderId, email, firstName, totalCents, JSON.stringify(handles), Math.floor(Date.parse(o.createdAt) / 1000)).run();
+    await env.DB.prepare('UPDATE checkouts SET completed = 1 WHERE email = ? AND started_at <= ?').bind(email, Math.floor(Date.parse(o.createdAt) / 1000)).run();
+    await enqueue(env, { email, flow: 'postpurchase', dedupe: `postpurchase:${orderId}`, priority: 3, data: { firstName, handles }, sendAfter: now() + 7 * DAY });
+  }
+}
+
+/**
+ * After someone orders, we leave them alone until the order has arrived: until Shopify shows it delivered (plus a
+ * day), or, without a delivery update, 3 weeks after it shipped (4 weeks after ordering if it hasn't shipped yet),
+ * and never longer than 5 weeks. Returns the time the quiet period ends (0 when there's none).
+ */
+export async function quietUntil(env, email) {
+  let orders;
+  try { orders = await recentOrdersFor(env, email); } catch (e) { console.error('quiet check', e); return 0; }
+  let until = 0;
+  for (const o of orders) {
+    if (o.cancelledAt) continue;
+    const placed = Date.parse(o.createdAt) / 1000;
+    const fs = o.fulfillments || [];
+    const delivered = fs.map((f) => f.deliveredAt && Date.parse(f.deliveredAt) / 1000).filter(Boolean);
+    const shipped = fs.map((f) => Date.parse(f.createdAt) / 1000).filter(Boolean);
+    let end;
+    if (delivered.length && delivered.length === fs.length) end = Math.max(...delivered) + DAY;
+    else if (shipped.length) end = Math.min(...shipped) + 21 * DAY;
+    else end = placed + 28 * DAY;
+    until = Math.max(until, Math.min(end, placed + 35 * DAY));
+  }
+  return until > now() ? until : 0;
 }
 
 /** Someone who has bought before: the first-order welcome code isn't for them. */
@@ -771,6 +820,8 @@ for (const [key, build] of Object.entries(builders)) {
  * Sends queued emails, at most DAILY_SEND_LIMIT per 24 hours, after a fresh consent check.
  * With `id`, sends just that one job now (the welcome email, right after sign-up).
  */
+const DROP_WHEN_QUIET = ['fortnight', 'journal', 'browse', 'wishlist', 'cart1', 'cart2', 'welcome2', 'welcome3', 'winback'];
+
 export async function drainOutbox(env, { id } = {}) {
   // Master switch: until the sending domain is approved, jobs stay queued and nothing is sent.
   if (!(await sendingReady(env))) return { sent: 0, reason: 'sending not live (switch off or domain not verified)' };
@@ -781,6 +832,7 @@ export async function drainOutbox(env, { id } = {}) {
     : await env.DB.prepare(`SELECT * FROM sends WHERE status = 'queued' AND created_at <= ? ORDER BY priority ASC, created_at ASC LIMIT ?`)
       .bind(now(), Math.min(budget, Number(env.BATCH_SIZE || 6))).all();
   let sent = 0;
+  const quiet = new Map(); // email -> end of their post-order quiet period (looked up once per run)
   for (const job of results) {
     const mark = (status, error = null) => env.DB.prepare('UPDATE sends SET status = ?, error = ?, sent_at = ? WHERE id = ?')
       .bind(status, error, now(), job.id).run();
@@ -794,6 +846,17 @@ export async function drainOutbox(env, { id } = {}) {
       if (recent) {
         await env.DB.prepare('UPDATE sends SET created_at = ? WHERE id = ?').bind(now() + (urgent ? 1 : 6) * HOUR, job.id).run();
         continue;
+      }
+      // Just ordered: dated emails are dropped, the rest (thank-you, next-order reminder, VIP...) wait until the
+      // order has arrived. A reminder for a new checkout they started still goes.
+      if (!['checkout1', 'checkout2'].includes(job.flow)) {
+        if (!quiet.has(job.email)) quiet.set(job.email, await quietUntil(env, job.email));
+        const q = quiet.get(job.email);
+        if (q) {
+          if (DROP_WHEN_QUIET.includes(job.flow)) await mark('skipped', 'recent order');
+          else await env.DB.prepare('UPDATE sends SET created_at = ? WHERE id = ?').bind(q, job.id).run();
+          continue;
+        }
       }
       const builder = builders[job.flow];
       const { results: seenRows } = await env.DB.prepare('SELECT DISTINCT handle FROM shown WHERE email = ? AND at > ?').bind(job.email, now() - 60 * DAY).all();

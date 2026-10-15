@@ -117,6 +117,23 @@ export async function abandonedCheckouts(env, sinceIso) {
   return d.abandonedCheckouts.nodes;
 }
 
+/** Orders placed since `sinceIso` (any channel), newest first. */
+export async function ordersSince(env, sinceIso) {
+  const d = await gql(env, `query($q: String!){ orders(first: 50, sortKey: CREATED_AT, reverse: true, query: $q){ nodes {
+      id email createdAt cancelledAt customer { firstName } totalPriceSet { shopMoney { amount } }
+      lineItems(first: 10) { nodes { product { handle } } } } } }`, { q: `created_at:>='${sinceIso}'` });
+  return d.orders.nodes;
+}
+
+/** This customer's orders from the last 40 days, with shipping and delivery dates (read-only). */
+export async function recentOrdersFor(env, email) {
+  const since = new Date(Date.now() - 40 * 86400000).toISOString();
+  const d = await gql(env, `query($q: String!){ orders(first: 5, sortKey: CREATED_AT, reverse: true, query: $q){ nodes {
+      createdAt cancelledAt fulfillments(first: 5) { createdAt deliveredAt displayStatus } } } }`,
+    { q: `email:"${String(email).replace(/["\\]/g, '')}" created_at:>='${since}'` });
+  return d.orders.nodes;
+}
+
 /** True when Shopify has an order from this email created after `sinceIso`. */
 export async function shopifyOrderedSince(env, email, sinceIso) {
   try {
