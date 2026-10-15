@@ -207,7 +207,8 @@
         "ink": true,
         "reverse": false,
         "speed": 40
-      }
+      },
+      "disabled": true
     },
     "depts": {
       "type": "dept-cards",
@@ -505,11 +506,21 @@
         "button": "Shop all",
         "link": "/collections/shop-all"
       }
+    },
+    "ribbon": {
+      "type": "product-ribbon",
+      "settings": {
+        "eyebrow": "The edit",
+        "heading": "Build your look",
+        "limit": 14,
+        "speed": 60
+      }
     }
   },
   "order": [
     "hero",
     "usp",
+    "ribbon",
     "reviews",
     "depts",
     "latest",
