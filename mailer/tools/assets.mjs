@@ -34,16 +34,17 @@ async function shot(html, w, h, file, { jpg = false, transparent = false } = {})
   console.log('  ', file.split('/public/')[1]);
 }
 
-// Header, 600x100 shown at 2x.
-await shot(`<div style="width:1200px;height:200px;background:#0D0B07;display:flex;align-items:center;justify-content:center;gap:26px;border-bottom:2px solid #3A2B12">
-<img src="data:image/png;base64,${readFileSync(new URL('ld-mark.png', theme)).toString('base64')}" style="width:104px;height:104px;object-fit:contain"><div style="font-family:C;font-weight:600;font-size:58px;letter-spacing:4px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
+// Header, 600x100 shown at 2x: the gold LUXEDEALERS lettering on the luxury blue gradient (no LD mark).
+await shot(`<div style="width:1200px;height:200px;display:flex;align-items:center;justify-content:center;
+background:radial-gradient(70% 140% at 88% 0%,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),linear-gradient(135deg,#0F3479 0%,#1E4FA8 45%,#2E66C6 75%,#6F98E0 100%)">
+<div style="font-family:C;font-weight:600;font-size:66px;letter-spacing:5px;${WORD}">LUXE<span style="font-weight:500">DEALERS</span></div></div>`, 1200, 200, out('public/brand/header.png'));
 
 // Banners, 600x260 shown at 2x.
 // Each email has its own colour scheme (matches TONES in src/email.js): [dark, mid, light accent].
 const TONES = {
-  gold: ['#0D0B07', '#3A2B12', '#F1D27A'], rose: ['#1A0C0A', '#5A2E2A', '#F4C2B4'], emerald: ['#06120E', '#14473A', '#9FE0C2'],
-  sapphire: ['#080C18', '#1D2E5E', '#B4C8F7'], burgundy: ['#12060A', '#511520', '#F2A9B3'], onyx: ['#050505', '#2C2C2C', '#F1D27A'],
-  champagne: ['#120E08', '#4A3C25', '#EBD5A8'], plum: ['#0E060C', '#43203A', '#E6B3DC'],
+  gold: ['#0F3479', '#2E66C6', '#FFD966'], rose: ['#3A0F27', '#B0476B', '#FFC2D6'], emerald: ['#06120E', '#14473A', '#9FE0C2'],
+  sapphire: ['#0B1E4A', '#2457B8', '#B4C8F7'], burgundy: ['#12060A', '#511520', '#F2A9B3'], onyx: ['#0B2559', '#1E4FA8', '#FFD966'],
+  champagne: ['#0E2F6E', '#3C7BE0', '#BFD8FF'], plum: ['#0E060C', '#43203A', '#E6B3DC'],
 };
 const BANNERS = {
   'b-welcome1': ['Welcome gift', '10% off', 'your first order', 'gift', 'gold'],
@@ -95,16 +96,16 @@ const GLYPHS = {
 for (const [n, g] of Object.entries(GLYPHS)) {
   const offer = ['gift', 'tag', 'crown', 'heart', 'sparkles'].includes(n);
   const svg = offer
-    ? `<svg viewBox="0 0 24 24" width="96" height="96"><g ${stroke('#F1D27A')} transform="translate(2.4 2.4) scale(.8)">${g}</g></svg>`
-    : `<svg viewBox="0 0 24 24" width="96" height="96"><circle cx="12" cy="12" r="11.6" fill="#0D0B07"/><g ${stroke('#E6C463')} transform="translate(5.4 5.4) scale(.55)" stroke-width="2.2">${g}</g></svg>`;
+    ? `<svg viewBox="0 0 24 24" width="96" height="96"><g ${stroke('#FFD966')} transform="translate(2.4 2.4) scale(.8)">${g}</g></svg>`
+    : `<svg viewBox="0 0 24 24" width="96" height="96"><circle cx="12" cy="12" r="11.6" fill="#1E4FA8"/><g ${stroke('#FFD966')} transform="translate(5.4 5.4) scale(.55)" stroke-width="2.2">${g}</g></svg>`;
   await shot(svg, 96, 96, out(`public/icons/${offer ? 'offer' : 'trust'}-${n}.png`), { transparent: true });
 }
 const SOCIAL = {
-  instagram: '<rect x="5" y="5" width="14" height="14" rx="4"/><circle cx="12" cy="12" r="3.3"/><circle cx="16.2" cy="7.8" r=".6" fill="#E6C463"/>',
+  instagram: '<rect x="5" y="5" width="14" height="14" rx="4"/><circle cx="12" cy="12" r="3.3"/><circle cx="16.2" cy="7.8" r=".6" fill="#FFD966"/>',
   facebook: '<path d="M13.2 19.5v-6.6h2.3l.4-2.7h-2.7V8.6c0-.8.3-1.3 1.4-1.3H16V4.9c-.3 0-1.1-.1-2.1-.1-2.1 0-3.4 1.2-3.4 3.5v2h-2.3v2.7h2.3v6.6"/>',
   tiktok: '<path d="M13.5 4.5v10.3a2.9 2.9 0 1 1-2.6-2.9M13.5 4.5c.3 2.2 1.8 3.7 4 3.9"/>',
 };
 for (const [n, g] of Object.entries(SOCIAL)) {
-  await shot(`<svg viewBox="0 0 24 24" width="72" height="72"><circle cx="12" cy="12" r="11.3" fill="none" stroke="#6B5323" stroke-width=".9"/><g ${stroke('#E6C463')} stroke-width="1.5">${g}</g></svg>`, 72, 72, out(`public/icons/social-${n}.png`), { transparent: true });
+  await shot(`<svg viewBox="0 0 24 24" width="72" height="72"><circle cx="12" cy="12" r="11.3" fill="none" stroke="#FFD966" stroke-opacity=".55" stroke-width=".9"/><g ${stroke('#FFD966')} stroke-width="1.5">${g}</g></svg>`, 72, 72, out(`public/icons/social-${n}.png`), { transparent: true });
 }
 await browser.close();

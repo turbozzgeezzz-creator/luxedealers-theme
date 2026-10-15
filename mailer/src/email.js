@@ -1,11 +1,12 @@
 // Email layout, components, sending through Resend, and the outbox that respects the daily send limit.
 import { esc, money, now, hmacHex, DAY, sendingReady } from './util.js';
 
-const GOLD = '#D4AF37';
-const GOLD_TEXT = '#8C6D1F';
+const GOLD = '#F4C430';
+const GOLD_TEXT = '#1E4FA8';
 const VIOLET = GOLD_TEXT;
-const INK = '#0D0D0D';
-const MUTED = '#6B6862';
+const INK = '#14213D';
+const BRAND = '#1E4FA8'; // luxury blue: header and footer
+const MUTED = '#5B6474';
 
 /**
  * Colour schemes. Every email has its own, so a welcome never looks like a checkout reminder or a VIP note.
@@ -14,13 +15,13 @@ const MUTED = '#6B6862';
  * page: background around the email, deep/deep2: offer card gradient, glow: big numbers on the offer card.
  */
 export const TONES = {
-  gold:      { a: '#D4AF37', ai: '#111111', at: '#8C6D1F', soft: '#FBF6E8', line: '#ECE2C6', page: '#F1EEE8', deep: '#0D0B07', deep2: '#3A2B12', glow: '#F1D27A' },
-  rose:      { a: '#C98B7D', ai: '#FFFFFF', at: '#9A5B4E', soft: '#FBF0EC', line: '#F0DDD6', page: '#F5ECE8', deep: '#1A0C0A', deep2: '#5A2E2A', glow: '#F4C2B4' },
+  gold:      { a: '#F4C430', ai: '#14213D', at: '#1E4FA8', soft: '#F3F6FA', line: '#DCE4F0', page: '#EEF2F8', deep: '#0F3479', deep2: '#2E66C6', glow: '#FFD966' },
+  rose:      { a: '#C2557A', ai: '#FFFFFF', at: '#A8436A', soft: '#FCEFF4', line: '#F4D6E1', page: '#F8EDF2', deep: '#3A0F27', deep2: '#B0476B', glow: '#FFC2D6' },
   emerald:   { a: '#1F6B52', ai: '#FFFFFF', at: '#1F6B52', soft: '#ECF5F0', line: '#D3E7DD', page: '#E7F0EB', deep: '#06120E', deep2: '#14473A', glow: '#9FE0C2' },
-  sapphire:  { a: '#24407F', ai: '#FFFFFF', at: '#24407F', soft: '#EEF1F8', line: '#D9E0F0', page: '#E8ECF4', deep: '#080C18', deep2: '#1D2E5E', glow: '#B4C8F7' },
+  sapphire:  { a: '#2457B8', ai: '#FFFFFF', at: '#2457B8', soft: '#EEF3FC', line: '#D6E0F2', page: '#E9EEF7', deep: '#0B1E4A', deep2: '#2457B8', glow: '#B4C8F7' },
   burgundy:  { a: '#7A1F2B', ai: '#FFFFFF', at: '#7A1F2B', soft: '#F8EDEF', line: '#EDD4D8', page: '#F2E8EA', deep: '#12060A', deep2: '#511520', glow: '#F2A9B3' },
-  onyx:      { a: '#111111', ai: '#F1D27A', at: '#111111', soft: '#F4F2EE', line: '#E4E0D8', page: '#E9E7E2', deep: '#050505', deep2: '#2C2C2C', glow: '#F1D27A' },
-  champagne: { a: '#B59A6A', ai: '#FFFFFF', at: '#7E6638', soft: '#F8F3EA', line: '#EBE1CC', page: '#F3EEE5', deep: '#120E08', deep2: '#4A3C25', glow: '#EBD5A8' },
+  onyx:      { a: '#1E4FA8', ai: '#FFD966', at: '#1E4FA8', soft: '#EEF3FC', line: '#D6E0F2', page: '#E9EEF7', deep: '#0B2559', deep2: '#1E4FA8', glow: '#FFD966' },
+  champagne: { a: '#3C7BE0', ai: '#FFFFFF', at: '#2457B8', soft: '#EEF5FF', line: '#D3E3FA', page: '#EAF1FC', deep: '#0E2F6E', deep2: '#3C7BE0', glow: '#BFD8FF' },
   plum:      { a: '#5B2A4E', ai: '#FFFFFF', at: '#5B2A4E', soft: '#F5EDF3', line: '#E6D5E1', page: '#EFE7EE', deep: '#0E060C', deep2: '#43203A', glow: '#E6B3DC' },
 };
 const FLOW_TONES = {
@@ -54,7 +55,7 @@ export function para(html) {
 
 /** Plain code box, kept for the weekly report and anything without its own offer card. */
 export function codeBox(code, note) {
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 6px;"><tr><td align="center" style="padding:18px;border:2px dashed ${GOLD};border-radius:16px;background:#FBF6E8;">
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 6px;"><tr><td align="center" style="padding:18px;border:2px dashed ${GOLD};border-radius:16px;background:#F3F6FA;">
 <p style="margin:0;font-family:'Courier New',monospace;font-size:26px;font-weight:700;letter-spacing:2px;color:${INK};">${esc(code)}</p>
 ${note ? `<p style="margin:6px 0 0;font-size:13px;color:${MUTED};">${esc(note)}</p>` : ''}</td></tr></table>`;
 }
@@ -69,7 +70,7 @@ const OFFER_THEMES = {
   lastcall: { bg: '#7A2E12', grad: 'linear-gradient(135deg,#B8892E 0%,#6E1F14 100%)', accent: '#FFF3D6', text: '#FFFFFF', soft: '#FBE3C9', icon: 'sparkles' },
   thanks: { bg: '#0D0B07', grad: 'linear-gradient(135deg,#3A2B12 0%,#0D0B07 100%)', accent: '#E6C463', text: '#FFFFFF', soft: '#D9CFB4', icon: 'gift' },
   insider: { bg: '#1A140A', grad: 'linear-gradient(135deg,#4A3614 0%,#0D0B07 100%)', accent: '#F1D27A', text: '#FFFFFF', soft: '#E6D9B8', icon: 'tag' },
-  tiers: { bg: '#0D0B07', grad: 'linear-gradient(135deg,#3A2B12 0%,#0D0B07 100%)', accent: '#E6C463', text: '#FFFFFF', soft: '#D9CFB4', icon: 'sparkles' },
+  tiers: { bg: '#0F3479', grad: 'linear-gradient(135deg,#2E66C6 0%,#0F3479 100%)', accent: '#FFD966', text: '#FFFFFF', soft: '#DCE6F7', icon: 'sparkles' },
 };
 
 /**
@@ -102,7 +103,7 @@ export function tierCard(env) {
   const t = OFFER_THEMES.tiers;
   const cell = (spend, save) => `<td class="stack" width="50%" valign="top" style="padding:6px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:16px 10px;border-radius:14px;background:rgba(255,255,255,0.12);">
 <span style="display:block;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:${t.soft};">Spend ${spend}+</span>
-<span style="display:block;margin-top:4px;font-size:30px;font-weight:800;color:#F1D27A;">Save ${save}</span></td></tr></table></td>`;
+<span style="display:block;margin-top:4px;font-size:30px;font-weight:800;color:#FFD966;">Save ${save}</span></td></tr></table></td>`;
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:22px 0 8px;border-radius:20px;background:${t.bg};background-image:${t.grad};"><tr><td style="padding:22px 18px 18px;">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td width="56" valign="middle" style="padding:0 6px;"><img src="${env.PUBLIC_URL}/icons/offer-sparkles.png" width="44" height="44" alt="" style="display:block;border:0;"></td>
 <td valign="middle" style="padding:0 6px;font-size:19px;font-weight:900;color:#FFFFFF;">Spend more, save more<span style="display:block;font-size:13px;font-weight:400;color:${t.soft};">Taken off automatically at checkout. No code needed.</span></td></tr></table>
@@ -118,9 +119,9 @@ export function tierNudge(env, subtotalCents) {
   if (subtotalCents >= top) msg = `<strong>Good news:</strong> orders of ${money(top)}+ get ${topP}% off automatically at checkout.`;
   else if (subtotalCents >= tr.s1) msg = `<strong>You're getting ${tr.p1}% off</strong> automatically. Add ${money(top - subtotalCents)} more to make it ${topP}%.`;
   else msg = `<strong>Add ${money(tr.s1 - subtotalCents)} more</strong> and ${tr.p1}% comes off automatically (orders of ${money(tr.s1)}+).`;
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 6px;"><tr><td style="padding:14px 16px;border-radius:14px;background:#FBF6E8;border:1px solid #E8D7A6;">
-<table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="38" valign="middle"><span style="display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:#111;color:#E6C463;text-align:center;font-weight:900;">%</span></td>
-<td valign="middle" style="font-size:14px;line-height:1.5;color:#3E2E0A;">${msg}</td></tr></table></td></tr></table>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:18px 0 6px;"><tr><td style="padding:14px 16px;border-radius:14px;background:#EEF3FC;border:1px solid #D6E0F2;">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr><td width="38" valign="middle"><span style="display:inline-block;width:28px;height:28px;line-height:28px;border-radius:50%;background:#1E4FA8;color:#FFD966;text-align:center;font-weight:900;">%</span></td>
+<td valign="middle" style="font-size:14px;line-height:1.5;color:#14213D;">${msg}</td></tr></table></td></tr></table>`;
 }
 
 /**
@@ -196,11 +197,11 @@ export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reas
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;">${esc(preheader || '')}&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;&#8199;&#847;</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:%%PAGE%%;"><tr><td class="outer" align="center" style="padding:24px 12px;">
 <table role="presentation" class="wrap card" width="600" cellpadding="0" cellspacing="0" style="width:600px;max-width:600px;border-radius:22px;overflow:hidden;background:#FFFFFF;">
-<tr><td style="padding:0;background:${INK};"><a href="${env.STORE_URL}" style="display:block;text-decoration:none;"><img src="${env.PUBLIC_URL}/brand/header.png" width="600" height="100" alt="${esc(env.BRAND)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:${INK};color:#FFFFFF;font-size:22px;font-weight:900;font-style:italic;text-align:center;"></a></td></tr>
+<tr><td style="padding:0;background:${BRAND};"><a href="${env.STORE_URL}" style="display:block;text-decoration:none;"><img src="${env.PUBLIC_URL}/brand/header.png" width="600" height="100" alt="${esc(env.BRAND)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:${BRAND};color:#FFFFFF;font-size:22px;font-weight:900;font-style:italic;text-align:center;"></a></td></tr>
 ${bannerImg}
 <tr><td class="px" style="background:#FFFFFF;padding:32px 32px 30px;">${body}</td></tr>
 ${plain ? '' : `<tr><td class="px" style="background:%%SOFT%%;padding:22px 26px;">${trustRow(env)}</td></tr>`}
-<tr><td class="px" align="center" bgcolor="${INK}" background="${env.PUBLIC_URL}/footer/bg.png" style="background-color:${INK};background-image:url('${env.PUBLIC_URL}/footer/bg.png');background-repeat:repeat;padding:30px 24px 32px;text-align:center;font-size:0;line-height:0;">
+<tr><td class="px" align="center" bgcolor="${BRAND}" background="${env.PUBLIC_URL}/footer/bg.png" style="background-color:${BRAND};background-image:url('${env.PUBLIC_URL}/footer/bg.png');background-repeat:repeat;padding:30px 24px 32px;text-align:center;font-size:0;line-height:0;">
 <p style="margin:0 0 18px;">${social('instagram', 'https://www.instagram.com/_luxedealers/', 'Instagram')}${social('tiktok', 'https://www.tiktok.com/@luxe.dealers', 'TikTok')}${social('facebook', 'https://www.facebook.com/people/LuxeDealers/61586243374554/', 'Facebook')}</p>
 <p style="margin:0 0 14px;">${part('new-in', 45, 20, 'New in', `${env.STORE_URL}/collections/new-arrivals`)}${part('dot', 22, 20, '·')}${part('bags', 34, 20, 'Bags', `${env.STORE_URL}/collections/handbags`)}${part('dot', 22, 20, '·')}${part('shop-all', 54, 20, 'Shop all', `${env.STORE_URL}/collections/shop-all`)}</p>
 <p style="margin:0 0 10px;">${part('help', 288, 20, `Questions? Email ${env.REPLY_TO}`, `mailto:${env.REPLY_TO}`)}</p>
