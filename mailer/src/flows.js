@@ -4,7 +4,7 @@
 // right before every send.
 import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex, sendingReady } from './util.js';
 import {
-  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders,
+  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince,
 } from './shopify.js';
 import {
   enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
@@ -121,6 +121,38 @@ export async function syncShopifySubscribers(env) {
   if (!cursor) await setKV(env, 'cust_sync_at', last || new Date().toISOString());
   else if (last) await setKV(env, 'cust_sync_at', last);
   await setKV(env, 'customer_sync', `ok, ${added} added ${new Date().toISOString().slice(0, 16)}`);
+}
+
+/**
+ * Abandoned checkouts straight from Shopify (website, Facebook, Instagram, Shop), so reminders don't depend on the
+ * pixel. Only subscribers' checkouts are kept; a checkout that later became an order is marked completed.
+ * Shopify's own "return to checkout" link is stored so the email button reopens their exact checkout.
+ */
+export async function syncShopifyCheckouts(env) {
+  if (!(await sendingReady(env))) return;
+  let list;
+  try { list = await abandonedCheckouts(env, new Date((now() - 6 * DAY) * 1000).toISOString()); } catch (e) { console.error('abandoned checkouts', e); return; }
+  for (const c of list) {
+    const email = cleanEmail(c.customer && c.customer.email);
+    if (!email) continue;
+    const member = await subscriber(env, email);
+    if (!member || member.status !== 'subscribed') continue;
+    const token = 'shop:' + String(c.id).replace(/\D/g, '');
+    const started = Math.floor(Date.parse(c.createdAt) / 1000);
+    const known = await env.DB.prepare('SELECT completed FROM checkouts WHERE token = ?').bind(token).first();
+    let completed = c.completedAt ? 1 : 0;
+    if (!completed && !(known && known.completed) && (await shopifyOrderedSince(env, email, c.createdAt))) completed = 1;
+    const items = c.lineItems.nodes.filter((l) => l.variant).map((l) => ({
+      variantId: String(l.variant.id).replace(/\D/g, ''), qty: l.quantity, handle: l.variant.product ? l.variant.product.handle : null, title: l.title,
+    }));
+    await env.DB.prepare(`INSERT INTO checkouts (token, email, first_name, total, items, started_at, updated_at, completed, recover_url)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(token) DO UPDATE SET completed = MAX(checkouts.completed, excluded.completed), items = excluded.items,
+          total = excluded.total, updated_at = excluded.updated_at, recover_url = excluded.recover_url`)
+      .bind(token, email, (c.customer && c.customer.firstName) || member.first_name || null,
+        c.subtotalPriceSet ? String(c.subtotalPriceSet.shopMoney.amount) : null, JSON.stringify(items),
+        started, Math.floor(Date.parse(c.updatedAt) / 1000), completed, c.abandonedCheckoutUrl || null).run();
+  }
 }
 
 /** Someone who has bought before: the first-order welcome code isn't for them. */
@@ -276,7 +308,7 @@ export async function scanAbandonment(env) {
     if (await orderedSince(env, ck.email, ck.started_at - HOUR)) continue;
     const items = JSON.parse(ck.items || '[]');
     if (!items.length) continue;
-    const data = { token: ck.token, items, firstName: ck.first_name, subtotal: ck.total };
+    const data = { token: ck.token, items, firstName: ck.first_name, subtotal: ck.total, url: ck.recover_url || null };
     if (t - ck.updated_at < 2 * DAY) {
       await enqueue(env, { email: ck.email, flow: 'checkout1', dedupe: `checkout1:${ck.token}`, priority: 1, data });
     } else {
@@ -538,7 +570,7 @@ export const builders = {
       body: heading('Ready when you are') + para(`${hi(d.firstName)} you started a checkout but didn't quite finish. Your items are below, and the button puts them straight back in your cart.`)
         + productGrid(products, { heading: 'Still in your checkout' })
         + tierNudge(env, d.subtotal != null ? Math.round(parseFloat(d.subtotal) * 100) : null)
-        + button('Complete my order', cartLink(env, d.items)),
+        + button('Complete my order', d.url || cartLink(env, d.items)),
     };
   },
   async checkout2(env, email, d) {
@@ -554,7 +586,7 @@ export const builders = {
       body: heading('A little nudge, with 5% off') + para(`${hi(d.firstName)} your items are still available. Here's 5% off to help you decide.`)
         + offerCard(env, { theme: 'personal', big: '5%', unit: 'off', title: 'A code just for you, to finish your order', code,
           fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Complete my order', cartLink(env, d.items, code)) + productGrid(products, { heading: 'Still in your checkout' }),
+        + button('Complete my order', d.url ? `${d.url}${d.url.includes('?') ? '&' : '?'}discount=${encodeURIComponent(code)}` : cartLink(env, d.items, code)) + productGrid(products, { heading: 'Still in your checkout' }),
     };
   },
   async cart1(env, email, d) {
@@ -754,11 +786,13 @@ export async function drainOutbox(env, { id } = {}) {
       .bind(status, error, now(), job.id).run();
     try {
       if (!(await mayEmail(env, job.email, job.flow))) { await mark('skipped', 'not subscribed'); continue; }
-      // One marketing email per person per 20 hours; anything else waits its turn.
+      // One newsletter-style email per person per 20 hours. Time-sensitive emails (checkout and cart reminders,
+      // the first welcome, thank-you) only need a 2-hour gap, so a welcome never holds back a checkout reminder.
+      const urgent = ['checkout1', 'checkout2', 'cart1', 'cart2', 'welcome1', 'postpurchase'].includes(job.flow);
       const recent = await env.DB.prepare(`SELECT id FROM sends WHERE email = ? AND status = 'sent' AND sent_at > ? LIMIT 1`)
-        .bind(job.email, now() - 20 * HOUR).first();
+        .bind(job.email, now() - (urgent ? 2 : 20) * HOUR).first();
       if (recent) {
-        await env.DB.prepare('UPDATE sends SET created_at = ? WHERE id = ?').bind(now() + 6 * HOUR, job.id).run();
+        await env.DB.prepare('UPDATE sends SET created_at = ? WHERE id = ?').bind(now() + (urgent ? 1 : 6) * HOUR, job.id).run();
         continue;
       }
       const builder = builders[job.flow];

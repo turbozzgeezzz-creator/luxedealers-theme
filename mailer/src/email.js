@@ -226,7 +226,9 @@ const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'imag
  * (inline attachments referenced as cid:). An image that can't be fetched stays a normal link.
  */
 export async function embedImages(env, html, maxBytes = 1_500_000) {
-  const urls = [...new Set([...html.matchAll(/<img[^>]+src="(https?:\/\/[^"]+)"/g)].map((m) => m[1]))];
+  // Only our own artwork (logo, banners, icons) is attached; product photos load from Shopify's image servers,
+  // which keeps each run within Cloudflare's per-run request limit so the queue keeps moving.
+  const urls = [...new Set([...html.matchAll(/<img[^>]+src="(https?:\/\/[^"]+)"/g)].map((m) => m[1]))].filter((u) => u.startsWith(env.PUBLIC_URL + '/'));
   // Fetch every image at once (faster sends), then attach them in page order within the size budget.
   const fetched = await Promise.all(urls.map(async (raw) => {
     const url = raw.replace(/&amp;/g, '&');

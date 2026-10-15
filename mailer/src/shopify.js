@@ -107,6 +107,28 @@ export async function createSharedCode(env, { prefix, percent, days, title, coll
   return { code, endsAt };
 }
 
+/** Shopify's own abandoned checkouts created since `sinceIso` (every sales channel, no pixel needed). */
+export async function abandonedCheckouts(env, sinceIso) {
+  const d = await gql(env, `query($q: String!){ abandonedCheckouts(first: 50, sortKey: CREATED_AT, reverse: true, query: $q){ nodes {
+      id createdAt updatedAt completedAt abandonedCheckoutUrl
+      customer { email firstName }
+      subtotalPriceSet { shopMoney { amount } }
+      lineItems(first: 10) { nodes { quantity title variant { id product { handle } } } } } } }`, { q: `created_at:>='${sinceIso}'` });
+  return d.abandonedCheckouts.nodes;
+}
+
+/** True when Shopify has an order from this email created after `sinceIso`. */
+export async function shopifyOrderedSince(env, email, sinceIso) {
+  try {
+    const d = await gql(env, `query($q: String!){ orders(first: 1, query: $q){ nodes { id } } }`,
+      { q: `email:"${String(email).replace(/["\\]/g, '')}" created_at:>='${sinceIso}'` });
+    return !!(d.orders && d.orders.nodes.length);
+  } catch (e) {
+    console.error('order lookup', e);
+    return false;
+  }
+}
+
 /** True when Shopify has an order for this email (read-only; Shopify searches recent orders). */
 export async function shopifyHasOrders(env, email) {
   try {

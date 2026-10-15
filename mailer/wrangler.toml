@@ -13,8 +13,8 @@ database_name = "luxemail-main"
 database_id = "eb1197c7-0323-4435-8c95-129d93bb8f80"
 
 [triggers]
-# Every 30 minutes: process reminders and drain the outbox. Daily and fortnightly jobs gate themselves on time.
-crons = ["*/30 * * * *"]
+# Every 10 minutes: process reminders and drain the outbox. Daily and fortnightly jobs gate themselves on time.
+crons = ["*/10 * * * *"]
 
 [vars]
 SHOP_DOMAIN = "ya9p17-nn.myshopify.com"

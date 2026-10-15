@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, client_
 CREATE INDEX IF NOT EXISTS events_email ON events(email, type, at);
 CREATE INDEX IF NOT EXISTS events_client ON events(client_id, at);
 -- Checkouts reported by the Shopify custom pixel (subscribers only). items: [{variantId, qty, handle, title}]
-CREATE TABLE IF NOT EXISTS checkouts (token TEXT PRIMARY KEY, email TEXT, first_name TEXT, total TEXT, items TEXT, started_at INTEGER, updated_at INTEGER, completed INTEGER DEFAULT 0);
+CREATE TABLE IF NOT EXISTS checkouts (token TEXT PRIMARY KEY, email TEXT, first_name TEXT, total TEXT, items TEXT, started_at INTEGER, updated_at INTEGER, completed INTEGER DEFAULT 0, recover_url TEXT);
 CREATE INDEX IF NOT EXISTS checkouts_email ON checkouts(email, updated_at);
 -- Order history from the pixel's checkout_completed, checked against the Admin API (verified = 1).
 CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, email TEXT, first_name TEXT, total_cents INTEGER, handles TEXT, verified INTEGER DEFAULT 0, created_at INTEGER);

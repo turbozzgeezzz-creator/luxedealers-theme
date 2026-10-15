@@ -3,7 +3,7 @@ import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
-  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders, syncShopifySubscribers,
+  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders, syncShopifySubscribers, syncShopifyCheckouts,
 } from './flows.js';
 
 function cors(env, request) {
@@ -180,7 +180,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncShopifySubscribers, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
+    const steps = [syncShopifySubscribers, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }
