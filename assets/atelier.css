@@ -354,7 +354,7 @@ html, body { overflow-x: clip; }
 .tile__img { width: 100%; height: 100%; object-fit: contain; transition: transform 1.2s var(--ease-out); }
 a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translateY(-6px) scale(1.03); }
 .tile .btn--light { --btn-bg: #fff; --btn-fg: #14213D; --btn-line: #fff; }
-.tile--ivory .btn--light, .tile--gold .btn--light { --btn-bg: #14213D; --btn-fg: #fff; --btn-line: #14213D; }
+.tile--ivory .btn--light, .tile--gold .btn--light { --btn-bg: #1E4FA8; --btn-fg: #fff; --btn-line: #1E4FA8; }
 .btn--ghost-light { border-radius: 10px; }
 
 /* ---------- Promo grid (hero) ---------- */
@@ -742,7 +742,7 @@ a.tile:hover .tile__img, .promo-slide.is-active .tile__img { transform: translat
 
 /* ---------- Footer ---------- */
 .site-footer { background: #0A0908; color: #fff; }
-.footer__promises { border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(90deg, #163F8F, #0A0908 60%); }
+.footer__promises { border-bottom: 1px solid rgba(255,255,255,.08); background: linear-gradient(90deg, #1E4FA8, #163F8F 60%); }
 .footer__promises-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; padding-block: 26px; }
 @media (min-width: 990px) { .footer__promises-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 .footer__promise { display: flex; align-items: center; gap: 14px; }
