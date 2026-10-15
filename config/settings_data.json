@@ -110,6 +110,14 @@
     "qty_2_count": 3,
     "qty_2_percent": 15,
     "welcome_personal": true,
-    "welcome_offer": "10% off your first order"
+    "welcome_offer": "10% off your first order",
+    "color_background": "#FFFFFF",
+    "color_subtle": "#F3F6FA",
+    "color_ink": "#14213D",
+    "color_muted": "#5B6474",
+    "color_border": "#E3E8EF",
+    "color_gold": "#F4C430",
+    "color_gold_text": "#1E4FA8",
+    "color_sapphire": "#1E4FA8"
   }
 }

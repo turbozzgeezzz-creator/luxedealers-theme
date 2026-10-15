@@ -54,7 +54,7 @@
         "type": "color",
         "id": "color_ink",
         "label": "Text and dark buttons",
-        "default": "#0F1E3D"
+        "default": "#14213D"
       },
       {
         "type": "color",
@@ -80,7 +80,7 @@
         "id": "color_gold_text",
         "label": "Gold text",
         "info": "A deeper gold that stays readable on white.",
-        "default": "#1F3B73"
+        "default": "#1E4FA8"
       },
       {
         "type": "color",
