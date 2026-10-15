@@ -219,6 +219,10 @@ function toBase64(buf) {
   return btoa(bin);
 }
 
+// Our own artwork never changes between deploys, so each image is fetched once per Worker instance and reused for
+// every email (each fetch counts towards Cloudflare's per-run request limit).
+const IMG_CACHE = new Map();
+
 const EXT = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/gif': 'gif', 'image/webp': 'webp' };
 
 /**
@@ -232,12 +236,15 @@ export async function embedImages(env, html, maxBytes = 1_500_000) {
   // Fetch every image at once (faster sends), then attach them in page order within the size budget.
   const fetched = await Promise.all(urls.map(async (raw) => {
     const url = raw.replace(/&amp;/g, '&');
+    if (IMG_CACHE.has(url)) return { raw, ...IMG_CACHE.get(url) };
     try {
       const req = new Request(url, { headers: { Accept: 'image/jpeg,image/png;q=0.9,image/gif;q=0.8' } });
       const res = url.startsWith(env.PUBLIC_URL + '/') && env.ASSETS ? await env.ASSETS.fetch(req) : await fetch(req);
       const type = (res.headers.get('Content-Type') || '').split(';')[0].trim();
       if (!res.ok || !EXT[type]) return null;
-      return { raw, type, buf: await res.arrayBuffer() };
+      const buf = await res.arrayBuffer();
+      IMG_CACHE.set(url, { type, buf });
+      return { raw, type, buf };
     } catch (e) {
       console.error('embed image', url, e);
       return null;
