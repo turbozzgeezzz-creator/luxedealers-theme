@@ -2244,3 +2244,8 @@ html[data-theme="dark"] .card, html[data-theme="dark"] .product-card { backgroun
 html[data-theme="dark"] .eyebrow, html[data-theme="dark"] .tile__eyebrow { color: #FFD966; }
 html[data-theme="dark"] .card__multi { color: #FFD966; }
 html[data-theme="dark"] .btn:not(.btn--gold):not(.btn--outline):not(.btn--light):not(.btn--ghost-light):not(.btn--ghost) { --btn-bg: #F4C430; --btn-fg: #14213D; --btn-line: #F4C430; background: #F4C430; color: #14213D; }
+
+/* Bigger wordmark on phones */
+@media (max-width: 989px) { .header__logo .brandmark__word { font-size: 22px !important; letter-spacing: .05em !important; } }
+@media (max-width: 380px) { .header__logo .brandmark__word { font-size: 19.5px !important; } }
+.mnav__logo .brandmark__word { font-size: 21px !important; }
