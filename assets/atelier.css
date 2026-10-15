@@ -2215,3 +2215,32 @@ html[data-theme="dark"] .brandmark__word { color: transparent !important; }
 .announcement--usp, .marquee--ink, .ribbon { background: var(--blue-bar) !important; }
 .site-footer { background: radial-gradient(90% 60% at 85% 0%, rgba(255,255,255,.16), rgba(255,255,255,0) 50%), linear-gradient(180deg, #1E4FA8 0%, #163F8F 55%, #0F3479 100%) !important; }
 .footer__promises { background: linear-gradient(90deg, #2457B8, #1E4FA8 45%, #4F7FD2 50%, #1E4FA8 55%, #163F8F) !important; }
+
+/* ===== Buy-more cards: blue accents, clean white ===== */
+.qtyb__opt { background: #fff; border-color: #DCE4F0; }
+.qtyb__opt:hover { border-color: #9DB6E6; }
+.qtyb__opt.is-on { background: linear-gradient(180deg, #F2F6FF, #fff); border-color: var(--blue); box-shadow: 0 12px 28px -20px rgba(30,79,168,.55); }
+.qtyb__opt.is-on .qtyb__radio { background-color: var(--blue); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); }
+.qtyb__save { background: var(--blue-grad); color: #FFD966; }
+.qtyb__save--none { background: #EEF2F8; color: #5B6474; }
+.qtyb__title { color: var(--blue); }
+html[data-theme="dark"] .qtyb__opt { background: #11295E !important; border-color: rgba(255,255,255,.14); }
+html[data-theme="dark"] .qtyb__opt.is-on { background: linear-gradient(180deg, #1E4FA8, #173572) !important; border-color: #F4C430; }
+html[data-theme="dark"] .qtyb__opt.is-on .qtyb__radio { background-color: #F4C430; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2314213D' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E"); }
+html[data-theme="dark"] .qtyb__title { color: #FFD966; }
+
+/* ===== Bundle bar: blue gradient with the white glow ===== */
+.bset__bar, html[data-theme="dark"] body .bset__bar { background: var(--blue-grad) !important; color: #fff; border: 0; box-shadow: 0 18px 40px -26px rgba(30,79,168,.8); }
+.bset__bar .bset__sum strong, html[data-theme="dark"] body .bset__bar strong { color: #FFD966 !important; }
+.bset__prices s { color: rgba(255,255,255,.6); }
+.bset__save { color: #fff; }
+.bset__save::before { background: #FFD966; }
+
+/* ===== Dark mode: richer luxury blue, yellow accents ===== */
+html[data-theme="dark"] { --c-bg: #0A1A3F; --c-subtle: #11295E; --c-border: rgba(255,255,255,.12); --c-gold: #F4C430; --c-gold-text: #FFD966; --c-muted: #A9B6CF; }
+html[data-theme="dark"] body { background: radial-gradient(1200px 600px at 85% -10%, rgba(80,130,220,.22), transparent 60%), #0A1A3F; }
+html[data-theme="dark"] .header-wrapper, html[data-theme="dark"] .site-header { background: rgba(10,26,63,.92); }
+html[data-theme="dark"] .card, html[data-theme="dark"] .product-card { background: #11295E; border-color: rgba(255,255,255,.1); }
+html[data-theme="dark"] .eyebrow, html[data-theme="dark"] .tile__eyebrow { color: #FFD966; }
+html[data-theme="dark"] .card__multi { color: #FFD966; }
+html[data-theme="dark"] .btn:not(.btn--gold):not(.btn--outline):not(.btn--light):not(.btn--ghost-light):not(.btn--ghost) { --btn-bg: #F4C430; --btn-fg: #14213D; --btn-line: #F4C430; background: #F4C430; color: #14213D; }
