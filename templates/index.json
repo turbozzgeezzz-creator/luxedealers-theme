@@ -516,6 +516,29 @@
         "speed": 65
       },
       "disabled": true
+    },
+    "deals_row": {
+      "type": "featured-collection",
+      "blocks": {
+        "d": {
+          "type": "collection",
+          "settings": {
+            "collection": "deals",
+            "title": "Deals"
+          }
+        }
+      },
+      "block_order": [
+        "d"
+      ],
+      "settings": {
+        "eyebrow": "Genuine price drops",
+        "heading": "Deals",
+        "layout": "rail",
+        "limit": 12,
+        "view_all": true,
+        "subtle": true
+      }
     }
   },
   "order": [
@@ -526,6 +549,7 @@
     "depts",
     "latest",
     "offers",
+    "deals_row",
     "deals",
     "budget",
     "why",
