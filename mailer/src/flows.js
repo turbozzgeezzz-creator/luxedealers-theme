@@ -441,7 +441,7 @@ export async function scanDaily(env) {
   }
 }
 
-const THEMES = ['new', 'picks', 'best'];
+const THEMES = ['new', 'deals', 'picks', 'best'];
 
 /** Every second Tuesday from 6:30 pm Sydney time: the fortnightly email to the whole list, rotating 4 themes. */
 export async function scanFortnightly(env) {
@@ -761,7 +761,8 @@ export const builders = {
       preheader: `${articles.length} new ${articles.length === 1 ? 'story' : 'stories'} from the style desk this week.`,
       banner: 'banner-blog.jpg', bannerAlt: 'This week in the journal',
       body: heading('This week in the journal') + para(`${hi(d.firstName)} here's everything new from the style desk this week: buying tips, style notes and what to look for.`)
-        + articleList(articles) + productGrid(p, { heading: 'Picked for you' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
+        + articleList(articles) + productGrid(p, { heading: 'Picked for you' })
+        + productGrid(await collectionProducts(env, 'deals', 2).catch(() => []), { heading: 'Price drops' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
     };
   },
   async fortnight(env, email, d) {
@@ -778,9 +779,19 @@ export const builders = {
         body: heading('New arrivals') + para(intro) + insider('new arrivals', 'Subscriber code: 10% off New arrivals', 'Valid on the New arrivals collection', '/collections/new-arrivals')
           + productGrid(p) + (d.offer ? '' : button('See what\'s new', `${env.STORE_URL}/collections/new-arrivals`)) };
     }
+    if (d.theme === 'deals') {
+      // Genuine price drops (compare-at prices). No code: the reduced prices are the offer, and multi-buy still applies.
+      const p = await collectionProducts(env, 'deals', 6);
+      if (p.length >= 2) {
+        return { _theme: 'deals', subject: 'Price drops on 150+ styles', preheader: 'Selected pieces reduced, and they still count towards Buy 2 or 3+ savings.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Price drops',
+          body: heading('Price drops') + para(`${hi(d.firstName)} we've reduced selected styles across bags, shoes, jackets and more. Here are a few worth a look.`)
+            + productGrid(p) + tierCard(env) + button('Shop price drops', `${env.STORE_URL}/collections/deals`) };
+      }
+      d = { ...d, theme: 'best' };
+    }
     if (d.theme === 'best') {
       const p = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
-      return { subject: 'Our top picks right now', preheader: 'Hand-picked by our team this fortnight.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Top picks this fortnight',
+      return { _theme: 'best', subject: 'Our top picks right now', preheader: 'Hand-picked by our team this fortnight.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Top picks this fortnight',
         body: heading('Top picks right now') + para(intro) + productGrid(p) + tierCard(env) + button('Shop all', `${env.STORE_URL}/collections/${env.BEST_COLLECTION || 'shop-all'}`) };
     }
     if (d.theme === 'blog') {
@@ -803,14 +814,15 @@ export const builders = {
 const FLOW_BANNERS = {
   welcome1: 'b-welcome1.jpg', welcome2: 'b-welcome2.jpg', welcome3: 'b-welcome3.jpg', checkout1: 'b-checkout1.jpg', checkout2: 'b-checkout2.jpg',
   cart1: 'b-cart1.jpg', cart2: 'b-cart2.jpg', browse: 'b-browse.jpg', wishlist: 'b-wishlist.jpg', postpurchase: 'b-postpurchase.jpg',
-  nextreminder: 'b-nextreminder.jpg', vip: 'b-vip.jpg', winback: 'b-winback.jpg', 'fortnight:new': 'b-new.jpg', 'fortnight:best': 'b-best.jpg', journal: 'b-journal.jpg',
+  nextreminder: 'b-nextreminder.jpg', vip: 'b-vip.jpg', winback: 'b-winback.jpg', 'fortnight:new': 'b-new.jpg', 'fortnight:best': 'b-best.jpg', 'fortnight:deals': 'b-deals.jpg', journal: 'b-journal.jpg',
 };
 for (const [key, build] of Object.entries(builders)) {
   builders[key] = async (env, email, d) => {
     const out = await build(env, email, d);
     if (!out) return out;
-    const k = key === 'fortnight' ? `fortnight:${d.theme}` : key;
-    return { ...out, tone: toneFor(key, key === 'fortnight' ? d.theme : null), banner: FLOW_BANNERS[k] || out.banner };
+    const theme = out._theme || d.theme;
+    const k = key === 'fortnight' ? `fortnight:${theme}` : key;
+    return { ...out, tone: toneFor(key, key === 'fortnight' ? theme : null), banner: FLOW_BANNERS[k] || out.banner };
   };
 }
 

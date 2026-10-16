@@ -162,7 +162,7 @@ export async function shopifyHasOrders(env, email) {
 // so product data comes from the Admin API, which this app can read (read_products, read_content).
 
 const PRODUCT_FIELDS = `legacyResourceId handle title status onlineStoreUrl
-  featuredMedia{ preview{ image{ url } } } priceRangeV2{ minVariantPrice{ amount } } variants(first: 20){ nodes{ availableForSale } }`;
+  featuredMedia{ preview{ image{ url } } } priceRangeV2{ minVariantPrice{ amount } } compareAtPriceRange{ maxVariantCompareAtPrice{ amount } } variants(first: 20){ nodes{ availableForSale } }`;
 
 export function normaliseProduct(env, p) {
   if (!p || !p.handle) return null;
@@ -177,6 +177,9 @@ export function normaliseProduct(env, p) {
     // Small progressive JPEGs (about 25-45 KB): sharp on phones, and emails stay light enough to open instantly.
     image: image ? `${image}${image.includes('?') ? '&' : '?'}width=440&height=440&crop=center&format=pjpg` : null,
     price: p.priceRangeV2 ? Math.round(parseFloat(p.priceRangeV2.minVariantPrice.amount) * 100) : null,
+    // Genuine was-price (Shopify compare-at), only when it is above the selling price.
+    compareAt: p.compareAtPriceRange && p.priceRangeV2 && parseFloat(p.compareAtPriceRange.maxVariantCompareAtPrice.amount) > parseFloat(p.priceRangeV2.minVariantPrice.amount)
+      ? Math.round(parseFloat(p.compareAtPriceRange.maxVariantCompareAtPrice.amount) * 100) : null,
     // On sale only if active, published to the online store, and at least one variant can be bought.
     available: p.status === 'ACTIVE' && !!p.onlineStoreUrl && (p.variants ? p.variants.nodes.some((v) => v.availableForSale) : true),
   };

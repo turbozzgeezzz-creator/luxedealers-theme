@@ -29,7 +29,7 @@ export const TONES = {
 const FLOW_TONES = {
   welcome1: 'gold', welcome2: 'rose', welcome3: 'burgundy', checkout1: 'onyx', checkout2: 'sapphire', cart1: 'emerald', cart2: 'plum',
   browse: 'champagne', wishlist: 'rose', postpurchase: 'emerald', nextreminder: 'sapphire', vip: 'onyx', winback: 'plum',
-  'fortnight:new': 'gold', 'fortnight:picks': 'champagne', 'fortnight:best': 'burgundy', journal: 'sapphire',
+  'fortnight:new': 'gold', 'fortnight:picks': 'champagne', 'fortnight:best': 'burgundy', 'fortnight:deals': 'gold', journal: 'sapphire',
 };
 export function toneFor(flow, theme) {
   return FLOW_TONES[theme ? `${flow}:${theme}` : flow] || FLOW_TONES[flow] || 'gold';
@@ -138,7 +138,8 @@ export function productGrid(products, { heading: title } = {}) {
 ${p.image ? `<img src="${esc(p.image)}" width="254" alt="${esc(shortTitle(p.title))}" style="display:block;width:100%;height:auto;border:0;border-radius:17px 17px 0 0;background:#F4F2EE;">` : ''}</a>
 <div class="pbody" style="padding:14px 14px 16px;">
 <a href="${esc(p.url)}" style="text-decoration:none;color:${INK};"><span class="ptitle" style="display:block;height:38px;overflow:hidden;font-size:13px;font-weight:700;line-height:19px;text-transform:uppercase;">${esc(shortTitle(p.title))}</span></a>
-<span style="display:block;margin-top:8px;font-size:18px;line-height:22px;font-weight:800;color:${INK};">${p.price != null ? money(p.price) : '&nbsp;'}</span>
+<span style="display:block;margin-top:8px;font-size:18px;line-height:22px;font-weight:800;color:${INK};">${p.price != null ? money(p.price) : '&nbsp;'}${p.compareAt ? ` <s style="font-size:13px;font-weight:500;color:${MUTED};">${money(p.compareAt)}</s>` : ''}</span>
+${p.compareAt ? `<span style="display:inline-block;margin-top:6px;padding:3px 9px;border-radius:999px;background:#F4C430;color:#14213D;font-size:11px;font-weight:800;letter-spacing:.3px;">SAVE ${Math.floor((p.compareAt - p.price) * 100 / p.compareAt)}%</span>` : ''}
 <a href="${esc(p.url)}" style="display:inline-block;margin-top:10px;padding:9px 16px;border-radius:10px;background:%%A%%;color:%%AI%%;font-size:13px;font-weight:700;text-decoration:none;">Shop now</a>
 </div></td>` : '<td class="pcard pcard--empty" width="50%" style="width:50%;padding:0;"></td>';
   let rows = '';

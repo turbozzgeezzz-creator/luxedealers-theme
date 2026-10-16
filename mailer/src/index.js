@@ -57,7 +57,7 @@ async function sendTestsOnce(env) {
     ['browse', { handle: 'chan-luxury-handbags' }], ['wishlist', { handles: ['chan-luxury-handbags'] }],
     ['postpurchase', { firstName: 'Sam', handles: ['chan-luxury-handbags'] }], ['nextreminder', { firstName: 'Sam', code: 'NEXT10-PREVIEW', endsAt: until, since: 0 }],
     ['vip', { firstName: 'Sam' }], ['winback', { firstName: 'Sam' }],
-    ['fortnight', { theme: 'new', firstName: 'Sam', offer: { code: 'NEWIN10-PREVIEW', endsAt: until } }], ['fortnight', { theme: 'picks', firstName: 'Sam' }], ['fortnight', { theme: 'best', firstName: 'Sam' }],
+    ['fortnight', { theme: 'new', firstName: 'Sam', offer: { code: 'NEWIN10-PREVIEW', endsAt: until } }], ['fortnight', { theme: 'deals', firstName: 'Sam' }], ['fortnight', { theme: 'picks', firstName: 'Sam' }], ['fortnight', { theme: 'best', firstName: 'Sam' }],
     ['journal', { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() }],
   ];
   const unsubUrl = await unsubscribeUrl(env, 'preview@example.com');
@@ -147,7 +147,7 @@ export default {
         fortnight: { theme: url.searchParams.get('theme') || 'new', firstName: 'Sam' },
         journal: { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() },
       }[flow];
-      if (!sample) return new Response('Preview supports: journal, welcome1, welcome2, welcome3, checkout1, checkout2, cart1, cart2, browse, wishlist, postpurchase, nextreminder, vip, winback, fortnight (theme=new|picks|best|blog)', { status: 400 });
+      if (!sample) return new Response('Preview supports: journal, welcome1, welcome2, welcome3, checkout1, checkout2, cart1, cart2, browse, wishlist, postpurchase, nextreminder, vip, winback, fortnight (theme=new|deals|picks|best|blog)', { status: 400 });
       if (flow === 'fortnight' && ['new', 'blog'].includes(sample.theme)) {
         sample.offer = { code: sample.theme === 'new' ? 'NEWIN10-PREVIEW' : 'INSIDER10-PREVIEW', endsAt: new Date(Date.now() + 7 * 86400000).toISOString() };
       }

@@ -62,6 +62,7 @@ const BANNERS = {
   'b-winback': ["It's been a while", 'We miss', 'you', 'perfume', 'plum'],
   'b-new': ['Just landed', 'New', 'arrivals', 'sneaker', 'gold'],
   'b-best': ['This fortnight', 'Top picks', 'right now', 'watch', 'burgundy'],
+  'b-deals': ['Selected styles', 'Price', 'drops', 'bag', 'gold'],
   'b-journal': ['The journal', 'Stories', 'worth a read', 'necklace', 'sapphire'],
   'banner-picks-everyone': ['Picked for you', 'Fresh picks', 'for you', 'sunglasses', 'champagne'],
   'banner-picks-bags': ['Picked for you', 'Bags', 'for you', 'bag', 'champagne'],
