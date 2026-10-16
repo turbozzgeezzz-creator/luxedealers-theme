@@ -47,9 +47,9 @@
         "m4": {
           "type": "message",
           "settings": {
-            "icon": "return",
-            "text": "Refund or reship guarantee",
-            "link": "/policies/refund-policy",
+            "icon": "tag",
+            "text": "Price drops on 150+ styles",
+            "link": "/collections/deals",
             "opens_popup": false,
             "needs_code": false
           }
@@ -78,12 +78,12 @@
         }
       },
       "block_order": [
+        "m4",
         "m0",
         "m6",
         "m2",
         "m1",
-        "m5",
-        "m4"
+        "m5"
       ],
       "settings": {
         "speed": 4,
@@ -98,7 +98,7 @@
         "help_label": "Help",
         "help_menu": "support-menu",
         "hide_on_scroll": false,
-        "highlight_item": "",
+        "highlight_item": "Deals",
         "menu": "main-menu-2",
         "nav_hide": "Home, New Arrivals, Reviews, FAQs, Track Your Order, Why Choose Us?, Size Charts, Contact",
         "overlay_home": false,

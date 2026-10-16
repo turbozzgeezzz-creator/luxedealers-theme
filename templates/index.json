@@ -524,7 +524,7 @@
           "type": "collection",
           "settings": {
             "collection": "deals",
-            "title": "Deals"
+            "title": "Price drops"
           }
         }
       },
@@ -532,10 +532,10 @@
         "d"
       ],
       "settings": {
-        "eyebrow": "Genuine price drops",
-        "heading": "Deals",
+        "eyebrow": "150+ styles reduced",
+        "heading": "Price drops",
         "layout": "rail",
-        "limit": 12,
+        "limit": 16,
         "view_all": true,
         "subtle": true
       }
@@ -547,9 +547,9 @@
     "ribbon",
     "reviews",
     "depts",
+    "deals_row",
     "latest",
     "offers",
-    "deals_row",
     "deals",
     "budget",
     "why",
