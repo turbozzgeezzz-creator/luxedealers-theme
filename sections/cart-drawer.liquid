@@ -13,6 +13,11 @@
           </form>
           {%- liquid
             assign up = section.settings.upsell_collection
+            assign ups_title = section.settings.upsell_title
+            if up == blank and collections['deals'].products_count > 0
+              assign up = collections['deals']
+              assign ups_title = 'cart.deals_title' | t
+            endif
             if up == blank
               assign up = cart.items.first.product.collections.first
             endif
@@ -28,7 +33,7 @@
                 <div class="bag-up">
                   <a class="bag-up__img" href="{{ p.url }}">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 240 | image_tag: loading: 'lazy', alt: p.title, width: 120, height: 120 }}{%- endif -%}</a>
                   <a class="bag-up__title" href="{{ p.url }}">{{ p.title }}</a>
-                  <strong class="bag-up__price">{{ p.price | money }}</strong>
+                  <strong class="bag-up__price">{{ p.price | money }}{%- if p.compare_at_price > p.price -%} <s class="bag-up__was">{{ p.compare_at_price | money }}</s>{%- endif -%}</strong>
                   {%- if p.has_only_default_variant -%}
                     <button type="button" class="bag-up__add" data-add-variant="{{ p.selected_or_first_available_variant.id }}" aria-label="{{ 'products.add_title' | t: title: p.title | escape }}">{% render 'icon', name: 'plus', class: 'icon--sm' %} {{ 'cart.add' | t }}</button>
                   {%- else -%}
@@ -39,7 +44,7 @@
             {%- endcapture -%}
             {%- if shown > 0 -%}
               <div class="bag__ups">
-                <p class="bag__ups-title">{{ section.settings.upsell_title }}</p>
+                <p class="bag__ups-title">{{ ups_title }}</p>
                 <div class="bag__ups-row">{{ ups }}</div>
               </div>
             {%- endif -%}

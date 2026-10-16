@@ -2254,3 +2254,10 @@ html[data-theme="dark"] .btn:not(.btn--gold):not(.btn--outline):not(.btn--light)
 
 /* Sale badges: navy text on yellow in both themes */
 html[data-theme="dark"] .badge--sale, html[data-theme="dark"] .card__badges .badge--sale { color: #14213D !important; }
+
+/* Deals: menu pill, cart price drops */
+.nav-link--highlight { color: #14213D !important; background: var(--yellow, #F4C430); height: 34px; align-self: center; border-radius: 999px; padding: 0 14px !important; font-weight: 600; }
+.nav-link--highlight:hover { background: var(--yellow-hi, #FFD966); }
+.nav-link--highlight .nav-link__icon { color: #14213D; }
+.bag-up__was { margin-left: 4px; font-weight: 400; font-size: 12px; color: var(--c-muted, #5B6474); }
+html[data-theme="dark"] .bag-up__was { color: rgba(255,255,255,.55); }

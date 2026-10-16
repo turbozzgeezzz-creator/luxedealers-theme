@@ -104,6 +104,8 @@
                 assign icon = 'user'
               elsif lt contains 'fragr'
                 assign icon = 'perfume'
+              elsif lt contains 'deal' or lt contains 'sale'
+                assign icon = 'percent'
               elsif lt contains 'home'
                 assign icon = 'home'
               endif
@@ -240,6 +242,8 @@
                 assign icon = 'user'
               elsif lt contains 'fragr'
                 assign icon = 'perfume'
+              elsif lt contains 'deal' or lt contains 'sale'
+                assign icon = 'percent'
               endif
             -%}
             {%- unless is_page -%}

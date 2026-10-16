@@ -142,7 +142,8 @@
     "real_support": "Real people answer every email",
     "more_from": "More from {{ title }}",
     "help_title": "Questions about this piece?",
-    "help_cta": "Ask us"
+    "help_cta": "Ask us",
+    "save_amount": "Save {{ amount }}"
   },
   "cart": {
     "free_shipping_on": "Free tracked shipping on this order",
@@ -186,7 +187,8 @@
     "tier_next": "You're saving {{ current }}%. Spend {{ amount }} more to save {{ percent }}%",
     "tier_done": "You've unlocked {{ percent }}% off, applied at checkout",
     "tier_offer_1": "Spend {{ amount }}, save {{ percent }}%",
-    "tier_auto": "Applied automatically at checkout"
+    "tier_auto": "Applied automatically at checkout",
+    "deals_title": "Price drops that count towards your multi-buy saving"
   },
   "collections": {
     "category": "Category",
