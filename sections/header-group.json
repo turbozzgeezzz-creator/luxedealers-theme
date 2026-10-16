@@ -48,7 +48,7 @@
           "type": "message",
           "settings": {
             "icon": "tag",
-            "text": "Price drops on 150+ styles",
+            "text": "Price drops on selected styles",
             "link": "/collections/deals",
             "opens_popup": false,
             "needs_code": false

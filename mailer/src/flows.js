@@ -783,7 +783,7 @@ export const builders = {
       // Genuine price drops (compare-at prices). No code: the reduced prices are the offer, and multi-buy still applies.
       const p = await collectionProducts(env, 'deals', 6);
       if (p.length >= 2) {
-        return { _theme: 'deals', subject: 'Price drops on 150+ styles', preheader: 'Selected pieces reduced, and they still count towards Buy 2 or 3+ savings.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Price drops',
+        return { _theme: 'deals', subject: 'Price drops on selected styles', preheader: 'Selected pieces reduced, and they still count towards Buy 2 or 3+ savings.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Price drops',
           body: heading('Price drops') + para(`${hi(d.firstName)} we've reduced selected styles across bags, shoes, jackets and more. Here are a few worth a look.`)
             + productGrid(p) + tierCard(env) + button('Shop price drops', `${env.STORE_URL}/collections/deals`) };
       }
