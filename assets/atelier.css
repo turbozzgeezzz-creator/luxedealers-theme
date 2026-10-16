@@ -2251,3 +2251,6 @@ html[data-theme="dark"] .btn:not(.btn--gold):not(.btn--outline):not(.btn--light)
 .mnav__logo .brandmark__word { font-size: 21px !important; }
 @media (max-width: 989px) { .header__logo .brandmark__word { font-size: 24px !important; } }
 @media (max-width: 380px) { .header__logo .brandmark__word { font-size: 21px !important; } }
+
+/* Sale badges: navy text on yellow in both themes */
+html[data-theme="dark"] .badge--sale, html[data-theme="dark"] .card__badges .badge--sale { color: #14213D !important; }
