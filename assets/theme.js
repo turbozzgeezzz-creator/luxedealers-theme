@@ -549,6 +549,12 @@
           else { stockEl.textContent = stockEl.dataset.in; }
         }
         if (v.featured_media && gallery) { gallery.dispatchEvent(new CustomEvent('gallery:go', { detail: v.featured_media.id })); }
+        else if (v.featured_media && v.featured_media.src) {
+          // Quick view: the photo sits beside the form, not in a gallery. Swap it to the chosen style.
+          var qv = wrap.closest('[data-quick-view-content]') || wrap.parentElement;
+          var qimg = qv && $('.quick-view__media img', qv);
+          if (qimg && qimg.getAttribute('src') !== v.featured_media.src) { qimg.removeAttribute('srcset'); qimg.src = v.featured_media.src; }
+        }
         if (updateUrl) { var url = new URL(window.location.href); url.searchParams.set('variant', v.id); history.replaceState({}, '', url.toString()); }
         if (sticky) { var sb = $('[data-add-button]', sticky); if (sb) { sb.disabled = !v.available; $('[data-add-label]', sb).textContent = v.available ? L.strings.addToBag : L.strings.soldOut; } var sp = $('[data-price]', sticky); if (sp && priceEl) sp.innerHTML = priceEl.innerHTML; }
       }
