@@ -957,7 +957,8 @@ ${blockedLine}${errs ? `<p><strong>Errors to look at:</strong></p><ul>${errs}</u
  * Resend's "delivery_delayed" and are left alone; Resend retries those itself.
  */
 export async function checkDeliveries(env) {
-  if (!env.RESEND_API_KEY) return;
+  const readKey = env.RESEND_READ_KEY || env.RESEND_API_KEY; // a Full access key, kept separate from the sending key
+  if (!readKey) return;
   const t = now();
   // One-off catch-up for emails sent before tracking started: page through Resend's recent sends (a few pages a run).
   if ((await getKV(env, 'bounce_backfill')) !== 'done') {
@@ -965,9 +966,9 @@ export async function checkDeliveries(env) {
     for (let page = 0; page < 4; page++) {
       let body;
       try {
-        const res = await fetch(`https://api.resend.com/emails?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+        const res = await fetch(`https://api.resend.com/emails?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`, { headers: { Authorization: `Bearer ${readKey}` } });
         if (!res.ok) {
-          await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; it needs Full access to read bounces' : ''}`);
+          await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; add a Full access key as RESEND_READ_KEY in Cloudflare' : ''}`);
           if (res.status !== 401 && res.status !== 403) await setKV(env, 'bounce_backfill', 'done');
           break;
         }
@@ -993,9 +994,9 @@ export async function checkDeliveries(env) {
   for (const d of results) {
     let event = null;
     try {
-      const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(d.resend_id)}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+      const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(d.resend_id)}`, { headers: { Authorization: `Bearer ${readKey}` } });
       if (!res.ok) {
-        await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; it needs Full access to read bounces' : ''}`);
+        await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; add a Full access key as RESEND_READ_KEY in Cloudflare' : ''}`);
         await env.DB.prepare('UPDATE deliveries SET checked_at = ? WHERE resend_id = ?').bind(t, d.resend_id).run();
         continue;
       }
