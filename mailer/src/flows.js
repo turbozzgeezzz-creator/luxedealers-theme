@@ -176,6 +176,9 @@ export async function syncShopifyOrders(env) {
         ON CONFLICT(id) DO UPDATE SET verified = 1, total_cents = COALESCE(excluded.total_cents, orders.total_cents)`)
       .bind(orderId, email, firstName, totalCents, JSON.stringify(handles), Math.floor(Date.parse(o.createdAt) / 1000)).run();
     await env.DB.prepare('UPDATE checkouts SET completed = 1 WHERE email = ? AND started_at <= ?').bind(email, Math.floor(Date.parse(o.createdAt) / 1000)).run();
+    // They bought: drop any cart, checkout or browse reminder still waiting to go out.
+    await env.DB.prepare(`UPDATE sends SET status = 'skipped', error = 'ordered', sent_at = ? WHERE email = ? AND status = 'queued'
+        AND flow IN ('checkout1', 'checkout2', 'cart1', 'cart2', 'browse')`).bind(now(), email).run();
     await enqueue(env, { email, flow: 'postpurchase', dedupe: `postpurchase:${orderId}`, priority: 3, data: { firstName, handles }, sendAfter: now() + 7 * DAY });
   }
 }
@@ -353,8 +356,15 @@ export async function scanAbandonment(env) {
   // Abandoned checkout (from the pixel): a reminder after 4 hours, then a 5% code after 2 days.
   const { results: checkouts } = await env.DB.prepare(
     `SELECT * FROM checkouts WHERE completed = 0 AND updated_at < ? AND updated_at > ?`).bind(t - 4 * HOUR, t - 6 * DAY).all();
-  for (const ck of checkouts) {
+  // One reminder chain per person: only their newest abandoned checkout, and nothing if a different checkout
+  // already got a reminder in the last 3 days.
+  const newest = new Map();
+  for (const ck of checkouts) if (!newest.has(ck.email) || ck.updated_at > newest.get(ck.email).updated_at) newest.set(ck.email, ck);
+  for (const ck of newest.values()) {
     if (await orderedSince(env, ck.email, ck.started_at - HOUR)) continue;
+    const other = await env.DB.prepare(`SELECT id FROM sends WHERE email = ? AND flow IN ('checkout1', 'checkout2') AND dedupe NOT LIKE ?
+        AND status IN ('queued', 'sent') AND created_at > ? LIMIT 1`).bind(ck.email, `%:${ck.token}`, t - 3 * DAY).first();
+    if (other) continue;
     const items = JSON.parse(ck.items || '[]');
     if (!items.length) continue;
     const data = { token: ck.token, items, firstName: ck.first_name, subtotal: ck.total, url: ck.recover_url || null };
@@ -832,6 +842,7 @@ for (const [key, build] of Object.entries(builders)) {
  * Sends queued emails, at most DAILY_SEND_LIMIT per 24 hours, after a fresh consent check.
  * With `id`, sends just that one job now (the welcome email, right after sign-up).
  */
+const REMINDERS = ['checkout1', 'checkout2', 'cart1', 'cart2', 'browse'];
 const DROP_WHEN_QUIET = ['fortnight', 'journal', 'browse', 'wishlist', 'cart1', 'cart2', 'welcome2', 'welcome3', 'winback'];
 
 export async function drainOutbox(env, { id } = {}) {
@@ -870,15 +881,38 @@ export async function drainOutbox(env, { id } = {}) {
           continue;
         }
       }
+      // Cart, checkout and browse reminders: one last check that they haven't ordered since (our own records,
+      // then Shopify itself in case this run's order sync hasn't caught up).
+      if (REMINDERS.includes(job.flow)) {
+        const payload = JSON.parse(job.payload || '{}');
+        const ck = payload.token ? await env.DB.prepare('SELECT started_at FROM checkouts WHERE token = ?').bind(payload.token).first() : null;
+        const since = (ck && ck.started_at ? ck.started_at : job.created_at - 3 * DAY) - HOUR;
+        if (await orderedSince(env, job.email, since)
+          || await shopifyOrderedSince(env, job.email, new Date(since * 1000).toISOString())) {
+          await mark('skipped', 'ordered');
+          continue;
+        }
+      }
       const builder = builders[job.flow];
       const { results: seenRows } = await env.DB.prepare('SELECT DISTINCT handle FROM shown WHERE email = ? AND at > ?').bind(job.email, now() - 60 * DAY).all();
       const jobEnv = { ...env, _who: job.email, _seen: new Set(seenRows.map((r) => r.handle)), _shown: [] };
       const email = builder ? await builder(jobEnv, job.email, JSON.parse(job.payload || '{}')) : null;
       if (!email) { await mark('skipped', 'nothing to send'); continue; }
       const unsubUrl = await unsubscribeUrl(env, job.email);
-      await sendViaResend(env, { to: job.email, subject: email.subject, unsubUrl,
-        html: layout(env, { ...email, unsubUrl }) });
+      let res;
+      try {
+        res = await sendViaResend(env, { to: job.email, subject: email.subject, unsubUrl, html: layout(env, { ...email, unsubUrl }) });
+      } catch (e) {
+        // Resend rejects addresses that can't receive mail (422): never try them again.
+        if (/Resend 422/.test(String(e && e.message)) && /to|email|address|recipient/i.test(String(e.message))) {
+          await unsubscribe(env, job.email, 'invalid address');
+          await mark('skipped', 'invalid address');
+          continue;
+        }
+        throw e;
+      }
       await mark('sent');
+      if (res && res.id) await env.DB.prepare('INSERT OR IGNORE INTO deliveries (resend_id, email, flow, sent_at) VALUES (?, ?, ?, ?)').bind(res.id, job.email, job.flow, now()).run();
       for (const h of jobEnv._shown.slice(0, 12)) await env.DB.prepare('INSERT INTO shown (email, handle, at) VALUES (?, ?, ?)').bind(job.email, h, now()).run();
       sent++;
       if (email.afterSend) await email.afterSend().catch((e) => console.error('afterSend', job.flow, e));
@@ -906,8 +940,63 @@ export async function weeklyReport(env) {
     `SELECT flow, error, COUNT(*) AS n FROM sends WHERE status = 'error' AND created_at > ? GROUP BY flow, error LIMIT 10`).bind(since).all();
   const rows = results.map((r) => `<tr><td style="padding:4px 10px;">${esc(r.flow)}</td><td style="padding:4px 10px;">${esc(r.status)}</td><td style="padding:4px 10px;text-align:right;">${r.n}</td></tr>`).join('');
   const errs = errors.map((e) => `<li>${esc(e.flow)}: ${esc(e.error)} (${e.n})</li>`).join('');
+  const { results: blocked } = await env.DB.prepare(`SELECT reason, COUNT(*) AS n FROM suppressions WHERE at > ? AND reason IN ('bounced', 'marked as spam', 'invalid address') GROUP BY reason`).bind(since).all();
+  const blockedLine = blocked.length ? `<p>Addresses stopped this week (never emailed again): ${blocked.map((b) => `${esc(b.reason)} ${b.n}`).join(', ')}.</p>` : '';
   const html = `<div style="font-family:Arial,sans-serif;color:#0B1220;"><h2>LuxeMail weekly report</h2>
 <p>Emails in the last 7 days:</p><table style="border-collapse:collapse;border:1px solid #ddd;">${rows || '<tr><td style="padding:6px;">No emails this week.</td></tr>'}</table>
-${errs ? `<p><strong>Errors to look at:</strong></p><ul>${errs}</ul>` : '<p>No errors. Everything is running.</p>'}</div>`;
+${blockedLine}${errs ? `<p><strong>Errors to look at:</strong></p><ul>${errs}</ul>` : '<p>No errors. Everything is running.</p>'}</div>`;
   await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: `LuxeMail weekly report (${ymd})`, html, unsubUrl: env.STORE_URL });
+}
+
+/* ======================= Bounces and spam complaints ======================= */
+
+/**
+ * A few times an hour, ask Resend what happened to recent emails. A hard bounce (the address doesn't exist or the
+ * mailbox refuses mail) or a spam complaint puts that address on the suppression list, so it's never emailed again:
+ * no wasted sends, and our sending reputation stays clean. Temporary problems (mailbox full, server busy) are
+ * Resend's "delivery_delayed" and are left alone; Resend retries those itself.
+ */
+export async function checkDeliveries(env) {
+  if (!env.RESEND_API_KEY) return;
+  const t = now();
+  // One-off catch-up for emails sent before tracking started: page through Resend's recent sends (a few pages a run).
+  if ((await getKV(env, 'bounce_backfill')) !== 'done') {
+    let after = await getKV(env, 'bounce_backfill_after');
+    for (let page = 0; page < 4; page++) {
+      let body;
+      try {
+        const res = await fetch(`https://api.resend.com/emails?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+        if (!res.ok) { await setKV(env, 'bounce_backfill', 'done'); break; }
+        body = await res.json();
+      } catch (e) { break; }
+      const list = body.data || [];
+      for (const m of list) {
+        const to = cleanEmail(Array.isArray(m.to) ? m.to[0] : m.to);
+        if (!to) continue;
+        if (m.last_event === 'bounced') await unsubscribe(env, to, 'bounced');
+        else if (m.last_event === 'complained') await unsubscribe(env, to, 'marked as spam');
+      }
+      if (!body.has_more || !list.length) { await setKV(env, 'bounce_backfill', 'done'); break; }
+      after = list[list.length - 1].id;
+      await setKV(env, 'bounce_backfill_after', after);
+    }
+  }
+  const { results } = await env.DB.prepare(`SELECT resend_id, email FROM deliveries
+      WHERE (last_event IS NULL OR last_event IN ('sent', 'queued', 'scheduled', 'delivery_delayed'))
+        AND sent_at < ? AND sent_at > ? AND (checked_at IS NULL OR checked_at < ?)
+      ORDER BY checked_at IS NOT NULL, checked_at ASC LIMIT 8`).bind(t - 10 * 60, t - 3 * DAY, t - HOUR).all();
+  for (const d of results) {
+    let event = null;
+    try {
+      const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(d.resend_id)}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
+      if (!res.ok) { await env.DB.prepare('UPDATE deliveries SET checked_at = ? WHERE resend_id = ?').bind(t, d.resend_id).run(); continue; }
+      event = (await res.json()).last_event || null;
+    } catch (e) {
+      if (/too many subrequests/i.test(String(e && e.message))) break;
+      continue;
+    }
+    await env.DB.prepare('UPDATE deliveries SET checked_at = ?, last_event = ? WHERE resend_id = ?').bind(t, event, d.resend_id).run();
+    if (event === 'bounced') await unsubscribe(env, d.email, 'bounced');
+    else if (event === 'complained') await unsubscribe(env, d.email, 'marked as spam');
+  }
 }

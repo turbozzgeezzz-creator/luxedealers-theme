@@ -28,3 +28,7 @@ CREATE TABLE IF NOT EXISTS welcome_codes (email TEXT PRIMARY KEY, code TEXT, end
 -- Products each subscriber has been shown, so the next emails show different ones.
 CREATE TABLE IF NOT EXISTS shown (email TEXT NOT NULL, handle TEXT NOT NULL, at INTEGER NOT NULL);
 CREATE INDEX IF NOT EXISTS shown_email ON shown (email, at);
+
+-- Every email we send through Resend, so bounces and spam complaints can be found and that address never emailed again.
+CREATE TABLE IF NOT EXISTS deliveries (resend_id TEXT PRIMARY KEY, email TEXT, flow TEXT, sent_at INTEGER, checked_at INTEGER, last_event TEXT);
+CREATE INDEX IF NOT EXISTS deliveries_check ON deliveries(last_event, sent_at);

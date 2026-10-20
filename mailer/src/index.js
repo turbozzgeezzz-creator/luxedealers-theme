@@ -3,7 +3,7 @@ import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
-  scanFortnightly, scanWeeklyJournal, drainOutbox, weeklyReport, builders, syncShopifySubscribers, syncShopifyCheckouts, syncShopifyOrders,
+  scanFortnightly, scanWeeklyJournal, drainOutbox, checkDeliveries, weeklyReport, builders, syncShopifySubscribers, syncShopifyCheckouts, syncShopifyOrders,
 } from './flows.js';
 
 function cors(env, request) {
@@ -169,7 +169,8 @@ export default {
           (SELECT COUNT(*) FROM sends WHERE status = 'sent' AND sent_at > ?) AS sent_24h,
           (SELECT COUNT(*) FROM sends WHERE status = 'error' AND sent_at > ?) AS errors_24h,
           (SELECT COUNT(*) FROM events WHERE at > ?) AS events_24h,
-          (SELECT COUNT(*) FROM subscribers WHERE status = 'subscribed') AS subscribers`).bind(now() - 86400, now() - 86400, now() - 86400).first();
+          (SELECT COUNT(*) FROM subscribers WHERE status = 'subscribed') AS subscribers,
+          (SELECT COUNT(*) FROM suppressions WHERE reason IN ('bounced', 'marked as spam', 'invalid address')) AS blocked_addresses`).bind(now() - 86400, now() - 86400, now() - 86400).first();
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
@@ -180,7 +181,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, sendTestsOnce];
+    const steps = [syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, checkDeliveries, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }
