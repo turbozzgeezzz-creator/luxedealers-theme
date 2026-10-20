@@ -966,8 +966,13 @@ export async function checkDeliveries(env) {
       let body;
       try {
         const res = await fetch(`https://api.resend.com/emails?limit=100${after ? `&after=${encodeURIComponent(after)}` : ''}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
-        if (!res.ok) { await setKV(env, 'bounce_backfill', 'done'); break; }
+        if (!res.ok) {
+          await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; it needs Full access to read bounces' : ''}`);
+          if (res.status !== 401 && res.status !== 403) await setKV(env, 'bounce_backfill', 'done');
+          break;
+        }
         body = await res.json();
+        await setKV(env, 'bounce_check', 'ok');
       } catch (e) { break; }
       const list = body.data || [];
       for (const m of list) {
@@ -989,7 +994,12 @@ export async function checkDeliveries(env) {
     let event = null;
     try {
       const res = await fetch(`https://api.resend.com/emails/${encodeURIComponent(d.resend_id)}`, { headers: { Authorization: `Bearer ${env.RESEND_API_KEY}` } });
-      if (!res.ok) { await env.DB.prepare('UPDATE deliveries SET checked_at = ? WHERE resend_id = ?').bind(t, d.resend_id).run(); continue; }
+      if (!res.ok) {
+        await setKV(env, 'bounce_check', `Resend refused (${res.status})${res.status === 401 || res.status === 403 ? ': the API key can only send; it needs Full access to read bounces' : ''}`);
+        await env.DB.prepare('UPDATE deliveries SET checked_at = ? WHERE resend_id = ?').bind(t, d.resend_id).run();
+        continue;
+      }
+      await setKV(env, 'bounce_check', 'ok');
       event = (await res.json()).last_event || null;
     } catch (e) {
       if (/too many subrequests/i.test(String(e && e.message))) break;

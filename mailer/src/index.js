@@ -174,7 +174,7 @@ export default {
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
-      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', shopify_subscriber_sync: await getKV(env, 'customer_sync'), ...row, ...todayCounts });
+      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', shopify_subscriber_sync: await getKV(env, 'customer_sync'), bounce_check: await getKV(env, 'bounce_check'), ...row, ...todayCounts });
     }
 
     return new Response('LuxeMail', { status: 404 });
