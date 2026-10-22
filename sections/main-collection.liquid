@@ -80,8 +80,20 @@
       </div>
     </div>
   </div>
-    {%- assign intro_text = coll_intro | strip_html | strip -%}
-    {%- if paginate.current_page == 1 and s.show_description and intro_text.size > coll_lead.size or paginate.current_page == 1 and coll_faq != '' -%}
+    {%- liquid
+      assign intro_text = coll_intro | strip_html | strip
+      assign lead_len = coll_lead.size | plus: 20
+      assign show_about = false
+      if paginate.current_page == 1
+        if coll_faq != ''
+          assign show_about = true
+        endif
+        if s.show_description and intro_text.size > lead_len
+          assign show_about = true
+        endif
+      endif
+    -%}
+    {%- if show_about -%}
       <section class="container coll-about" aria-labelledby="CollAbout">
         <div class="coll-about__intro">
           <h2 class="coll-about__title" id="CollAbout">About the {{ collection.title }} range</h2>
