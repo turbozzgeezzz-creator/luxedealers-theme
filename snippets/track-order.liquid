@@ -13,7 +13,15 @@
       <div class="track__card">
         <h2>{{ 'track.have_number' | t }}</h2>
         <p>{{ 'track.have_number_text' | t }}</p>
-        <p class="track__notice"><strong>{{ 'track.unavailable_title' | t }}</strong> {{ 'track.unavailable_text' | t }}</p>
+        {%- assign trk_endpoint = settings.luxemail_endpoint | replace: '/t', '/track' -%}
+        <form class="track__form track__form--lookup" data-track-lookup data-endpoint="{{ trk_endpoint }}" novalidate>
+          <label class="visually-hidden" for="TrackOrder">Order number</label>
+          <input class="field__input" id="TrackOrder" name="o" placeholder="Order number, e.g. #451170A" required autocomplete="off" inputmode="text">
+          <label class="visually-hidden" for="TrackEmail">Email used at checkout</label>
+          <input class="field__input" id="TrackEmail" name="e" type="email" placeholder="Email used at checkout" required autocomplete="email">
+          <button type="submit" class="btn btn--gold">Track my order</button>
+        </form>
+        <p class="track__msg" data-track-msg role="status" aria-live="polite"></p>
       </div>
       <div class="track__card">
         <h2>{{ 'track.account' | t }}</h2>
@@ -26,5 +34,61 @@
         <a class="btn btn--sm btn--gold" href="mailto:{{ settings.support_email }}">{{ settings.support_email }}</a>
       </div>
     </div>
+    <div class="trk" data-track-result hidden></div>
   </div>
 </section>
+<script>
+(function () {
+  var form = document.querySelector('[data-track-lookup]');
+  if (!form) return;
+  var msg = document.querySelector('[data-track-msg]'), out = document.querySelector('[data-track-result]');
+  var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); };
+  var day = function (d) { return d ? new Date(d).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : ''; };
+  var LABEL = { CONFIRMED: 'Carrier has the parcel', LABEL_PRINTED: 'Label created', LABEL_PURCHASED: 'Label created', READY_FOR_PICKUP: 'Ready for pickup', IN_TRANSIT: 'In transit', OUT_FOR_DELIVERY: 'Out for delivery', ATTEMPTED_DELIVERY: 'Delivery attempted', DELIVERED: 'Delivered', FAILURE: 'Delivery problem: contact us', PICKED_UP: 'Picked up', CARRIER_PICKED_UP: 'Picked up by carrier' };
+  function render(d) {
+    var sh = d.shipments || [], ev = [], tracks = [];
+    sh.forEach(function (s) { (s.events || []).forEach(function (e) { ev.push(e); }); (s.tracking || []).forEach(function (t) { tracks.push(t); }); });
+    var has = function (st) { return ev.some(function (e) { return e.status === st; }); };
+    var delivered = sh.some(function (s) { return s.deliveredAt; }) || has('DELIVERED');
+    var shipped = sh.length > 0;
+    var steps = [
+      ['Order placed', true, d.placedAt],
+      ['Hand-checked and packed', shipped, shipped ? sh[0].shippedAt : null],
+      ['Shipped', shipped, shipped ? sh[0].shippedAt : null],
+      ['In transit', delivered || has('IN_TRANSIT') || has('OUT_FOR_DELIVERY'), (sh[0] && sh[0].inTransitAt) || null],
+      ['Out for delivery', delivered || has('OUT_FOR_DELIVERY'), null],
+      ['Delivered', delivered, (sh.find(function (s) { return s.deliveredAt; }) || {}).deliveredAt]
+    ];
+    var est = sh.map(function (s) { return s.estimate; }).filter(Boolean)[0];
+    var typical = new Date(new Date(d.placedAt).getTime() + 21 * 86400000);
+    var html = '<div class="trk__head"><div><span class="trk__eyebrow">Order ' + esc(d.name) + '</span><h2 class="trk__title">' +
+      (d.cancelled ? 'This order was cancelled' : delivered ? 'Delivered' : shipped ? 'On its way' : 'Being prepared') + '</h2>' +
+      '<p class="muted">Placed ' + day(d.placedAt) + (!delivered && !d.cancelled ? ' · ' + (est ? 'Estimated delivery ' + day(est) : 'Most orders arrive by about ' + day(typical)) : '') + '</p></div></div>';
+    html += '<ol class="trk__steps">' + steps.map(function (s) { return '<li class="' + (s[1] ? 'is-done' : '') + '"><span class="trk__dot"></span><strong>' + esc(s[0]) + '</strong>' + (s[1] && s[2] ? '<span>' + day(s[2]) + '</span>' : '') + '</li>'; }).join('') + '</ol>';
+    if (tracks.length) html += '<div class="trk__tracking">' + tracks.map(function (t) {
+      return '<div class="trk__num"><span class="muted">Tracking number</span><strong>' + esc(t.number) + '</strong><div class="trk__links"><a class="btn btn--gold btn--sm" href="' + esc(t.primary) + '" target="_blank" rel="noopener nofollow">Live tracking</a><a class="link" href="' + esc(t.backup) + '" target="_blank" rel="noopener nofollow">Try another tracker</a></div></div>';
+    }).join('') + '<p class="muted trk__note">International parcels can show no updates for a few days while they move between countries. That is normal.</p></div>';
+    else if (!d.cancelled) html += '<p class="trk__note">Your tracking number appears here as soon as your order ships. We email it to you too.</p>';
+    if (ev.length) html += '<details class="trk__history"><summary>Shipping history</summary><ul>' + ev.slice().reverse().map(function (e) { return '<li><strong>' + esc(LABEL[e.status] || e.status.replace(/_/g, ' ').toLowerCase()) + '</strong><span>' + day(e.at) + (e.place ? ' · ' + esc(e.place) : '') + '</span>' + (e.message ? '<em>' + esc(e.message) + '</em>' : '') + '</li>'; }).join('') + '</ul></details>';
+    html += '<div class="trk__items">' + (d.items || []).map(function (i) { return '<div class="trk__item">' + (i.image ? '<img src="' + esc(i.image) + '" alt="" width="56" height="56" loading="lazy">' : '') + '<span>' + esc(i.title) + (i.variant ? ' <em>' + esc(i.variant) + '</em>' : '') + ' × ' + i.qty + '</span></div>'; }).join('') + '</div>';
+    if (d.statusPage) html += '<p><a class="link" href="' + esc(d.statusPage) + '" target="_blank" rel="noopener">View full order details</a></p>';
+    out.innerHTML = html; out.hidden = false; out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var o = form.o.value.trim(), em = form.e.value.trim();
+    if (!o || !em) { msg.textContent = 'Enter your order number and the email you used at checkout.'; return; }
+    var btn = form.querySelector('button'); btn.disabled = true; msg.textContent = 'Looking up your order…';
+    fetch(form.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ o: o, e: em }) })
+      .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, status: r.status, j: j }; }); })
+      .then(function (r) {
+        if (r.ok) { msg.textContent = ''; render(r.j); }
+        else if (r.status === 404) msg.textContent = 'We couldn\u2019t find an order with that number and email. Check both match your order confirmation email.';
+        else if (r.status === 429) msg.textContent = 'Too many lookups. Please try again in an hour, or email us.';
+        else msg.textContent = 'Tracking is busy right now. Please try again in a minute.';
+      })
+      .catch(function () { msg.textContent = 'Tracking is busy right now. Please try again in a minute.'; })
+      .finally(function () { btn.disabled = false; });
+  });
+})();
+</script>
