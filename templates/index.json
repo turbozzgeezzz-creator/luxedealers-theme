@@ -201,14 +201,14 @@
         "m4",
         "m5"
       ],
+      "disabled": true,
       "settings": {
         "label": "Why LuxeDealers",
         "style": "label",
         "ink": true,
         "reverse": false,
         "speed": 40
-      },
-      "disabled": true
+      }
     },
     "depts": {
       "type": "dept-cards",
@@ -360,13 +360,13 @@
         "b",
         "c"
       ],
+      "disabled": true,
       "settings": {
         "eyebrow": "Shop by budget",
         "heading": "Luxury at every price",
         "text": "Pick a budget and see everything that fits it.",
         "collection": "shop-all"
-      },
-      "disabled": true
+      }
     },
     "why": {
       "type": "why-us",
@@ -409,10 +409,10 @@
     "journal": {
       "type": "blog-posts",
       "settings": {
+        "blog": "news",
         "eyebrow": "The style desk",
         "heading": "Guides and inspiration",
-        "limit": 3,
-        "blog": "news"
+        "limit": 3
       }
     },
     "help": {
@@ -509,13 +509,13 @@
     },
     "ribbon": {
       "type": "product-ribbon",
+      "disabled": true,
       "settings": {
         "eyebrow": "The edit",
         "heading": "Build your look",
         "limit": 14,
         "speed": 65
-      },
-      "disabled": true
+      }
     },
     "deals_row": {
       "type": "featured-collection",
