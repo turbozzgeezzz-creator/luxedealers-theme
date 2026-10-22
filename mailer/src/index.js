@@ -114,8 +114,10 @@ export default {
     // Track your order page: order number + email in, shipping progress out (only when both match).
     if (url.pathname === '/track' && request.method === 'POST') {
       const headers = { ...cors(env, request), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
-      if (await rateLimited(env, 'trk:' + (request.headers.get('CF-Connecting-IP') || ''), 20)) return new Response(JSON.stringify({ error: 'busy' }), { status: 429, headers });
       const body = await readBeacon(request);
+      // Lookups without an email are limited harder (they only ever show progress, never personal details).
+      const ip = request.headers.get('CF-Connecting-IP') || '';
+      if (await rateLimited(env, (body && body.e ? 'trk:' : 'trkn:') + ip, body && body.e ? 20 : 10)) return new Response(JSON.stringify({ error: 'busy' }), { status: 429, headers });
       try {
         const result = body ? await trackOrder(env, body.o, body.e) : null;
         if (!result) return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers });

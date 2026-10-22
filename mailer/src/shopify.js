@@ -265,9 +265,11 @@ export function carrierLinks(number) {
 }
 
 export async function trackOrder(env, rawNumber, rawEmail) {
+  // With the order's email: full details. Without it: progress and dates only (no items, tracking number or
+  // places), so guessing order numbers reveals nothing personal.
   const email = String(rawEmail || '').trim().toLowerCase();
   const num = String(rawNumber || '').trim().replace(/^#/, '').replace(/\s+/g, '').toUpperCase();
-  if (!email || !/^[0-9A-Z-]{3,20}$/.test(num)) return null;
+  if (!/^[0-9A-Z-]{3,20}$/.test(num)) return null;
   const q = `query($q: String!){ orders(first: 3, query: $q){ nodes{ name email createdAt cancelledAt displayFulfillmentStatus statusPageUrl
       lineItems(first: 20){ nodes{ title quantity variantTitle image{ url } } }
       fulfillments(first: 5){ createdAt displayStatus estimatedDeliveryAt inTransitAt deliveredAt
@@ -276,8 +278,15 @@ export async function trackOrder(env, rawNumber, rawEmail) {
   const names = /[A-Z]$/.test(num) ? [num] : [num, `${num}A`];
   for (const n of names) {
     const data = await gql(env, q, { q: `name:#${n}` });
-    const order = (data.orders.nodes || []).find((o) => (o.email || '').toLowerCase() === email && o.name.replace('#', '').toUpperCase() === n);
+    const order = (data.orders.nodes || []).find((o) => o.name.replace('#', '').toUpperCase() === n && (!email || (o.email || '').toLowerCase() === email));
     if (!order) continue;
+    if (!email) {
+      return {
+        limited: true, name: order.name, placedAt: order.createdAt, cancelled: !!order.cancelledAt, status: order.displayFulfillmentStatus,
+        shipments: order.fulfillments.map((f) => ({ shippedAt: f.createdAt, status: f.displayStatus, estimate: f.estimatedDeliveryAt, inTransitAt: f.inTransitAt,
+          deliveredAt: f.deliveredAt, tracking: [], events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt })) })),
+      };
+    }
     return {
       name: order.name,
       placedAt: order.createdAt,
