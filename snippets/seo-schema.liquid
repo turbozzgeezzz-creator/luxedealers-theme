@@ -146,6 +146,27 @@
       "mainEntityOfPage": {{ request.origin | append: article.url | json }}
     }
   </script>
+  {%- comment -%} Q&A at the end of a post (<div class="article-faq"> with <h3> questions and <p> answers) becomes FAQ data for Google and AI answers. {%- endcomment -%}
+  {%- if article.content contains 'class="article-faq"' -%}
+    {%- assign faq_parts = article.content | split: 'class="article-faq"' | last | split: '<h3' -%}
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+          {%- assign first = true -%}
+          {%- for part in faq_parts offset: 1 -%}
+            {%- assign q = part | split: '</h3>' | first | prepend: '<h3' | strip_html | strip -%}
+            {%- assign a = part | split: '</h3>' | last | strip_html | strip_newlines | strip -%}
+            {%- if q != blank and a != blank -%}
+              {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
+              { "@type": "Question", "name": {{ q | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ a | truncate: 600 | json }} } }
+            {%- endif -%}
+          {%- endfor -%}
+        ]
+      }
+    </script>
+  {%- endif -%}
 {%- endif -%}
 {%- if request.page_type == 'collection' and collection.products.size > 0 -%}
   <script type="application/ld+json">
