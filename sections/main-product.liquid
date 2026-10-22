@@ -37,7 +37,9 @@
   <div class="container">
     <nav class="breadcrumbs breadcrumbs--left" aria-label="{{ 'general.breadcrumbs' | t }}">
       <a href="{{ routes.root_url }}">{{ 'general.home' | t }}</a><span aria-hidden="true">/</span>
-      {%- if collection -%}<a href="{{ collection.url }}">{{ collection.title }}</a><span aria-hidden="true">/</span>{%- elsif product.collections.first -%}<a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a><span aria-hidden="true">/</span>{%- endif -%}
+      {%- capture crumb_handle -%}{%- render 'crumb-collection', product: product -%}{%- endcapture -%}
+      {%- assign crumb_handle = crumb_handle | strip -%}{%- assign crumb = collections[crumb_handle] -%}
+      {%- if collection -%}<a href="{{ collection.url }}">{{ collection.title }}</a><span aria-hidden="true">/</span>{%- elsif crumb_handle != blank and crumb -%}<a href="{{ crumb.url }}">{{ crumb.title }}</a><span aria-hidden="true">/</span>{%- endif -%}
       <span aria-current="page">{{ product.title }}</span>
     </nav>
 

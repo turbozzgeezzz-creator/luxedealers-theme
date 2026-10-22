@@ -62,22 +62,40 @@
     }
   </script>
 {%- endif -%}
-{%- if request.page_type == 'collection' or request.page_type == 'product' or request.page_type == 'article' -%}
+{%- if request.page_type == 'collection' or request.page_type == 'product' or request.page_type == 'article' or request.page_type == 'page' or request.page_type == 'blog' -%}
+  {%- liquid
+    assign crumb = collection
+    if request.page_type == 'product' and collection == blank
+      capture crumb_handle
+        render 'crumb-collection', product: product
+      endcapture
+      assign crumb_handle = crumb_handle | strip
+      if crumb_handle != blank
+        assign crumb = collections[crumb_handle]
+      endif
+    endif
+  -%}
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": {{ 'general.home' | t | json }}, "item": {{ request.origin | append: routes.root_url | json }} }
-        {%- if collection -%},
-        { "@type": "ListItem", "position": 2, "name": {{ collection.title | json }}, "item": {{ request.origin | append: collection.url | json }} }
+        {%- if crumb -%},
+        { "@type": "ListItem", "position": 2, "name": {{ crumb.title | json }}, "item": {{ request.origin | append: crumb.url | json }} }
+        {%- endif -%}
+        {%- if request.page_type == 'page' -%},
+        { "@type": "ListItem", "position": 2, "name": {{ page.title | json }}, "item": {{ request.origin | append: page.url | json }} }
+        {%- endif -%}
+        {%- if request.page_type == 'blog' -%},
+        { "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ request.origin | append: blog.url | json }} }
         {%- endif -%}
         {%- if article -%},
         { "@type": "ListItem", "position": 2, "name": {{ blog.title | json }}, "item": {{ request.origin | append: blog.url | json }} },
         { "@type": "ListItem", "position": 3, "name": {{ article.title | json }}, "item": {{ request.origin | append: article.url | json }} }
         {%- endif -%}
         {%- if product -%},
-        { "@type": "ListItem", "position": {% if collection %}3{% else %}2{% endif %}, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
+        { "@type": "ListItem", "position": {% if crumb %}3{% else %}2{% endif %}, "name": {{ product.title | json }}, "item": {{ request.origin | append: product.url | json }} }
         {%- endif %}
       ]
     }
