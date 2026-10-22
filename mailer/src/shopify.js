@@ -250,3 +250,48 @@ export async function latestArticles(env, limit = 3, sinceIso = null) {
     publishedAt: a.publishedAt,
   }));
 }
+
+/**
+ * Order tracking for the store's Track your order page. Answers only when the order number AND the email on the
+ * order match; never returns addresses or payment details. Carrier links go straight to the carrier (4PX etc.),
+ * with a universal tracker as the fallback, never to a third-party app page.
+ */
+// Every shipment is tracked on 17TRACK's public tracking website (it reads Huahan, 4PX, China Post and the local
+// postal services in every destination country). ParcelsApp is shown as a second option. These are public
+// websites, not the 17TRACK Shopify app.
+export function carrierLinks(number) {
+  const n = encodeURIComponent(number);
+  return { primary: `https://t.17track.net/en#nums=${n}`, backup: `https://parcelsapp.com/en/tracking/${n}` };
+}
+
+export async function trackOrder(env, rawNumber, rawEmail) {
+  const email = String(rawEmail || '').trim().toLowerCase();
+  const num = String(rawNumber || '').trim().replace(/^#/, '').replace(/\s+/g, '').toUpperCase();
+  if (!email || !/^[0-9A-Z-]{3,20}$/.test(num)) return null;
+  const q = `query($q: String!){ orders(first: 3, query: $q){ nodes{ name email createdAt cancelledAt displayFulfillmentStatus statusPageUrl
+      lineItems(first: 20){ nodes{ title quantity variantTitle image{ url } } }
+      fulfillments(first: 5){ createdAt displayStatus estimatedDeliveryAt inTransitAt deliveredAt
+        trackingInfo(first: 3){ company number }
+        events(first: 25, sortKey: HAPPENED_AT){ nodes{ status happenedAt message city country } } } } } }`;
+  const names = /[A-Z]$/.test(num) ? [num] : [num, `${num}A`];
+  for (const n of names) {
+    const data = await gql(env, q, { q: `name:#${n}` });
+    const order = (data.orders.nodes || []).find((o) => (o.email || '').toLowerCase() === email && o.name.replace('#', '').toUpperCase() === n);
+    if (!order) continue;
+    return {
+      name: order.name,
+      placedAt: order.createdAt,
+      cancelled: !!order.cancelledAt,
+      status: order.displayFulfillmentStatus,
+      statusPage: order.statusPageUrl,
+      items: order.lineItems.nodes.map((l) => ({ title: l.title, variant: l.variantTitle && l.variantTitle !== 'Default Title' ? l.variantTitle : null, qty: l.quantity,
+        image: l.image ? `${l.image.url}${l.image.url.includes('?') ? '&' : '?'}width=160` : null })),
+      shipments: order.fulfillments.map((f) => ({
+        shippedAt: f.createdAt, status: f.displayStatus, estimate: f.estimatedDeliveryAt, inTransitAt: f.inTransitAt, deliveredAt: f.deliveredAt,
+        tracking: f.trackingInfo.filter((t) => t.number).map((t) => ({ number: t.number, ...carrierLinks(t.number) })),
+        events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt, message: e.message || null, place: [e.city, e.country].filter(Boolean).join(', ') || null })),
+      })),
+    };
+  }
+  return null;
+}

@@ -1,3 +1,4 @@
+import { trackOrder } from './shopify.js';
 // LuxeMail entry point: HTTP routes and the 30-minute scheduler.
 import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util.js';
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
@@ -106,6 +107,21 @@ export default {
       } catch (e) {
         if (e.returning) return new Response(JSON.stringify({ error: 'returning' }), { status: 409, headers });
         console.error('welcome-code', e);
+        return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503, headers });
+      }
+    }
+
+    // Track your order page: order number + email in, shipping progress out (only when both match).
+    if (url.pathname === '/track' && request.method === 'POST') {
+      const headers = { ...cors(env, request), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
+      if (await rateLimited(env, 'trk:' + (request.headers.get('CF-Connecting-IP') || ''), 20)) return new Response(JSON.stringify({ error: 'busy' }), { status: 429, headers });
+      const body = await readBeacon(request);
+      try {
+        const result = body ? await trackOrder(env, body.o, body.e) : null;
+        if (!result) return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers });
+        return new Response(JSON.stringify(result), { headers });
+      } catch (e) {
+        console.error('track', e);
         return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503, headers });
       }
     }
