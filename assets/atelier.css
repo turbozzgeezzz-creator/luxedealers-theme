@@ -2340,3 +2340,18 @@ html[data-theme="dark"] .trk__note--hint { background: #3A3315; color: #FFF; }
 /* Track page: chat bubble steps aside while someone is typing their order details */
 body:has(.trk-lookup :focus) shopify-chat, body:has(.trk-lookup :focus) #shopify-chat { display: none !important; }
 .trk-lookup { scroll-margin-top: 90px; }
+
+/* Collection: about the range + common questions (from the collection description) */
+.coll-about { display: grid; gap: 28px; padding-block: 48px 8px; }
+@media (min-width: 990px) { .coll-about { grid-template-columns: 1.1fr 1fr; gap: 56px; } }
+.coll-about__title { font-size: 22px; font-weight: 700; margin: 0 0 12px; }
+.coll-about__intro .rte p { color: var(--c-muted, #5B6474); line-height: 1.65; max-width: 62ch; }
+.coll-about__intro .rte a { color: var(--blue, #1E4FA8); text-decoration: underline; text-underline-offset: 3px; }
+.coll-about__q { border-bottom: 1px solid rgba(20,33,61,.12); }
+.coll-about__q summary { cursor: pointer; list-style: none; padding: 16px 28px 16px 0; font-weight: 600; position: relative; }
+.coll-about__q summary::-webkit-details-marker { display: none; }
+.coll-about__q summary::after { content: '+'; position: absolute; right: 4px; top: 12px; font-size: 22px; font-weight: 400; color: var(--blue, #1E4FA8); }
+.coll-about__q[open] summary::after { content: '–'; }
+.coll-about__q .rte { padding: 0 0 16px; color: var(--c-muted, #5B6474); line-height: 1.6; }
+html[data-theme="dark"] .coll-about__q { border-bottom-color: rgba(255,255,255,.14); }
+html[data-theme="dark"] .coll-about__intro .rte a, html[data-theme="dark"] .coll-about__q summary::after { color: #FFD966; }

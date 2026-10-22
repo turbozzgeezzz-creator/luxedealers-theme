@@ -209,3 +209,23 @@
     }
   </script>
 {%- endif -%}
+{%- if request.page_type == 'collection' and collection.description contains '<h2>Common questions</h2>' -%}
+  {%- assign cfaq = collection.description | split: '<h2>Common questions</h2>' | last | split: '<p><strong>' -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- assign first = true -%}
+        {%- for part in cfaq offset: 1 -%}
+          {%- assign q = part | split: '</strong>' | first | strip_html | strip -%}
+          {%- assign a = part | split: '</strong>' | last | strip_html | strip_newlines | strip -%}
+          {%- if q != blank and a != blank -%}
+            {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
+            { "@type": "Question", "name": {{ q | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ a | truncate: 600 | json }} } }
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
