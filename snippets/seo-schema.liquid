@@ -155,6 +155,9 @@
     assign faq_section = ''
     assign faq_markers = '>Common questions</h2>|>Common Questions</h2>|>Frequently asked questions</h2>|>Frequently Asked Questions</h2>|>FAQ</h2>|>FAQs</h2>' | split: '|'
     for m in faq_markers
+      if article.content contains '"FAQPage"'
+        break
+      endif
       if article.content contains m
         assign faq_section = article.content | split: m | last | split: '<h2' | first
         break
