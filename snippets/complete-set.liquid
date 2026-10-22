@@ -18,17 +18,17 @@
   for c in product.collections
     assign handles = handles | append: ' ' | append: c.handle
   endfor
-  assign pair = 'accessories,fragances'
+  assign pair = 'accessories,fragrances'
   if handles contains 'bag'
-    assign pair = 'accessories,fragances'
+    assign pair = 'accessories,fragrances'
   elsif handles contains 'shoe' or handles contains 'sneaker' or handles contains 'boot' or handles contains 'slide'
     assign pair = 'clothing,accessories'
   elsif handles contains 'cloth' or handles contains 'hood' or handles contains 'shirt' or handles contains 'jacket' or handles contains 'denim' or handles contains 'jersey'
     assign pair = 'sneakers-1,accessories'
   elsif handles contains 'jewel' or handles contains 'watch'
-    assign pair = 'jewellery,fragances'
+    assign pair = 'jewellery,fragrances'
   elsif handles contains 'fragr' or handles contains 'fragance'
-    assign pair = 'fragances,handbags'
+    assign pair = 'fragrances,handbags'
   elsif handles contains 'access'
     assign pair = 'handbags,clothing'
   endif
