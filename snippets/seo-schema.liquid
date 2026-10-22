@@ -2,18 +2,22 @@
   Schema.org data from real store data only. Ratings are included only when a
   reviews app has written the standard reviews metafields.
 {%- endcomment -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "OnlineStore",
+    "@id": {{ request.origin | append: '/#store' | json }},
+    "name": {{ shop.name | json }},
+    "url": {{ request.origin | append: routes.root_url | json }},
+    "logo": {{ 'ld-mark.png' | asset_url | prepend: 'https:' | json }},
+    "description": {{ settings.seo_home_description | default: shop.description | default: 'Designer-inspired clothing, shoes, bags, watches, jewellery and fragrances, hand-checked and shipped free worldwide with tracking.' | strip_html | json }},
+    "email": {{ settings.support_email | default: shop.email | json }},
+    "areaServed": "Worldwide",
+    "contactPoint": { "@type": "ContactPoint", "contactType": "customer service", "email": {{ settings.support_email | default: shop.email | json }}, "availableLanguage": "English" },
+    "sameAs": ["https://www.instagram.com/_luxedealers/", "https://www.tiktok.com/@luxe.dealers", "https://www.facebook.com/people/LuxeDealers/61586243374554/"]
+  }
+</script>
 {%- if request.page_type == 'index' -%}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": {{ shop.name | json }},
-      "url": {{ request.origin | append: routes.root_url | json }},
-      "logo": {{ 'ld-mark.png' | asset_url | prepend: 'https:' | json }},
-      "email": {{ settings.support_email | default: shop.email | json }},
-      "sameAs": ["https://www.instagram.com/_luxedealers/", "https://www.tiktok.com/@luxe.dealers", "https://www.facebook.com/people/LuxeDealers/61586243374554/"]
-    }
-  </script>
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -57,7 +61,32 @@
         "offerCount": {{ product.variants.size }},
         "availability": "https://schema.org/{% if product.available %}InStock{% else %}OutOfStock{% endif %}",
         "url": {{ request.origin | append: product.url | json }},
-        "seller": { "@type": "Organization", "name": {{ shop.name | json }} }
+        "seller": { "@id": {{ request.origin | append: '/#store' | json }} },
+        {%- liquid
+          assign ship_to = 'AU,US,GB,CA,NZ,IE,DE,FR,NL,IT,ES,SE,DK,NO,FI,BE,AT,CH,PL,PT,SG,HK,JP,KR,AE,SA' | split: ','
+          assign avail = localization.available_countries | map: 'iso_code'
+          assign dest = ''
+          for c in ship_to
+            if avail contains c
+              assign dest = dest | append: c | append: ','
+            endif
+          endfor
+          assign dest = dest | split: ','
+        -%}
+        "shippingDetails": [
+          {%- for c in dest -%}
+          {
+            "@type": "OfferShippingDetails",
+            "shippingRate": { "@type": "MonetaryAmount", "value": 0, "currency": {{ cart.currency.iso_code | json }} },
+            "shippingDestination": { "@type": "DefinedRegion", "addressCountry": {{ c | json }} },
+            "deliveryTime": {
+              "@type": "ShippingDeliveryTime",
+              "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" },
+              "transitTime": { "@type": "QuantitativeValue", "minValue": 10, "maxValue": 18, "unitCode": "DAY" }
+            }
+          }{% unless forloop.last %},{% endunless %}
+          {%- endfor -%}
+        ]
       }
     }
   </script>
