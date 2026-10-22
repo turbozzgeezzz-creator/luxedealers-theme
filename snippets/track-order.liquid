@@ -1,11 +1,11 @@
 {%- comment -%} Order tracking help, shown on /pages/track-your-order (and the track-order page template). {%- endcomment -%}
-{%- assign tt = 'track.title' | t -%}{%- assign te = 'track.eyebrow' | t -%}{%- assign tx = 'track.intro' | t -%}
+{%- assign tt = 'Track your order' -%}{%- assign te = 'Help' -%}{%- assign tx = 'Every order ships free with tracking. Enter your order number below to see exactly where it is.' -%}
 {% render 'page-banner', title: tt, eyebrow: te, text: tx, art: 'parcel' %}
 <section class="section section--flush-top">
   <div class="container track">
     {%- assign trk_endpoint = settings.luxemail_endpoint | replace: '/t', '/track' -%}
     <div class="trk-lookup">
-      <h2 class="trk-lookup__title">{{ 'track.have_number' | t }}</h2>
+      <h2 class="trk-lookup__title">Find your order</h2>
       <p class="trk-lookup__text">Enter your order number or tracking number. Add your email to see full details.</p>
       <form class="trk-lookup__form" data-track-lookup data-endpoint="{{ trk_endpoint }}" novalidate>
         <label class="trk-lookup__label" for="TrackOrder">Order or tracking number</label>

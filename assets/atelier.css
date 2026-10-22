@@ -2337,3 +2337,6 @@ html[data-theme="dark"] .trk__dot { background: #11295E; border-color: rgba(255,
 @media (min-width: 990px) { .track__cards--two { grid-template-columns: 1fr 1fr; } }
 html[data-theme="dark"] .trk-lookup { background: #173572; }
 html[data-theme="dark"] .trk__note--hint { background: #3A3315; color: #FFF; }
+/* Track page: chat bubble steps aside while someone is typing their order details */
+body:has(.trk-lookup :focus) shopify-chat, body:has(.trk-lookup :focus) #shopify-chat { display: none !important; }
+.trk-lookup { scroll-margin-top: 90px; }
