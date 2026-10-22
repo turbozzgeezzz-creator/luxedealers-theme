@@ -66,7 +66,7 @@
           <ul class="mini-list" role="list">
             {%- for p in nc.products limit: 4 -%}
               <li data-pid="{{ p.id }}"><a href="{{ p.url }}">
-                <span class="mini-list__img">{{ p.featured_media.preview_image | image_url: width: 140 | image_tag: width: 64, height: 64, loading: 'lazy', alt: '' }}</span>
+                <span class="mini-list__img">{{ p.featured_media.preview_image | image_url: width: 140 | image_tag: width: 64, height: 64, loading: 'lazy', alt: p.title }}</span>
                 <span class="mini-list__name">{{ p.title }}</span>
                 <strong>{{ p.price | money }}</strong>
               </a></li>

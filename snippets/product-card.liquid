@@ -45,7 +45,7 @@
       -%}
       {{ img1 | image_url: width: 1400 | image_tag: widths: '300, 450, 600, 800, 1000, 1400', sizes: sizes, loading: loading, alt: product.title, class: primary_class }}
       {%- if img2 -%}
-        {{ img2 | image_url: width: 1400 | image_tag: widths: '300, 450, 600, 800, 1000, 1400', sizes: sizes, loading: 'lazy', alt: '', class: 'card__img card__img--hover' }}
+        {{ img2 | image_url: width: 1400 | image_tag: widths: '300, 450, 600, 800, 1000, 1400', sizes: sizes, loading: 'lazy', alt: product.title, class: 'card__img card__img--hover' }}
       {%- endif -%}
     {%- else -%}
       {% render 'placeholder' %}

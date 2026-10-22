@@ -242,7 +242,7 @@
   <div class="sticky-atc" data-sticky-atc aria-hidden="false">
     <div class="sticky-atc__inner">
       <div class="sticky-atc__info">
-        <div class="sticky-atc__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: '' }}{%- endif -%}</div>
+        <div class="sticky-atc__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 160 | image_tag: loading: 'lazy', alt: product.title }}{%- endif -%}</div>
         <div class="sticky-atc__text">
           <div class="sticky-atc__title">{{ product.title }}</div>
           <div class="sticky-atc__sub">{% render 'price', product: product, variant: current %}<span class="sticky-atc__ship">{% render 'icon', name: 'truck', class: 'icon--sm' %} {{ 'products.free_shipping' | t }}</span></div>

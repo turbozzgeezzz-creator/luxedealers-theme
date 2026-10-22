@@ -39,7 +39,7 @@
               <p class="search-pop__label">{{ 'search.trending' | t: title: sc.title }}</p>
               <ul class="search-pop__products" role="list">
                 {%- for p in sc.products limit: 4 -%}
-                  <li><a href="{{ p.url }}"><span class="search-pop__img">{{ p.featured_media.preview_image | image_url: width: 160 | image_tag: width: 64, height: 64, loading: 'lazy', alt: '' }}</span><span class="search-pop__name">{{ p.title }}</span><strong>{{ p.price | money }}</strong></a></li>
+                  <li><a href="{{ p.url }}"><span class="search-pop__img">{{ p.featured_media.preview_image | image_url: width: 160 | image_tag: width: 64, height: 64, loading: 'lazy', alt: p.title }}</span><span class="search-pop__name">{{ p.title }}</span><strong>{{ p.price | money }}</strong></a></li>
                 {%- endfor -%}
               </ul>
             {%- endif -%}
@@ -158,7 +158,7 @@
                         {%- for p in mc.products limit: 3 -%}
                           {%- if p.featured_media -%}
                             <a class="mega__shot" href="{{ p.url }}">
-                              <span class="mega__shot-img">{{ p.featured_media.preview_image | image_url: width: 300 | image_tag: width: 150, height: 150, loading: 'lazy', alt: '' }}</span>
+                              <span class="mega__shot-img">{{ p.featured_media.preview_image | image_url: width: 300 | image_tag: width: 150, height: 150, loading: 'lazy', alt: p.title }}</span>
                               <span class="mega__shot-name">{{ p.title }}</span>
                               <span class="mega__shot-price">{{ p.price | money }}</span>
                             </a>
@@ -277,7 +277,7 @@
             {%- if link.type == 'collection_link' and link.links.size > 0 -%}
               {%- assign dimg = link.object.featured_image | default: link.object.products.first.featured_media.preview_image -%}
               <a class="mnav__dept" href="{{ link.url }}">
-                <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: '' }}{%- endif -%}</span>
+                <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: link.title }}{%- endif -%}</span>
                 <span class="mnav__dept-name">{{ link.title }}</span>
               </a>
             {%- endif -%}

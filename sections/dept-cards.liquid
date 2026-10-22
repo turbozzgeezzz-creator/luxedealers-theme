@@ -27,7 +27,7 @@
               {%- capture fp -%}{% render 'from-price', collection: c %}{%- endcapture -%}
               {%- if fp != blank -%}<p class="tile__from">{{ 'sections.from_price' | t }} <strong>{{ fp }}</strong></p>{%- endif -%}
               <div class="dept__thumbs">
-                {%- for p in c.products limit: 3 -%}{%- if p.featured_media -%}<span>{{ p.featured_media.preview_image | image_url: width: 120 | image_tag: width: 60, height: 60, loading: 'lazy', alt: '' }}</span>{%- endif -%}{%- endfor -%}
+                {%- for p in c.products limit: 3 -%}{%- if p.featured_media -%}<span>{{ p.featured_media.preview_image | image_url: width: 120 | image_tag: width: 60, height: 60, loading: 'lazy', alt: p.title }}</span>{%- endif -%}{%- endfor -%}
               </div>
             {%- endif -%}
             <span class="btn btn--sm btn--light">{{ 'sections.shop_now' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</span>

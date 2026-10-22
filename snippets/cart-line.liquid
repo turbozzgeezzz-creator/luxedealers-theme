@@ -1,7 +1,7 @@
 {%- comment -%} One line in the bag. Params: item, ctx {%- endcomment -%}
 <div class="cart-line">
   <a class="cart-line__media" href="{{ item.url }}" tabindex="-1" aria-hidden="true">
-    {%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: '', widths: '120, 200, 300', sizes: '96px' }}{%- else -%}{% render 'placeholder' %}{%- endif -%}
+    {%- if item.image -%}{{ item.image | image_url: width: 300 | image_tag: loading: 'lazy', alt: item.product.title, widths: '120, 200, 300', sizes: '96px' }}{%- else -%}{% render 'placeholder' %}{%- endif -%}
   </a>
   <div class="cart-line__info">
     <div class="cart-line__top">

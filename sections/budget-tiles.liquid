@@ -37,7 +37,7 @@
             {%- for p in c.products limit: 60 -%}
               {%- if p.available and p.price >= lo and p.featured_media -%}
                 {%- if b.max == 0 or p.price <= hi -%}
-                  <span style="--k: {{ n }}">{{ p.featured_media.preview_image | image_url: width: 240 | image_tag: width: 120, height: 120, loading: 'lazy', alt: '' }}</span>
+                  <span style="--k: {{ n }}">{{ p.featured_media.preview_image | image_url: width: 240 | image_tag: width: 120, height: 120, loading: 'lazy', alt: p.title }}</span>
                   {%- assign n = n | plus: 1 -%}
                   {%- if n >= 3 -%}{%- break -%}{%- endif -%}
                 {%- endif -%}

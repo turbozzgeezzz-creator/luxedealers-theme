@@ -131,7 +131,6 @@
 
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
       {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ settings.seo_home_title | default: shop.name }}</h1>{%- endif -%}
-      {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ shop.name | escape }}: clothing, shoes, bags and accessories</h1>{%- endif -%}
       {{ content_for_layout }}
     </main>
 

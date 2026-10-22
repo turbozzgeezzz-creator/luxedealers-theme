@@ -9,7 +9,7 @@
   {%- if review.body != blank -%}<p class="review-card__body">{{ review.body | strip_html | truncate: 260 }}</p>{%- endif -%}
   {%- if review.pictures_urls.size > 0 and hero != true -%}
     <div class="review-card__pics">
-      {%- for pic in review.pictures_urls limit: 3 -%}<a href="{{ pic.huge }}" target="_blank" rel="noopener"><img src="{{ pic.small }}" alt="" width="80" height="80" loading="lazy"></a>{%- endfor -%}
+      {%- for pic in review.pictures_urls limit: 3 -%}<a href="{{ pic.huge }}" target="_blank" rel="noopener"><img src="{{ pic.small }}" alt="Customer photo" width="80" height="80" loading="lazy"></a>{%- endfor -%}
     </div>
   {%- endif -%}
   <div class="review-card__meta">

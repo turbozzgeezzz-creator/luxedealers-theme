@@ -47,7 +47,7 @@
   <div class="bset__grid">
     <div class="bset__item is-main">
       <span class="bset__check is-on" aria-hidden="true">{% render 'icon', name: 'check', class: 'icon--sm' %}</span>
-      <span class="bset__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: '' }}{%- endif -%}</span>
+      <span class="bset__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: product.title }}{%- endif -%}</span>
       <span class="bset__tag">{{ 'bundle.this_item' | t }}</span>
       <span class="bset__name">{{ product.title }}</span>
       <strong class="bset__price">{{ current.price | money }}</strong>
