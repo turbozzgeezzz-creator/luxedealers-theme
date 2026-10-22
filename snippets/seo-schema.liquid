@@ -146,9 +146,29 @@
       "mainEntityOfPage": {{ request.origin | append: article.url | json }}
     }
   </script>
-  {%- comment -%} Q&A at the end of a post (<div class="article-faq"> with <h3> questions and <p> answers) becomes FAQ data for Google and AI answers. {%- endcomment -%}
-  {%- if article.content contains 'class="article-faq"' -%}
-    {%- assign faq_parts = article.content | split: 'class="article-faq"' | last | split: '<h3' -%}
+  {%- comment -%}
+    The Q&A at the end of a post becomes FAQ data for Google and AI answers. Recognised formats:
+    an <h2> "Common questions" / "Frequently asked questions" / "FAQ" heading followed by <strong> or <h3> questions,
+    each followed by its answer paragraph.
+  {%- endcomment -%}
+  {%- liquid
+    assign faq_section = ''
+    assign faq_markers = '>Common questions</h2>|>Common Questions</h2>|>Frequently asked questions</h2>|>Frequently Asked Questions</h2>|>FAQ</h2>|>FAQs</h2>' | split: '|'
+    for m in faq_markers
+      if article.content contains m
+        assign faq_section = article.content | split: m | last | split: '<h2' | first
+        break
+      endif
+    endfor
+    assign faq_tag = '<strong>'
+    assign faq_end = '</strong>'
+    if faq_section contains '<h3'
+      assign faq_tag = '<h3'
+      assign faq_end = '</h3>'
+    endif
+  -%}
+  {%- if faq_section contains faq_end -%}
+    {%- assign faq_parts = faq_section | split: faq_tag -%}
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -156,8 +176,8 @@
         "mainEntity": [
           {%- assign first = true -%}
           {%- for part in faq_parts offset: 1 -%}
-            {%- assign q = part | split: '</h3>' | first | prepend: '<h3' | strip_html | strip -%}
-            {%- assign a = part | split: '</h3>' | last | strip_html | strip_newlines | strip -%}
+            {%- assign q = part | split: faq_end | first | prepend: faq_tag | strip_html | strip -%}
+            {%- assign a = part | split: faq_end | last | strip_html | strip_newlines | strip -%}
             {%- if q != blank and a != blank -%}
               {%- unless first -%},{%- endunless -%}{%- assign first = false -%}
               { "@type": "Question", "name": {{ q | json }}, "acceptedAnswer": { "@type": "Answer", "text": {{ a | truncate: 600 | json }} } }
