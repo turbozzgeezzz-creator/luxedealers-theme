@@ -37,7 +37,7 @@
             <summary class="footer__title">{{ block.settings.title | default: block.settings.menu.title }} {% render 'icon', name: 'plus', class: 'icon-plus' %}</summary>
             <ul class="footer__links" role="list">
               {%- if block.settings.menu != blank -%}
-                {%- for link in block.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title }}</a></li>{%- endfor -%}
+                {%- for link in block.settings.menu.links -%}<li><a href="{{ link.url }}">{{ link.title | escape }}</a></li>{%- endfor -%}
               {%- else -%}
                 {%- for policy in shop.policies -%}<li><a href="{{ policy.url }}">{{ policy.title }}</a></li>{%- endfor -%}
               {%- endif -%}

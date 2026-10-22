@@ -15,12 +15,12 @@
         {%- if search_menu.links.size > 0 -%}
           <p class="label muted" style="margin-bottom: 14px">{{ 'search.popular' | t }}</p>
           <div class="predictive__terms">
-            {%- for link in search_menu.links -%}<a class="chip" href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+            {%- for link in search_menu.links -%}<a class="chip" href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
           </div>
         {%- endif -%}
         <p class="label muted" style="margin-bottom: 14px">{{ 'search.departments' | t }}</p>
         <div class="predictive__terms">
-          {%- for link in linklists['main-menu'].links -%}<a class="chip" href="{{ link.url }}">{{ link.title }}</a>{%- endfor -%}
+          {%- for link in linklists['main-menu'].links -%}<a class="chip" href="{{ link.url }}">{{ link.title | escape }}</a>{%- endfor -%}
         </div>
       </div>
     </div>

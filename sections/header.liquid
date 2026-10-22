@@ -119,7 +119,7 @@
             -%}
             {%- unless skip -%}
             <li class="nav-item"{% if has_mega %} data-has-mega{% endif %}>
-              <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{% render 'icon', name: icon, class: 'nav-link__icon' %}{{ link.title }}{% if has_mega %}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}{% endif %}</a>
+              <a href="{{ link.url }}" class="nav-link{% if highlight %} nav-link--highlight{% endif %}"{% if link.current %} aria-current="page"{% endif %}{% if has_mega %} aria-haspopup="true" aria-expanded="false"{% endif %}>{% render 'icon', name: icon, class: 'nav-link__icon' %}{{ link.title | escape }}{% if has_mega %}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}{% endif %}</a>
               {%- if has_mega -%}
                 <div class="mega">
                   <div class="container mega__inner">
@@ -129,14 +129,14 @@
                       {%- if has_grand -%}
                         {%- for child in link.links -%}
                           <div>
-                            <a class="mega__title" href="{{ child.url }}">{{ child.title }}</a>
-                            <ul class="mega__links" role="list">{%- for g in child.links -%}<li><a href="{{ g.url }}">{{ g.title }}</a></li>{%- endfor -%}</ul>
+                            <a class="mega__title" href="{{ child.url }}">{{ child.title | escape }}</a>
+                            <ul class="mega__links" role="list">{%- for g in child.links -%}<li><a href="{{ g.url }}">{{ g.title | escape }}</a></li>{%- endfor -%}</ul>
                           </div>
                         {%- endfor -%}
                       {%- else -%}
                         <div>
-                          <a class="mega__title" href="{{ link.url }}">{{ link.title }}</a>
-                          <ul class="mega__links mega__links--cols" role="list">{%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title }}</a></li>{%- endfor -%}</ul>
+                          <a class="mega__title" href="{{ link.url }}">{{ link.title | escape }}</a>
+                          <ul class="mega__links mega__links--cols" role="list">{%- for child in link.links -%}<li><a href="{{ child.url }}">{{ child.title | escape }}</a></li>{%- endfor -%}</ul>
                         </div>
                       {%- endif -%}
                     </div>
@@ -176,7 +176,7 @@
           {%- if section.settings.help_menu != blank -%}
             <li class="nav-item nav-item--help" data-has-mega>
               <a href="{{ section.settings.help_menu.links.first.url | default: '#' }}" class="nav-link" aria-haspopup="true" aria-expanded="false">{% render 'icon', name: 'help', class: 'nav-link__icon' %}{{ section.settings.help_label }}{% render 'icon', name: 'chevron-down', class: 'nav-link__chev' %}</a>
-              <div class="dropdown"><ul role="list">{%- for l in section.settings.help_menu.links -%}<li><a href="{{ l.url }}">{{ l.title }}</a></li>{%- endfor -%}</ul></div>
+              <div class="dropdown"><ul role="list">{%- for l in section.settings.help_menu.links -%}<li><a href="{{ l.url }}">{{ l.title | escape }}</a></li>{%- endfor -%}</ul></div>
             </li>
           {%- endif -%}
         </ul>
@@ -250,22 +250,22 @@
               <li style="--i: {{ forloop.index0 }}">
                 {%- if link.links.size > 0 -%}
                   <details class="mnav__group" name="mnav">
-                    <summary class="mnav__row"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title }}</span>{% render 'icon', name: 'chevron-down', class: 'mnav__chev' %}</summary>
+                    <summary class="mnav__row"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title | escape }}</span>{% render 'icon', name: 'chevron-down', class: 'mnav__chev' %}</summary>
                     <div class="mnav__sub">
                       <a class="mnav__all" href="{{ link.url }}">{{ 'header.shop_all' | t: title: link.title }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
                       <div class="mnav__chips">
                         {%- for child in link.links -%}
                           {%- assign ct = child.title | downcase -%}
                           {%- unless ct contains 'shop all' or child.url == link.url -%}
-                            <a class="mnav__chip" href="{{ child.url }}">{{ child.title }}</a>
+                            <a class="mnav__chip" href="{{ child.url }}">{{ child.title | escape }}</a>
                           {%- endunless -%}
-                          {%- for g in child.links -%}{%- assign gt = g.title | downcase -%}{%- unless gt contains 'shop all' -%}<a class="mnav__chip mnav__chip--sub" href="{{ g.url }}">{{ g.title }}</a>{%- endunless -%}{%- endfor -%}
+                          {%- for g in child.links -%}{%- assign gt = g.title | downcase -%}{%- unless gt contains 'shop all' -%}<a class="mnav__chip mnav__chip--sub" href="{{ g.url }}">{{ g.title | escape }}</a>{%- endunless -%}{%- endfor -%}
                         {%- endfor -%}
                       </div>
                     </div>
                   </details>
                 {%- else -%}
-                  <a class="mnav__row" href="{{ link.url }}"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title }}</span>{% render 'icon', name: 'arrow-right', class: 'mnav__chev icon--sm' %}</a>
+                  <a class="mnav__row" href="{{ link.url }}"><span class="mnav__ico">{% render 'icon', name: icon %}</span><span class="mnav__txt">{{ link.title | escape }}</span>{% render 'icon', name: 'arrow-right', class: 'mnav__chev icon--sm' %}</a>
                 {%- endif -%}
               </li>
             {%- endunless -%}
@@ -278,7 +278,7 @@
               {%- assign dimg = link.object.featured_image | default: link.object.products.first.featured_media.preview_image -%}
               <a class="mnav__dept" href="{{ link.url }}">
                 <span class="mnav__dept-img">{%- if dimg -%}{{ dimg | image_url: width: 260 | image_tag: width: 130, height: 130, loading: 'lazy', alt: link.title }}{%- endif -%}</span>
-                <span class="mnav__dept-name">{{ link.title }}</span>
+                <span class="mnav__dept-name">{{ link.title | escape }}</span>
               </a>
             {%- endif -%}
           {%- endfor -%}
@@ -314,7 +314,7 @@
                 assign qi = 'sparkle'
               endif
             -%}
-            {%- if is_page -%}<a class="mnav__tile" href="{{ link.url }}">{% render 'icon', name: qi %}<span>{{ link.title }}</span></a>{%- endif -%}
+            {%- if is_page -%}<a class="mnav__tile" href="{{ link.url }}">{% render 'icon', name: qi %}<span>{{ link.title | escape }}</span></a>{%- endif -%}
           {%- endfor -%}
           {%- if contact_url != blank -%}<a class="mnav__tile" href="{{ contact_url }}">{% render 'icon', name: 'chat' %}<span>{{ section.settings.contact_label }}</span></a>{%- endif -%}
         </div>

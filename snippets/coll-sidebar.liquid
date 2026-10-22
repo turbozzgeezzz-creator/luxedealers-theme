@@ -10,7 +10,7 @@
       {%- comment -%} Category: the collections in the main menu (and their sub-collections), so shoppers can jump straight to a department. {%- endcomment -%}
       {%- capture catlinks -%}
         {%- for l in linklists['main-menu-2'].links -%}
-          {%- if l.type == 'collection_link' and l.object.handle != collection.handle -%}<a class="facet-cat" href="{{ l.url }}">{{ l.title }}</a>{%- endif -%}
+          {%- if l.type == 'collection_link' and l.object.handle != collection.handle -%}<a class="facet-cat" href="{{ l.url }}">{{ l.title | escape }}</a>{%- endif -%}
           {%- if l.active or l.child_active -%}{%- for c in l.links -%}{%- if c.type == 'collection_link' and c.object.handle != collection.handle -%}<a class="facet-cat facet-cat--sub" href="{{ c.url }}">{{ c.title }}</a>{%- endif -%}{%- endfor -%}{%- endif -%}
         {%- endfor -%}
       {%- endcapture -%}
