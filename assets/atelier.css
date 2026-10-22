@@ -2311,3 +2311,29 @@ html[data-theme="dark"] .post__content .article-faq { border-top-color: rgba(255
 html[data-theme="dark"] .trk { background: #11295E; border-color: rgba(255,255,255,.1); }
 html[data-theme="dark"] .trk__num { background: #173572; }
 html[data-theme="dark"] .trk__dot { background: #11295E; border-color: rgba(255,255,255,.3); }
+
+/* Track page v2: lookup first, compact steps */
+.trk-lookup { padding: 24px; border-radius: 22px; background: #F3F6FA; display: grid; gap: 10px; }
+.trk-lookup__title { font-size: 22px; font-weight: 700; margin: 0; }
+.trk-lookup__text { margin: 0; color: var(--c-muted, #5B6474); }
+.trk-lookup__form { display: grid; gap: 8px; margin-top: 6px; }
+.trk-lookup__label { font-size: 13px; font-weight: 600; margin-top: 4px; }
+.trk-lookup__label span { font-weight: 400; color: var(--c-muted, #5B6474); }
+.trk-lookup__form .field__input { height: 52px; font-size: 16px; border-radius: 12px; }
+.trk-lookup__form .btn { height: 52px; margin-top: 6px; font-size: 16px; }
+@media (min-width: 750px) {
+  .trk-lookup { padding: 32px; }
+  .trk-lookup__form { grid-template-columns: 1fr 1fr auto; align-items: end; column-gap: 10px; }
+  .trk-lookup__form .trk-lookup__label { grid-row: 1; }
+  .trk-lookup__form .field__input { grid-row: 2; }
+  .trk-lookup__form .btn { grid-row: 2; margin-top: 0; width: auto; padding: 0 28px; }
+}
+.trk { margin-top: 0; }
+.trk__note--hint { padding: 12px 14px; border-radius: 12px; background: #FFF6D6; border: 1px solid #F4C430; color: #14213D; }
+.track__steps--compact { gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.track__steps--compact li { padding: 14px; gap: 4px; font-size: 13px; border-radius: 16px; }
+.track__steps--compact .track__icon { width: 34px; height: 34px; border-radius: 10px; margin-bottom: 2px; }
+@media (min-width: 750px) { .track__steps--compact { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 990px) { .track__cards--two { grid-template-columns: 1fr 1fr; } }
+html[data-theme="dark"] .trk-lookup { background: #173572; }
+html[data-theme="dark"] .trk__note--hint { background: #3A3315; color: #FFF; }
