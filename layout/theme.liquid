@@ -2,6 +2,15 @@
 <html class="no-js" lang="{{ request.locale.iso_code }}" data-motion="{{ settings.motion }}"{% if settings.gold_shimmer %} data-shimmer{% endif %}{% if settings.page_transitions %} data-transitions{% endif %}>
   <head>
     <meta charset="utf-8">
+    {%- comment -%}
+      Security: browsers only run scripts from the sources below. Injected code that tries to load a script from
+      anywhere else (like the cartassure.top attack via a compromised app) is blocked. Off in the theme editor.
+      If a new app stops working, add its script domain here.
+    {%- endcomment -%}
+    {%- unless request.design_mode -%}
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' blob: https://cdn.shopify.com https://*.shopify.com https://*.shopifycloud.com https://shop.app https://*.shop.app https://connect.facebook.net https://www.google.com https://www.gstatic.com https://www.recaptcha.net https://www.googletagmanager.com https://www.google-analytics.com https://*.judge.me https://*.swym.it https://*.swymrelay.com https://luxemail-main.turbozzgeezzz.workers.dev; object-src 'none'; base-uri 'self'">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    {%- endunless -%}
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="theme-color" content="{{ settings.color_background }}">
