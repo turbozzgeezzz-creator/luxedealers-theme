@@ -21,13 +21,13 @@
       <label class="qtyb__opt">
         <input type="radio" name="{{ form_id }}-qtyb" value="{{ n }}"{% if forloop.first %} checked{% endif %} data-price="{{ v.price }}" data-pct="{{ pc }}">
         <span class="qtyb__radio" aria-hidden="true"></span>
-        <span class="qtyb__main"><strong>{% if n == 1 %}{{ 'products.qty_one' | t }}{% else %}{{ 'products.qty_many' | t: count: n }}{% endif %}</strong>
+        <span class="qtyb__main"><strong>Buy {{ n }}</strong>
           {%- if pc > 0 -%}<span class="qtyb__save">{{ 'products.qty_save' | t: percent: pc }}</span>{%- else -%}<span class="qtyb__save qtyb__save--none">{{ 'products.qty_standard' | t }}</span>{%- endif -%}
           {%- if n > 1 -%}{%- assign em = each | money -%}<small>{{ 'products.qty_each' | t: price: em }}</small>{%- endif -%}
         </span>
         <span class="qtyb__price"><strong data-qtyb-total>{{ tot | money }}</strong>{%- if pc > 0 -%}<s data-qtyb-was>{{ v.price | times: n | money }}</s>{%- endif -%}</span>
       </label>
     {%- endfor -%}
-    <p class="qtyb__note">{{ 'products.qty_note' | t }}</p>
+    <p class="qtyb__note">Mix and match any items. The discount is applied automatically at checkout.</p>
   </fieldset>
 {%- endif -%}
