@@ -15,7 +15,7 @@
   <div class="popup__card popup__card--lux" role="dialog" aria-modal="true" aria-labelledby="PopupTitle" tabindex="-1">
     <button type="button" class="icon-btn popup__close" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button>
     <div class="popup__side tile--noir">
-      <img src="{{ section.settings.art | default: 'gift' | prepend: 'lx-' | append: '.svg' | asset_url }}" alt="" width="300" height="300" loading="lazy">
+      <img src="{{ section.settings.art | default: 'gift' | prepend: 'lx-' | append: '.svg' | asset_url }}" alt="Gift for subscribers" width="300" height="300" loading="lazy">
       <ul class="popup__perks" role="list">
         <li>{% render 'icon', name: 'sparkle', class: 'icon--sm' %} {{ 'newsletter.perk_1' | t }}</li>
         <li>{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ 'newsletter.perk_2' | t }}</li>

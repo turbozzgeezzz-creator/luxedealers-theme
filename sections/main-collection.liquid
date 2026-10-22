@@ -17,7 +17,7 @@
         <p class="coll-hero__meta"><span>{{ count_text }}</span>{%- capture fp -%}{% render 'from-price', collection: collection %}{%- endcapture -%}{%- if fp != blank -%}<span data-from-wrap>{{ 'sections.from_price' | t }} <strong>{{ fp }}</strong></span>{%- endif -%}<span>{% render 'icon', name: 'truck', class: 'icon--sm' %} {{ 'products.free_shipping' | t }}</span></p>
         {%- if collection.description != blank and s.show_description -%}<div class="coll-hero__desc" data-clamp>{{ collection.description | strip_html | truncate: 260 }}</div>{%- endif -%}
       </div>
-      <div class="tile__art coll-hero__art"><img src="{{ art | append: '.svg' | asset_url }}" alt="" width="600" height="600" class="tile__img" fetchpriority="high"></div>
+      <div class="tile__art coll-hero__art"><img src="{{ art | append: '.svg' | asset_url }}" alt="{{ collection.title | escape }}" width="600" height="600" class="tile__img" fetchpriority="high"></div>
     </div>
     {%- if s.chips_menu != blank -%}
       <nav class="coll-chips" aria-label="{{ 'collections.browse' | t }}">

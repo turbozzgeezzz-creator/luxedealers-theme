@@ -627,6 +627,7 @@
         slides.forEach(function (s, i) {
           on(s, 'click', function (e) {
             if (e.target.closest('video, model-viewer, iframe, button')) return;
+            $$('img[data-lb-src]', lb).forEach(function (im) { if (!im.getAttribute('src')) im.src = im.dataset.lbSrc; });
             lb.classList.add('is-open'); lockScroll();
             var lbTrack = $('.lightbox__track', lb);
             requestAnimationFrame(function () { lbTrack.scrollLeft = i * lbTrack.clientWidth; $('.lightbox__close', lb).focus(); });

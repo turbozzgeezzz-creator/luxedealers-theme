@@ -16,7 +16,7 @@
         </form>
         {%- if search.performed -%}<p class="coll-hero__meta"><span>{{ 'search.results_count' | t: count: search.results_count, terms: search.terms }}</span></p>{%- endif -%}
       </div>
-      <div class="tile__art coll-hero__art"><img src="{{ 'lx-diamond.svg' | asset_url }}" alt="" width="600" height="600" class="tile__img"></div>
+      <div class="tile__art coll-hero__art"><img src="{{ 'lx-diamond.svg' | asset_url }}" alt="Search" width="600" height="600" class="tile__img"></div>
     </div>
     {%- assign pops = section.settings.popular | split: ',' -%}
     <nav class="coll-chips" aria-label="{{ 'search.popular' | t }}">{%- for q in pops -%}{%- assign qq = q | strip -%}<a class="search-chip" href="{{ routes.search_url }}?q={{ qq | url_encode }}&options%5Bprefix%5D=last&type=product">{{ qq }}</a>{%- endfor -%}</nav>

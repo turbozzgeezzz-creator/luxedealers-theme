@@ -22,6 +22,6 @@
         </p>
       {%- endif -%}
     </div>
-    <div class="tile__art coll-hero__art"><img src="{{ 'lx-' | append: a | append: '.svg' | asset_url }}" alt="" width="600" height="600" class="tile__img" fetchpriority="high"></div>
+    <div class="tile__art coll-hero__art"><img src="{{ 'lx-' | append: a | append: '.svg' | asset_url }}" alt="{{ title | escape }}" width="600" height="600" class="tile__img" fetchpriority="high"></div>
   </div>
 </div>

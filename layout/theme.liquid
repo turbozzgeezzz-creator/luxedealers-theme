@@ -57,7 +57,7 @@
       {{ seo_title }}
       {%- if current_tags %} &ndash; {{ current_tags | join: ', ' }}{% endif -%}
       {%- if current_page != 1 %} &ndash; Page {{ current_page }}{% endif -%}
-      {%- unless seo_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+      {%- comment -%} Brand suffix only when the title still fits in search results (about 60 characters). {%- endcomment -%}{%- unless seo_title contains shop.name or seo_title.size > 44 %} &ndash; {{ shop.name }}{% endunless -%}
     </title>
     <meta name="description" content="{{ seo_desc | escape }}">
     {%- liquid
