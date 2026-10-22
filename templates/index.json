@@ -290,7 +290,7 @@
         "eyebrow": "Just landed",
         "heading": "Shop the latest",
         "layout": "rail",
-        "limit": 10,
+        "limit": 8,
         "view_all": false,
         "subtle": false
       }
@@ -535,7 +535,7 @@
         "eyebrow": "Selected styles reduced",
         "heading": "Price drops",
         "layout": "rail",
-        "limit": 16,
+        "limit": 10,
         "view_all": true,
         "subtle": true
       }
