@@ -81,8 +81,8 @@
             "shippingDestination": { "@type": "DefinedRegion", "addressCountry": {{ c | json }} },
             "deliveryTime": {
               "@type": "ShippingDeliveryTime",
-              "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" },
-              "transitTime": { "@type": "QuantitativeValue", "minValue": 10, "maxValue": 18, "unitCode": "DAY" }
+              "handlingTime": { "@type": "QuantitativeValue", "minValue": 3, "maxValue": 7, "unitCode": "DAY" },
+              "transitTime": { "@type": "QuantitativeValue", "minValue": 7, "maxValue": 14, "unitCode": "DAY" }
             }
           }{% unless forloop.last %},{% endunless %}
           {%- endfor -%}
