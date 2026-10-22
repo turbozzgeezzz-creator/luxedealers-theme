@@ -73,7 +73,7 @@
           "settings": {
             "topic": "orders",
             "question": "Do you have any discounts?",
-            "answer": "<p>Yes. Buy any 2 pieces and save 10%, or buy 3 or more and save 15%. You can mix any items, and the saving applies automatically at checkout, so there's no code to enter.</p><p>Join our email list for 10% off your first order. Your personal code appears straight away and we email it to you too. Codes are single use and can't be combined with other discounts.</p>"
+            "answer": "<p>Yes. Buy any 2 items and save 10%, or buy 3 or more and save 15%. You can mix any items, and the saving applies automatically at checkout, so there's no code to enter.</p><p>Join our email list for 10% off your first order. Your personal code appears straight away and we email it to you too. Codes are single use and can't be combined with other discounts.</p>"
           }
         },
         "q9": {

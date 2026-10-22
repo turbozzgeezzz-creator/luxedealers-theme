@@ -70,9 +70,9 @@
     "qty_note": "Mix and match any items. The discount is applied automatically at checkout.",
     "show_all_options": "Show all {{ count }}",
     "show_fewer": "Show fewer",
-    "no_reviews_yet": "No reviews for this piece yet. Here's what customers say about others.",
+    "no_reviews_yet": "No reviews for this item yet. Here's what customers say about others.",
     "store_rating": "{{ rating }} / 5 store rating from {{ count }} reviews",
-    "more_reviews": "Recent reviews of other pieces",
+    "more_reviews": "Recent reviews of other items",
     "add_to_bag": "Add to bag",
     "add_title": "Add {{ title }} to bag",
     "quick_view": "Quick view",
@@ -109,7 +109,7 @@
     "copy_link": "Copy link",
     "dispatch": "Estimated dispatch:",
     "advisor_message": "Hello, I have a question about {{ title }}:",
-    "this_piece": "This piece",
+    "this_piece": "This item",
     "set_total": "Total",
     "add_selected": "Add selected",
     "choose_options": "Choose options",
@@ -141,7 +141,7 @@
     "reviews": "Reviews",
     "real_support": "Real people answer every email",
     "more_from": "More from {{ title }}",
-    "help_title": "Questions about this piece?",
+    "help_title": "Questions about this item?",
     "help_cta": "Ask us",
     "save_amount": "Save {{ amount }}"
   },
@@ -195,14 +195,14 @@
     "filter": "Filter",
     "sort": "Sort",
     "count": {
-      "one": "{{ count }} piece",
-      "other": "{{ count }} pieces"
+      "one": "{{ count }} item",
+      "other": "{{ count }} items"
     },
     "grid": "Grid size",
     "grid_3": "Larger photos",
     "grid_4": "Smaller photos",
     "clear": "Clear all",
-    "empty": "No pieces match these filters",
+    "empty": "No items match these filters",
     "apply": "Apply",
     "from": "From",
     "to": "To",
@@ -364,10 +364,10 @@
     "ribbon_each": "{{ price }} each with {{ count }}+",
     "hero_rating": "from {{ count }} reviews",
     "hero_ship": "Free tracked shipping",
-    "offers_qty": "Buy {{ count }} pieces",
+    "offers_qty": "Buy {{ count }} items",
     "offers_qty_plus": "Buy {{ count }} or more",
-    "offers_auto": "Any {{ count }} pieces, taken off at checkout",
-    "offers_mix": "Mix any pieces you like",
+    "offers_auto": "Any {{ count }} items, taken off at checkout",
+    "offers_mix": "Mix any items you like",
     "offers_join": "Join the list to get it",
     "offers_first": "Your first order",
     "offers_off": "off",
@@ -376,7 +376,7 @@
     "offers_ship_note": "Tracked shipping, worldwide"
   },
   "wishlist": {
-    "note": "Your saved pieces are kept on this device.",
+    "note": "Your saved items are kept on this device.",
     "empty": "Nothing saved yet",
     "title": "Wishlist",
     "empty_hint": "Tap the heart on any product to save it here.",
@@ -459,7 +459,7 @@
     "continue": "Pick up where you left off",
     "dismiss": "Dismiss",
     "heading": "Pick up where you left off",
-    "view": "View this piece",
+    "view": "View this item",
     "browse": "Browse everything"
   },
   "size": {
@@ -511,10 +511,10 @@
   "bundle": {
     "you_save": "You save {{ percent }}% ({{ amount }}), applied at checkout",
     "eyebrow": "Build your set",
-    "intro": "Tap the pieces you want, choose an option, and add them all at once.",
+    "intro": "Tap the items you want, choose an option, and add them all at once.",
     "this_item": "This item",
     "selected": "selected ·",
-    "add_one": "Pick pieces to add",
+    "add_one": "Pick items to add",
     "add_many": "Add [n] to bag",
     "add_item": "Add {{ title }}",
     "choose": "Choose an option for {{ title }}"
