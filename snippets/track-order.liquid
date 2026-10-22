@@ -13,12 +13,7 @@
       <div class="track__card">
         <h2>{{ 'track.have_number' | t }}</h2>
         <p>{{ 'track.have_number_text' | t }}</p>
-        <form class="track__form" action="https://t.17track.net/en" method="get" target="_blank" rel="noopener" data-track-form>
-          <label class="visually-hidden" for="TrackNumber">{{ 'track.number' | t }}</label>
-          <input class="field__input" id="TrackNumber" name="q" placeholder="{{ 'track.number' | t }}" required autocomplete="off">
-          <button type="submit" class="btn btn--gold">{{ 'track.track' | t }}</button>
-        </form>
-        <small class="muted">{{ 'track.opens' | t }}</small>
+        <p class="track__notice"><strong>{{ 'track.unavailable_title' | t }}</strong> {{ 'track.unavailable_text' | t }}</p>
       </div>
       <div class="track__card">
         <h2>{{ 'track.account' | t }}</h2>

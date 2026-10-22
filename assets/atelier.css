@@ -2273,3 +2273,4 @@ html[data-theme="dark"] .bag-up__was { color: rgba(255,255,255,.55); }
 html[data-theme="dark"] .post__content .article-answer { background: #173572; }
 html[data-theme="dark"] .post__content .article-answer strong:first-child { color: #FFD966; }
 html[data-theme="dark"] .post__content .article-faq { border-top-color: rgba(255,255,255,.15); }
+.track__notice { margin: 12px 0 0; padding: 14px 16px; border-radius: 12px; background: #FFF6D6; border: 1px solid #F4C430; color: #14213D; line-height: 1.5; }

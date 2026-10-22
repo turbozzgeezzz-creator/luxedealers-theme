@@ -504,7 +504,9 @@
     "account_text": "Sign in to see your orders and their status.",
     "sign_in": "Sign in",
     "help": "Need help?",
-    "help_text": "Tracking not working after 48 hours, or something not right? Email us with your order number."
+    "help_text": "Tracking not working after 48 hours, or something not right? Email us with your order number.",
+    "unavailable_title": "Online tracking is unavailable right now.",
+    "unavailable_text": "Use the tracking link in your shipping confirmation email, or email us your order number and we’ll send you an update."
   },
   "bundle": {
     "you_save": "You save {{ percent }}% ({{ amount }}), applied at checkout",
