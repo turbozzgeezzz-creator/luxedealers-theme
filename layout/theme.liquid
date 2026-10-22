@@ -22,8 +22,26 @@
       if request.page_type == 'index' and settings.seo_home_description != blank
         assign seo_desc = settings.seo_home_description
       endif
-      if seo_desc == blank
-        assign seo_desc = settings.seo_home_description
+      # Pages without their own description get one built from their own content, never the homepage text
+      # (identical descriptions across pages are flagged by Google and Bing).
+      if seo_desc == blank or seo_desc == settings.seo_home_description and request.page_type != 'index'
+        case request.page_type
+          when 'collection'
+            assign seo_desc = 'Shop ' | append: collection.title | append: ' at LuxeDealers: ' | append: collection.products_count | append: ' styles, each hand-checked, with free tracked shipping worldwide and a refund or reship guarantee.'
+          when 'product'
+            assign seo_desc = 'Shop ' | append: product.title | append: ' at LuxeDealers from ' | append: product.price_min | money_without_trailing_zeros | append: '. Hand-checked, free tracked shipping worldwide, refund or reship guarantee.'
+          when 'page'
+            assign seo_desc = page.content | strip_html | strip_newlines | truncate: 155
+          when 'blog'
+            assign seo_desc = 'Style guides, buying tips and trend notes from the LuxeDealers team: ' | append: blog.title | append: '.'
+          when 'article'
+            assign seo_desc = article.excerpt_or_content | strip_html | strip_newlines | truncate: 155
+          else
+            assign seo_desc = settings.seo_home_description
+        endcase
+        if seo_desc == blank
+          assign seo_desc = settings.seo_home_description
+        endif
       endif
     -%}
     <title>
