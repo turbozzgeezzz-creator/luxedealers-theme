@@ -185,9 +185,14 @@ export function normaliseProduct(env, p) {
   };
 }
 
-export async function productByHandle(env, handle) {
+export async function productByHandle(env, handle, hop = 0) {
   const data = await gql(env, `query($h: String!){ productByIdentifier(identifier: { handle: $h }){ ${PRODUCT_FIELDS} } }`, { h: handle });
-  return normaliseProduct(env, data.productByIdentifier);
+  if (data.productByIdentifier || hop > 1 || !handle) return normaliseProduct(env, data.productByIdentifier);
+  // Renamed product: follow the store's /products/<old> redirect (saved carts and wishlists keep old handles).
+  const r = await gql(env, `query($q: String!){ urlRedirects(first: 10, query: $q){ nodes{ path target } } }`, { q: `path:/products/${handle}` });
+  const hit = (r.urlRedirects.nodes || []).find((x) => x.path.toLowerCase() === `/products/${handle}`.toLowerCase());
+  const m = /\/products\/([^/?#]+)/.exec((hit || {}).target || '');
+  return m ? productByHandle(env, m[1], hop + 1) : null;
 }
 
 /**

@@ -51,13 +51,13 @@ async function sendTestsOnce(env) {
   if (await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_sent').first()) return;
   const next = Number((await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_next').first())?.v || 0);
   const until = new Date(Date.now() + 7 * 86400000).toISOString();
-  const items = [{ handle: 'chan-luxury-handbags', qty: 1 }];
+  const items = [{ handle: 'chan-handbags-1', qty: 1 }];
   const samples = [
     ['welcome1', { firstName: 'Sam' }], ['welcome2', { firstName: 'Sam' }], ['welcome3', { firstName: 'Sam' }],
     ['checkout1', { token: 'preview', items, firstName: 'Sam' }], ['checkout2', { token: 'preview', items, firstName: 'Sam' }],
-    ['cart1', { handles: ['chan-luxury-handbags'] }], ['cart2', { handles: ['chan-luxury-handbags'] }],
-    ['browse', { handle: 'chan-luxury-handbags' }], ['wishlist', { handles: ['chan-luxury-handbags'] }],
-    ['postpurchase', { firstName: 'Sam', handles: ['chan-luxury-handbags'] }], ['nextreminder', { firstName: 'Sam', code: 'NEXT10-PREVIEW', endsAt: until, since: 0 }],
+    ['cart1', { handles: ['chan-handbags-1'] }], ['cart2', { handles: ['chan-handbags-1'] }],
+    ['browse', { handle: 'chan-handbags-1' }], ['wishlist', { handles: ['chan-handbags-1'] }],
+    ['postpurchase', { firstName: 'Sam', handles: ['chan-handbags-1'] }], ['nextreminder', { firstName: 'Sam', code: 'NEXT10-PREVIEW', endsAt: until, since: 0 }],
     ['vip', { firstName: 'Sam' }], ['winback', { firstName: 'Sam' }],
     ['fortnight', { theme: 'new', firstName: 'Sam', offer: { code: 'NEWIN10-PREVIEW', endsAt: until } }], ['fortnight', { theme: 'deals', firstName: 'Sam' }], ['fortnight', { theme: 'picks', firstName: 'Sam' }], ['fortnight', { theme: 'best', firstName: 'Sam' }],
     ['journal', { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() }],
@@ -165,15 +165,15 @@ export default {
     // Owner-only preview of any email with sample data: /preview?flow=welcome1&key=UNSUB_SECRET
     if (url.pathname === '/preview' && url.searchParams.get('key') === env.UNSUB_SECRET) {
       const flow = url.searchParams.get('flow') || 'welcome1';
-      const items = [{ handle: url.searchParams.get('h') || 'chan-luxury-handbags', qty: 1 }];
+      const items = [{ handle: url.searchParams.get('h') || 'chan-handbags-1', qty: 1 }];
       const sample = {
         welcome3: { firstName: 'Sam' }, checkout2: { token: 'preview', items, firstName: 'Sam' }, cart2: { handles: items.map((i) => i.handle) },
         postpurchase: { firstName: 'Sam', handles: items.map((i) => i.handle) }, winback: { firstName: 'Sam' },
         nextreminder: { firstName: 'Sam', code: 'NEXT10-PREVIEW', endsAt: new Date(Date.now() + 7 * 86400000).toISOString(), since: 0 },
         checkout1: { token: 'preview', items, firstName: 'Sam' },
         welcome1: { firstName: 'Sam' }, welcome2: { firstName: 'Sam' }, vip: { firstName: 'Sam' },
-        browse: { handle: url.searchParams.get('h') || 'chan-luxury-handbags' },
-        cart1: { handles: ['chan-luxury-handbags'] }, wishlist: { handles: ['chan-luxury-handbags'] },
+        browse: { handle: url.searchParams.get('h') || 'chan-handbags-1' },
+        cart1: { handles: ['chan-handbags-1'] }, wishlist: { handles: ['chan-handbags-1'] },
         fortnight: { theme: url.searchParams.get('theme') || 'new', firstName: 'Sam' },
         journal: { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() },
       }[flow];
