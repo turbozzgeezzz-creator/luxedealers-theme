@@ -2359,3 +2359,25 @@ html[data-theme="dark"] .coll-about__intro .rte a, html[data-theme="dark"] .coll
 /* Sale price as bold as a regular price; was-price bold too */
 .price--sale .price__current { font-weight: 700; }
 .price__compare, .bag-up__was, .qtyb__price s { font-weight: 600; }
+
+/* Tracking result: one clear status, progress bar, latest update, copyable number */
+.trk__line { margin: 4px 0 0; font-size: 15px; color: var(--c-muted, #5B6474); }
+.trk__head .trk__title { margin: 4px 0 0; font-size: clamp(24px, 3vw, 32px); }
+.trk__bar { height: 10px; border-radius: 999px; background: rgba(20,33,61,.1); margin: 22px 0 10px; overflow: hidden; }
+.trk__fill { height: 100%; border-radius: inherit; background: var(--yellow, #F4C430); transition: width .6s ease; }
+.trk__stages { list-style: none; margin: 0 0 20px; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.trk__stages li { display: grid; gap: 2px; font-size: 13px; color: var(--c-muted, #5B6474); }
+.trk__stages li:nth-child(2) { text-align: center; } .trk__stages li:nth-child(3) { text-align: center; } .trk__stages li:last-child { text-align: right; }
+.trk__stages li.is-done { color: var(--c-text, #14213D); }
+.trk__stages li.is-now strong { color: var(--blue, #1E4FA8); }
+.trk__latest, .trk__num { display: grid; gap: 3px; padding: 14px 16px; border-radius: 12px; background: rgba(30,79,168,.06); margin: 0 0 10px; }
+.trk__latest strong { font-size: 16px; }
+.trk__latest span:last-child { font-size: 13px; color: var(--c-muted, #5B6474); }
+.trk__numrow { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.trk__numrow strong { font-size: 16px; letter-spacing: .04em; overflow-wrap: anywhere; }
+.trk__eyebrow { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c-muted, #5B6474); }
+html[data-theme="dark"] .trk__bar { background: rgba(255,255,255,.14); }
+html[data-theme="dark"] .trk__latest, html[data-theme="dark"] .trk__num { background: rgba(255,255,255,.07); }
+html[data-theme="dark"] .trk__stages li.is-done, html[data-theme="dark"] .trk__line { color: #EEF2FA; }
+@media (prefers-reduced-motion: reduce) { .trk__fill { transition: none; } }
+@media (max-width: 480px) { .trk__stages li { font-size: 12px; } }

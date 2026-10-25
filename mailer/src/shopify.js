@@ -259,6 +259,9 @@ export async function latestArticles(env, limit = 3, sinceIso = null) {
 // Every shipment is tracked on 17TRACK's public tracking website (it reads Huahan, 4PX, China Post and the local
 // postal services in every destination country). ParcelsApp is shown as a second option. These are public
 // websites, not the 17TRACK Shopify app.
+// Carrier and courier names are kept private: stripped from any scan text shown to customers.
+const CARRIERS = /\b(hua\s*han|huahan|hh-?exp\w*|4px|yun\s*express|yanwen|cainiao|17track|china post)\b[\s:,-]*/gi;
+export function hideCarrier(s) { return s ? String(s).replace(CARRIERS, '').replace(/\s{2,}/g, ' ').trim() : s; }
 export function carrierLinks(number) {
   const n = encodeURIComponent(number);
   return { primary: `https://t.17track.net/en#nums=${n}`, backup: `https://parcelsapp.com/en/tracking/${n}` };
@@ -297,8 +300,8 @@ export async function trackOrder(env, rawNumber, rawEmail) {
         image: l.image ? `${l.image.url}${l.image.url.includes('?') ? '&' : '?'}width=160` : null })),
       shipments: order.fulfillments.map((f) => ({
         shippedAt: f.createdAt, status: f.displayStatus, estimate: f.estimatedDeliveryAt, inTransitAt: f.inTransitAt, deliveredAt: f.deliveredAt,
-        tracking: f.trackingInfo.filter((t) => t.number).map((t) => ({ number: t.number, ...carrierLinks(t.number) })),
-        events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt, message: e.message || null, place: [e.city, e.country].filter(Boolean).join(', ') || null })),
+        tracking: f.trackingInfo.filter((t) => t.number).map((t) => ({ number: t.number })),
+        events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt, message: hideCarrier(e.message) || null, place: [e.city, e.country].filter(Boolean).join(', ') || null })),
       })),
     };
   }
