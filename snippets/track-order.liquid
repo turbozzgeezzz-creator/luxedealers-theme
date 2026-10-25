@@ -51,11 +51,15 @@
     var sh = d.shipments || [], ev = [], tracks = [];
     sh.forEach(function (s) { (s.events || []).forEach(function (e) { ev.push(e); }); (s.tracking || []).forEach(function (t) { if (tracks.indexOf(t.number) < 0) tracks.push(t.number); }); });
     ev.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    var scans = []; sh.forEach(function (s) { (s.scans || []).forEach(function (x) { scans.push(x); }); });
+    scans.sort(function (a, b) { return String(b.at).localeCompare(String(a.at)); });
+    var parcel = (sh.filter(function (s) { return s.parcel; })[0] || {}).parcel;
+    var when = function (d) { return d ? new Date(d).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : ''; };
     var has = function (st) { return ev.some(function (e) { return e.status === st; }); };
     var deliveredAt = (sh.filter(function (s) { return s.deliveredAt; })[0] || {}).deliveredAt;
-    var delivered = !!deliveredAt || has('DELIVERED');
+    var delivered = !!deliveredAt || has('DELIVERED') || parcel === 'Delivered';
     var shipped = sh.length > 0, shippedAt = shipped ? sh[0].shippedAt : null;
-    var moving = delivered || has('IN_TRANSIT') || has('OUT_FOR_DELIVERY') || (shipped && (Date.now() - new Date(shippedAt)) > 2 * 86400000);
+    var moving = delivered || has('IN_TRANSIT') || has('OUT_FOR_DELIVERY') || /InTransit|OutForDelivery|AvailableForPickup/.test(parcel || '') || (shipped && (Date.now() - new Date(shippedAt)) > 2 * 86400000);
     var stage = d.cancelled ? 0 : delivered ? 4 : moving ? 3 : shipped ? 2 : 1;
     var title = d.cancelled ? 'Order cancelled' : delivered ? 'Delivered' : has('OUT_FOR_DELIVERY') ? 'Out for delivery today' : moving ? 'On its way to you' : shipped ? 'Shipped' : 'Being prepared';
     var est = sh.map(function (s) { return s.estimate; }).filter(Boolean)[0];
@@ -69,11 +73,14 @@
     var html = '<div class="trk__head"><span class="trk__eyebrow">Order ' + esc(d.name) + '</span><h2 class="trk__title">' + esc(title) + '</h2><p class="trk__line">' + esc(line) + '</p></div>';
     if (!d.cancelled) html += '<div class="trk__bar" role="img" aria-label="' + esc(title) + '"><div class="trk__fill" style="width:' + [0, 8, 38, 70, 100][stage] + '%"></div></div><ol class="trk__stages">' +
       steps.map(function (s, i) { return '<li class="' + (stage >= i + 1 ? 'is-done' : '') + (stage === i + 1 && !delivered ? ' is-now' : '') + '"><strong>' + s[0] + '</strong><span>' + (stage >= i + 1 && s[1] ? day(s[1]) : '') + '</span></li>'; }).join('') + '</ol>';
-    if (ev.length && !d.limited) html += '<div class="trk__latest"><span class="trk__eyebrow">Latest update</span><strong>' + esc(LABEL[ev[0].status] || ev[0].status.replace(/_/g, ' ').toLowerCase()) + '</strong><span>' + day(ev[0].at) + (ev[0].place ? ' · ' + esc(ev[0].place) : '') + '</span></div>';
+    if (scans.length) {
+      html += '<div class="trk__latest"><span class="trk__eyebrow">Latest update</span><strong>' + esc(scans[0].text) + '</strong><span>' + when(scans[0].at) + (scans[0].place ? ' · ' + esc(scans[0].place) : '') + '</span></div>';
+    } else if (ev.length && !d.limited) html += '<div class="trk__latest"><span class="trk__eyebrow">Latest update</span><strong>' + esc(LABEL[ev[0].status] || ev[0].status.replace(/_/g, ' ').toLowerCase()) + '</strong><span>' + day(ev[0].at) + (ev[0].place ? ' · ' + esc(ev[0].place) : '') + '</span></div>';
     if (tracks.length) html += tracks.map(function (n) { return '<div class="trk__num"><span class="trk__eyebrow">Tracking number</span><div class="trk__numrow"><strong>' + esc(n) + '</strong><button type="button" class="btn btn--sm" data-copy="' + esc(n) + '">Copy</button></div></div>'; }).join('');
     if (shipped && !delivered && !d.cancelled) html += '<p class="trk__note">International parcels can go a few days without a new update while they move between countries. That\u2019s normal. If yours hasn\u2019t moved for 10 days, email us and we\u2019ll chase it.</p>';
     if (d.limited) html += '<p class="trk__note trk__note--hint">Add the email you used at checkout to see your items, tracking number and full history.</p>';
-    if (ev.length > 1 && !d.limited) html += '<details class="trk__history"><summary>Full shipping history</summary><ul>' + ev.map(function (e) { return '<li><strong>' + esc(LABEL[e.status] || e.status.replace(/_/g, ' ').toLowerCase()) + '</strong><span>' + day(e.at) + (e.place ? ' · ' + esc(e.place) : '') + '</span>' + (e.message ? '<em>' + esc(e.message) + '</em>' : '') + '</li>'; }).join('') + '</ul></details>';
+    if (scans.length > 1) html += '<details class="trk__history" open><summary>Full tracking history</summary><ul>' + scans.map(function (e) { return '<li><strong>' + esc(e.text) + '</strong><span>' + when(e.at) + (e.place ? ' · ' + esc(e.place) : '') + '</span></li>'; }).join('') + '</ul></details>';
+    else if (ev.length > 1 && !d.limited) html += '<details class="trk__history"><summary>Full shipping history</summary><ul>' + ev.map(function (e) { return '<li><strong>' + esc(LABEL[e.status] || e.status.replace(/_/g, ' ').toLowerCase()) + '</strong><span>' + day(e.at) + (e.place ? ' · ' + esc(e.place) : '') + '</span>' + (e.message ? '<em>' + esc(e.message) + '</em>' : '') + '</li>'; }).join('') + '</ul></details>';
     if ((d.items || []).length) html += '<div class="trk__items">' + d.items.map(function (i) { return '<div class="trk__item">' + (i.image ? '<img src="' + esc(i.image) + '" alt="" width="56" height="56" loading="lazy">' : '') + '<span>' + esc(i.title) + (i.variant ? ' <em>' + esc(i.variant) + '</em>' : '') + ' × ' + i.qty + '</span></div>'; }).join('') + '</div>';
     if (d.statusPage) html += '<p><a class="link" href="' + esc(d.statusPage) + '" target="_blank" rel="noopener">View full order details</a></p>';
     out.innerHTML = html; out.hidden = false; out.scrollIntoView({ behavior: 'smooth', block: 'start' });

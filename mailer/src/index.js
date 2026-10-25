@@ -1,4 +1,5 @@
 import { trackOrder } from './shopify.js';
+import { syncParcels, scansFor } from './parcels.js';
 // LuxeMail entry point: HTTP routes and the 30-minute scheduler.
 import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util.js';
 import { layout, sendViaResend, unsubscribeUrl } from './email.js';
@@ -120,6 +121,17 @@ export default {
       if (await rateLimited(env, (body && body.e ? 'trk:' : 'trkn:') + ip, body && body.e ? 20 : 10)) return new Response(JSON.stringify({ error: 'busy' }), { status: 429, headers });
       try {
         const result = body ? await trackOrder(env, body.o, body.e) : null;
+        if (result && env.TRACK17_KEY) {
+          // Scans from the parcel sync. Without the email only the place-free progress is shared.
+          const nums = (result.shipments || []).flatMap((x) => (x.tracking || []).map((t) => t.number)).concat(result.trackingNumbers || []);
+          const sc = await scansFor(env, [...new Set(nums.map((n) => n.replace(/\s+/g, '').toUpperCase()))]).catch(() => ({}));
+          for (const sh of result.shipments || []) {
+            const n = ((sh.tracking || [])[0] || {}).number || (sh.numbers || [])[0];
+            const p = n && sc[n.replace(/\s+/g, '').toUpperCase()];
+            if (p) { sh.parcel = p.status; sh.scans = result.limited ? [] : p.scans; }
+          }
+        }
+        for (const sh of (result && result.shipments) || []) delete sh.numbers;
         if (!result) return new Response(JSON.stringify({ error: 'not_found' }), { status: 404, headers });
         return new Response(JSON.stringify(result), { headers });
       } catch (e) {
@@ -199,7 +211,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, checkDeliveries, sendTestsOnce];
+    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, checkDeliveries, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }

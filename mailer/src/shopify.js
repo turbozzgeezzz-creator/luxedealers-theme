@@ -287,7 +287,7 @@ export async function trackOrder(env, rawNumber, rawEmail) {
       return {
         limited: true, name: order.name, placedAt: order.createdAt, cancelled: !!order.cancelledAt, status: order.displayFulfillmentStatus,
         shipments: order.fulfillments.map((f) => ({ shippedAt: f.createdAt, status: f.displayStatus, estimate: f.estimatedDeliveryAt, inTransitAt: f.inTransitAt,
-          deliveredAt: f.deliveredAt, tracking: [], events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt })) })),
+          deliveredAt: f.deliveredAt, tracking: [], numbers: f.trackingInfo.filter((t) => t.number).map((t) => t.number), events: f.events.nodes.map((e) => ({ status: e.status, at: e.happenedAt })) })),
       };
     }
     return {
