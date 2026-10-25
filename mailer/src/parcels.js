@@ -7,6 +7,7 @@ import { gql, hideCarrier } from './shopify.js';
 
 const T17 = 'https://api.17track.net/track/v2.2';
 const MAP = { InTransit: 'IN_TRANSIT', AvailableForPickup: 'READY_FOR_PICKUP', OutForDelivery: 'OUT_FOR_DELIVERY', DeliveryFailure: 'ATTEMPTED_DELIVERY', Delivered: 'DELIVERED' };
+const LABEL = 'LuxeDealers Tracked';
 const RANK = { CONFIRMED: 1, IN_TRANSIT: 2, READY_FOR_PICKUP: 3, ATTEMPTED_DELIVERY: 3, OUT_FOR_DELIVERY: 4, DELIVERED: 5 };
 
 async function t17(env, path, body) {
@@ -30,13 +31,13 @@ async function runSync(env, force) {
   let budget = 30; // Cloudflare free plan: 50 outbound requests per run
   const since = new Date(Date.now() - 100 * 86400000).toISOString().slice(0, 10);
   const data = await gql(env, `query($q:String!){ orders(first: 100, sortKey: CREATED_AT, reverse: true, query: $q){ nodes{ name
-      fulfillments(first: 5){ id displayStatus trackingInfo(first: 2){ number } events(first: 30){ nodes{ status } } } } } }`, { q: `created_at:>=${since}` });
+      fulfillments(first: 5){ id displayStatus trackingInfo(first: 2){ number company url } events(first: 30){ nodes{ status } } } } } }`, { q: `created_at:>=${since}` });
   budget--;
   const ships = [];
   for (const o of data.orders.nodes) for (const f of o.fulfillments) {
     const ti = (f.trackingInfo || []).find((x) => x.number);
     if (!ti || f.displayStatus === 'DELIVERED' || f.displayStatus === 'CANCELED') continue;
-    ships.push({ order: o.name.replace('#', ''), fid: f.id, number: ti.number.replace(/\s+/g, '').toUpperCase(), best: Math.max(0, ...f.events.nodes.map((e) => RANK[e.status] || 0)) });
+    ships.push({ order: o.name.replace('#', ''), fid: f.id, number: ti.number.replace(/\s+/g, '').toUpperCase(), company: ti.company, url: ti.url, best: Math.max(0, ...f.events.nodes.map((e) => RANK[e.status] || 0)) });
   }
   const nums = [...new Set(ships.map((s) => s.number))];
   let pending = false, eventsOk = (await getKV(env, 'parcel_events')) !== 'no permission', added = 0;
@@ -85,8 +86,21 @@ async function runSync(env, force) {
       }
     }
   }
+  // Customers only ever see our own tracking page: swap the carrier name and link on undelivered shipments.
+  let relabeled = 0;
+  for (const s of ships) {
+    const url = `${env.STORE_URL}/pages/track-your-order?order=${encodeURIComponent(s.order)}`;
+    if (s.company === LABEL && s.url === url) continue;
+    if (budget < 6) { pending = true; break; }
+    budget--;
+    const r = await gql(env, `mutation($id:ID!,$t:FulfillmentTrackingInput!){ fulfillmentTrackingInfoUpdate(fulfillmentId:$id, trackingInfoInput:$t, notifyCustomer:false){ userErrors{ message } } }`,
+      { id: s.fid, t: { company: LABEL, number: s.number, url } });
+    const errs = r.fulfillmentTrackingInfoUpdate.userErrors;
+    if (errs.length) throw new Error(`tracking relabel ${s.order}: ${errs.map((e) => e.message).join('; ')}`);
+    relabeled++;
+  }
   await setKV(env, 'parcel_next', String(t + (pending ? 0 : 3 * HOUR)));
-  await setKV(env, 'parcel_sync', `ok ${new Date().toISOString().slice(0, 16)}: ${nums.length} parcels, ${added} Shopify updates${eventsOk ? '' : ' (Shopify updates need fulfillment permission)'}${pending ? ', more next run' : ''}`);
+  await setKV(env, 'parcel_sync', `ok ${new Date().toISOString().slice(0, 16)}: ${nums.length} parcels, ${added} Shopify updates, ${relabeled} relabeled${eventsOk ? '' : ' (Shopify updates need fulfillment permission)'}${pending ? ', more next run' : ''}`);
 }
 
 export async function scansFor(env, numbers) {
