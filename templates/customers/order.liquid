@@ -12,16 +12,16 @@
             <tr>
               <td><a href="{{ line.url }}">{{ line.title }}</a>{%- if line.fulfillment -%}<br><small class="muted">{{ line.fulfillment.created_at | time_tag: format: 'date' }}{% if line.fulfillment.tracking_url %} · <a href="{{ line.fulfillment.tracking_url }}" style="text-decoration: underline">{{ 'customer.track' | t }}</a>{% endif %}</small>{%- endif -%}</td>
               <td>{{ line.quantity }}</td>
-              <td>{{ line.final_line_price | money_with_currency }}</td>
+              <td>{{ line.final_line_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td>
             </tr>
           {%- endfor -%}
         </tbody>
         <tfoot>
-          <tr><th scope="row" colspan="2">{{ 'cart.subtotal' | t }}</th><td>{{ order.line_items_subtotal_price | money_with_currency }}</td></tr>
-          {%- for d in order.cart_level_discount_applications -%}<tr><th scope="row" colspan="2">{{ d.title }}</th><td>−{{ d.total_allocated_amount | money_with_currency }}</td></tr>{%- endfor -%}
-          {%- for s in order.shipping_methods -%}<tr><th scope="row" colspan="2">{{ s.title }}</th><td>{{ s.price | money_with_currency }}</td></tr>{%- endfor -%}
-          {%- for t in order.tax_lines -%}<tr><th scope="row" colspan="2">{{ t.title }} {{ t.rate | times: 100 }}%</th><td>{{ t.price | money_with_currency }}</td></tr>{%- endfor -%}
-          <tr><th scope="row" colspan="2">{{ 'customer.total' | t }}</th><td><strong>{{ order.total_price | money_with_currency }}</strong></td></tr>
+          <tr><th scope="row" colspan="2">{{ 'cart.subtotal' | t }}</th><td>{{ order.line_items_subtotal_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td></tr>
+          {%- for d in order.cart_level_discount_applications -%}<tr><th scope="row" colspan="2">{{ d.title }}</th><td>−{{ d.total_allocated_amount | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td></tr>{%- endfor -%}
+          {%- for s in order.shipping_methods -%}<tr><th scope="row" colspan="2">{{ s.title }}</th><td>{{ s.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td></tr>{%- endfor -%}
+          {%- for t in order.tax_lines -%}<tr><th scope="row" colspan="2">{{ t.title }} {{ t.rate | times: 100 }}%</th><td>{{ t.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td></tr>{%- endfor -%}
+          <tr><th scope="row" colspan="2">{{ 'customer.total' | t }}</th><td><strong>{{ order.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></td></tr>
         </tfoot>
       </table>
     </div>

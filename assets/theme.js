@@ -44,7 +44,7 @@
         case 'amount_with_apostrophe_separator': return fmtNum(cents, 2, "'", '.');
         default: return fmtNum(cents, 2, ',', '.');
       }
-    }) + (L.currency ? ' ' + L.currency : '');
+    }).replace(/[.,]00$/, '') + (L.currency ? ' ' + L.currency : '');
   }
   var lastFocus = null;
   function trapFocus(container, e) {

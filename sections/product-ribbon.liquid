@@ -27,8 +27,8 @@
             <a href="{{ p.url }}" class="ribbon__link">
               <span class="ribbon__img">{%- if p.featured_media -%}{{ p.featured_media | image_url: width: 360 | image_tag: width: 180, height: 180, loading: 'lazy', alt: p.title, sizes: '180px' }}{%- endif -%}</span>
               <span class="ribbon__name">{{ p.title }}</span>
-              <span class="ribbon__price">{{ p.price | money_with_currency }}</span>
-              {%- if c2 > 1 and p2 > 0 -%}{%- assign each = 100 | minus: p2 | times: p.price | divided_by: 100 | money_with_currency -%}<span class="ribbon__each">{{ 'sections.ribbon_each' | t: price: each, count: c2 }}</span>{%- endif -%}
+              <span class="ribbon__price">{{ p.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</span>
+              {%- if c2 > 1 and p2 > 0 -%}{%- assign each = 100 | minus: p2 | times: p.price | divided_by: 100 | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}<span class="ribbon__each">{{ 'sections.ribbon_each' | t: price: each, count: c2 }}</span>{%- endif -%}
             </a>
           </li>
         {%- endfor -%}

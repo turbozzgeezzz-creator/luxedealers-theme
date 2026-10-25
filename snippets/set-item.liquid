@@ -7,7 +7,7 @@
   </label>
   <a class="bset__img" href="{{ p.url }}">{{ p.featured_media.preview_image | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: p.title }}</a>
   <a class="bset__name" href="{{ p.url }}">{{ p.title }}</a>
-  <strong class="bset__price" data-set-price>{{ v.price | money_with_currency }}</strong>
+  <strong class="bset__price" data-set-price>{{ v.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong>
   {%- assign avail = p.variants | where: 'available' -%}
   {%- if avail.size > 1 -%}
     <select class="bset__select" data-set-select aria-label="{{ 'bundle.choose' | t: title: p.title | escape }}">
@@ -19,7 +19,7 @@
             {%- if digits == blank -%}{{ p.options[forloop.index0] | replace: 'Collection', 'Style' }} {% endif -%}{{ val }}
           {%- endfor -%}
         {%- endcapture -%}
-        <option value="{{ x.id }}" data-price="{{ x.price }}" data-money="{{ x.price | money_with_currency | escape }}"{% if x.featured_media %} data-img="{{ x.featured_media.preview_image | image_url: width: 400 }}"{% endif %}{% if x.id == v.id %} selected{% endif %}>{{ label | strip }}</option>
+        <option value="{{ x.id }}" data-price="{{ x.price }}" data-money="{{ x.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' | escape }}"{% if x.featured_media %} data-img="{{ x.featured_media.preview_image | image_url: width: 400 }}"{% endif %}{% if x.id == v.id %} selected{% endif %}>{{ label | strip }}</option>
       {%- endfor -%}
     </select>
   {%- endif -%}

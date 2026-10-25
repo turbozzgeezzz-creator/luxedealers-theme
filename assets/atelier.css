@@ -2355,3 +2355,7 @@ body:has(.trk-lookup :focus) shopify-chat, body:has(.trk-lookup :focus) #shopify
 .coll-about__q .rte { padding: 0 0 16px; color: var(--c-muted, #5B6474); line-height: 1.6; }
 html[data-theme="dark"] .coll-about__q { border-bottom-color: rgba(255,255,255,.14); }
 html[data-theme="dark"] .coll-about__intro .rte a, html[data-theme="dark"] .coll-about__q summary::after { color: #FFD966; }
+
+/* Sale price as bold as a regular price; was-price bold too */
+.price--sale .price__current { font-weight: 700; }
+.price__compare, .bag-up__was, .qtyb__price s { font-weight: 600; }

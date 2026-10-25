@@ -13,7 +13,7 @@
               <thead><tr><th scope="col">{{ 'customer.order' | t }}</th><th scope="col">{{ 'customer.date' | t }}</th><th scope="col">{{ 'customer.payment' | t }}</th><th scope="col">{{ 'customer.fulfilment' | t }}</th><th scope="col">{{ 'customer.total' | t }}</th></tr></thead>
               <tbody>
                 {%- for order in customer.orders -%}
-                  <tr><td><a class="link" style="padding: 0" href="{{ order.customer_url }}">{{ order.name }}</a></td><td>{{ order.created_at | time_tag: format: 'date' }}</td><td>{{ order.financial_status_label }}</td><td>{{ order.fulfillment_status_label }}</td><td>{{ order.total_price | money_with_currency }}</td></tr>
+                  <tr><td><a class="link" style="padding: 0" href="{{ order.customer_url }}">{{ order.name }}</a></td><td>{{ order.created_at | time_tag: format: 'date' }}</td><td>{{ order.financial_status_label }}</td><td>{{ order.fulfillment_status_label }}</td><td>{{ order.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</td></tr>
                 {%- endfor -%}
               </tbody>
             </table>

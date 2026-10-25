@@ -17,7 +17,7 @@
 {%- if show_bar -%}
   <div class="ship-bar">
     <span>
-      {%- if remaining > 0 -%}{%- assign remaining_money = remaining | money_with_currency -%}{{ 'cart.free_shipping_remaining' | t: amount: remaining_money }}{%- else -%}{{ 'cart.free_shipping_unlocked' | t }}{%- endif -%}
+      {%- if remaining > 0 -%}{%- assign remaining_money = remaining | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}{{ 'cart.free_shipping_remaining' | t: amount: remaining_money }}{%- else -%}{{ 'cart.free_shipping_unlocked' | t }}{%- endif -%}
     </span>
     <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: {{ pct }}%"></div></div>
   </div>
@@ -50,15 +50,15 @@
   </details>
 {%- endif -%}
 {%- for d in cart.cart_level_discount_applications -%}
-  <div class="cart-totals cart-totals--disc"><span>{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ d.title }}</span><span>−{{ d.total_allocated_amount | money_with_currency }}</span></div>
+  <div class="cart-totals cart-totals--disc"><span>{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ d.title }}</span><span>−{{ d.total_allocated_amount | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</span></div>
 {%- endfor -%}
 {%- assign saved = cart.original_total_price | minus: cart.total_price -%}
-{%- if saved > 0 -%}<div class="cart-totals cart-totals--save"><span>{{ 'cart.you_save' | t }}</span><strong>{{ saved | money_with_currency }}</strong></div>{%- endif -%}
+{%- if saved > 0 -%}<div class="cart-totals cart-totals--save"><span>{{ 'cart.you_save' | t }}</span><strong>{{ saved | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></div>{%- endif -%}
 <div class="bag-totals">
   <div class="cart-totals"><span>{{ 'cart.shipping' | t }}</span><span class="bag-totals__free">{{ 'cart.free' | t }}</span></div>
-  <div class="cart-totals cart-totals--total"><span>{{ 'cart.total' | t }}</span><strong>{{ cart.total_price | money_with_currency }}</strong></div>
+  <div class="cart-totals cart-totals--total"><span>{{ 'cart.total' | t }}</span><strong>{{ cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></div>
 </div>
-{%- assign tot = cart.total_price | money_with_currency -%}
+{%- assign tot = cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}
 <button type="submit" name="checkout" form="CartForm-{{ context }}" class="btn btn--gold btn--block bag-checkout">{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'cart.checkout_total' | t: total: tot }}</button>
 <div class="bag-trust">
   <span>{% render 'icon', name: 'return', class: 'icon--sm' %} {{ 'cart.guarantee' | t }}</span>

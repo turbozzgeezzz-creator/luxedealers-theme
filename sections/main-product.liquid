@@ -206,7 +206,7 @@
             <dl>
               {%- if product.collections.first -%}<div><dt>{{ 'products.department' | t }}</dt><dd><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></dd></div>{%- endif -%}
               {%- unless product.has_only_default_variant -%}<div><dt>{{ 'products.options_count' | t }}</dt><dd>{{ product.variants.size }}</dd></div>{%- endunless -%}
-              <div><dt>{{ 'products.price' | t }}</dt><dd>{% if product.price_varies %}{{ 'products.from' | t }} {% endif %}{{ product.price_min | money_with_currency }}</dd></div>
+              <div><dt>{{ 'products.price' | t }}</dt><dd>{% if product.price_varies %}{{ 'products.from' | t }} {% endif %}{{ product.price_min | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</dd></div>
               <div><dt>{{ 'products.availability' | t }}</dt><dd>{% if product.available %}{{ 'products.in_stock_short' | t }}{% else %}{{ 'products.sold_out' | t }}{% endif %}</dd></div>
               <div><dt>{{ 'products.shipping' | t }}</dt><dd>{{ 'products.shipping_value' | t }}</dd></div>
               <div><dt>{{ 'products.guarantee' | t }}</dt><dd>{{ 'products.guarantee_value' | t }}</dd></div>

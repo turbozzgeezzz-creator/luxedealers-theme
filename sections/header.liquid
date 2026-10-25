@@ -160,7 +160,7 @@
                             <a class="mega__shot" href="{{ p.url }}">
                               <span class="mega__shot-img">{{ p.featured_media.preview_image | image_url: width: 300 | image_tag: width: 150, height: 150, loading: 'lazy', alt: p.title }}</span>
                               <span class="mega__shot-name">{{ p.title }}</span>
-                              <span class="mega__shot-price">{{ p.price | money_with_currency }}</span>
+                              <span class="mega__shot-price">{{ p.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</span>
                             </a>
                           {%- endif -%}
                         {%- endfor -%}
