@@ -40,7 +40,8 @@ async function runSync(env, force) {
     ships.push({ order: o.name.replace('#', ''), fid: f.id, number: ti.number.replace(/\s+/g, '').toUpperCase(), company: ti.company, url: ti.url, best: Math.max(0, ...f.events.nodes.map((e) => RANK[e.status] || 0)) });
   }
   const nums = [...new Set(ships.map((s) => s.number))];
-  let pending = false, eventsOk = (await getKV(env, 'parcel_events')) !== 'no permission', added = 0;
+  const denied = /^no permission (\d+)/.exec(await getKV(env, 'parcel_events') || '');
+  let pending = false, eventsOk = !denied || t > Number(denied[1]) + 6 * HOUR, added = 0;
   // Register numbers not seen before (each uses one quota, once).
   const known = new Set();
   for (let i = 0; i < nums.length; i += 90) {
@@ -81,7 +82,8 @@ async function runSync(env, force) {
             { e: { fulfillmentId: s.fid, status: target, happenedAt: (scans[0] || {}).at || new Date().toISOString(), message: scans[0] ? scans[0].text.slice(0, 200) : null } });
           s.best = RANK[target]; added++;
         } catch (e) {
-          if (/access|scope|denied/i.test(String(e.message || e))) { eventsOk = false; await setKV(env, 'parcel_events', 'no permission'); }
+          // Retried after 6 hours (a newly granted scope reaches the worker with its next Shopify token).
+          if (/access|scope|denied/i.test(String(e.message || e))) { eventsOk = false; await setKV(env, 'parcel_events', `no permission ${t}: ${String(e.message || e).slice(0, 200)}`); }
         }
       }
     }
