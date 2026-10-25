@@ -123,7 +123,7 @@ export default {
         const result = body ? await trackOrder(env, body.o, body.e) : null;
         if (result && env.TRACK17_KEY) {
           // Scans from the parcel sync. Without the email only the place-free progress is shared.
-          const nums = (result.shipments || []).flatMap((x) => (x.tracking || []).map((t) => t.number)).concat(result.trackingNumbers || []);
+          const nums = (result.shipments || []).flatMap((x) => (x.tracking || []).map((t) => t.number).concat(x.numbers || [])).concat(result.trackingNumbers || []);
           const sc = await scansFor(env, [...new Set(nums.map((n) => n.replace(/\s+/g, '').toUpperCase()))]).catch(() => ({}));
           for (const sh of result.shipments || []) {
             const n = ((sh.tracking || [])[0] || {}).number || (sh.numbers || [])[0];
