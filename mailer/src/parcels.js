@@ -18,6 +18,13 @@ async function t17(env, path, body) {
 
 export async function syncParcels(env, force = false) {
   if (!env.TRACK17_KEY) return;
+  try { await runSync(env, force); } catch (e) {
+    await setKV(env, 'parcel_sync', `error ${new Date().toISOString().slice(0, 16)}: ${String(e.message || e).slice(0, 300)}`);
+    throw e;
+  }
+}
+
+async function runSync(env, force) {
   const t = now();
   if (!force && t < Number(await getKV(env, 'parcel_next') || 0)) return;
   let budget = 30; // Cloudflare free plan: 50 outbound requests per run
