@@ -17,7 +17,7 @@
       {%- assign first = p.first | slice: 0 -%}
       {%- if p.last != blank and first != '_' -%}<span class="cart-line__props">{{ p.first }}: {{ p.last }}</span>{%- endif -%}
     {%- endfor -%}
-    {%- for d in item.line_level_discount_allocations -%}<span class="cart-line__discount">{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ d.discount_application.title }} (−{{ d.amount | money }})</span>{%- endfor -%}
+    {%- for d in item.line_level_discount_allocations -%}<span class="cart-line__discount">{% render 'icon', name: 'tag', class: 'icon--sm' %} {{ d.discount_application.title }} (−{{ d.amount | money_with_currency }})</span>{%- endfor -%}
     <div class="cart-line__bottom">
       <div class="qty qty--sm">
         <button type="button" data-qty-step="-1" aria-label="{{ 'cart.decrease' | t: title: item.product.title | escape }}">{% render 'icon', name: 'minus', class: 'icon--sm' %}</button>
@@ -26,8 +26,8 @@
         <button type="button" data-qty-step="1" aria-label="{{ 'cart.increase' | t: title: item.product.title | escape }}">{% render 'icon', name: 'plus', class: 'icon--sm' %}</button>
       </div>
       <div class="price cart-line__price{% if item.original_line_price > item.final_line_price %} price--sale{% endif %}">
-        {%- if item.original_line_price > item.final_line_price -%}<s class="price__compare">{{ item.original_line_price | money }}</s>{%- endif -%}
-        <span class="price__current">{{ item.final_line_price | money }}</span>
+        {%- if item.original_line_price > item.final_line_price -%}<s class="price__compare">{{ item.original_line_price | money_with_currency }}</s>{%- endif -%}
+        <span class="price__current">{{ item.final_line_price | money_with_currency }}</span>
       </div>
     </div>
   </div>

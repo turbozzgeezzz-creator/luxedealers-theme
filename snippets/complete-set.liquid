@@ -50,7 +50,7 @@
       <span class="bset__img">{%- if product.featured_media -%}{{ product.featured_media | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: product.title }}{%- endif -%}</span>
       <span class="bset__tag">{{ 'bundle.this_item' | t }}</span>
       <span class="bset__name">{{ product.title }}</span>
-      <strong class="bset__price">{{ current.price | money }}</strong>
+      <strong class="bset__price">{{ current.price | money_with_currency }}</strong>
       <input type="checkbox" checked disabled hidden data-set-main data-price="{{ current.price }}">
     </div>
     {%- capture cards -%}
@@ -74,7 +74,7 @@
   <div class="bset__bar" data-q1="{{ settings.qty_1_count | default: 0 }}" data-p1="{{ settings.qty_1_percent | default: 0 }}" data-q2="{{ settings.qty_2_count | default: 0 }}" data-p2="{{ settings.qty_2_percent | default: 0 }}">
     <div class="bset__sum">
       <span class="bset__count"><span data-set-count>1</span> {{ 'bundle.selected' | t }}</span>
-      <span class="bset__prices"><s data-set-was hidden></s> <strong data-set-total>{{ current.price | money }}</strong></span>
+      <span class="bset__prices"><s data-set-was hidden></s> <strong data-set-total>{{ current.price | money_with_currency }}</strong></span>
       <span class="bset__save" data-set-save data-text="{{ 'bundle.you_save' | t: percent: '[pct]', amount: '[amt]' | escape }}" hidden></span>
     </div>
     <button type="button" class="btn btn--gold" data-set-add disabled>{% render 'icon', name: 'bag', class: 'icon--sm' %} <span data-set-label data-one="{{ 'bundle.add_one' | t | escape }}" data-many="{{ 'bundle.add_many' | t | escape }}">{{ 'bundle.add_one' | t }}</span></button>

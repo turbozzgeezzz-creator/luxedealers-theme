@@ -104,6 +104,7 @@
         },
         cartType: {{ settings.cart_type | json }},
         moneyFormat: {{ shop.money_format | json }},
+        currency: {{ cart.currency.iso_code | json }},
         welcome: {{ settings.welcome_code | json }},
         mail: {% if settings.luxemail_endpoint != blank %}{ endpoint: {{ settings.luxemail_endpoint | json }}{% if customer and customer.accepts_marketing %}, email: {{ customer.email | json }}, firstName: {{ customer.first_name | json }}{% endif %} }{% else %}null{% endif %},
         searchStrings: {

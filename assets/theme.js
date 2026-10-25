@@ -44,7 +44,7 @@
         case 'amount_with_apostrophe_separator': return fmtNum(cents, 2, "'", '.');
         default: return fmtNum(cents, 2, ',', '.');
       }
-    });
+    }) + (L.currency ? ' ' + L.currency : '');
   }
   var lastFocus = null;
   function trapFocus(container, e) {
@@ -866,7 +866,7 @@
         var tot = $('[data-qtyb-total]', lab), was = $('[data-qtyb-was]', lab), sm = $('small', lab);
         if (tot) tot.textContent = formatMoney(each * n);
         if (was) was.textContent = formatMoney(price * n);
-        if (sm && n > 1) sm.textContent = sm.textContent.replace(/^[^ ]+/, formatMoney(each));
+        if (sm && n > 1) sm.textContent = sm.textContent.replace(/^\S+( [A-Z]{3}(?= ))?/, formatMoney(each));
       });
     }
     on(box, 'change', function (e) {

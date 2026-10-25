@@ -24,7 +24,7 @@
     {%- if filter.type == 'price_range' -%}
       {%- if filter.min_value.value or filter.max_value.value -%}
         {%- assign any_active = true -%}
-        <a href="{{ filter.url_to_remove }}" data-facet-link>{{ filter.min_value.value | default: 0 | money }} – {{ filter.max_value.value | default: filter.range_max | money }} {% render 'icon', name: 'close', class: 'icon--sm' %}</a>
+        <a href="{{ filter.url_to_remove }}" data-facet-link>{{ filter.min_value.value | default: 0 | money_with_currency }} – {{ filter.max_value.value | default: filter.range_max | money_with_currency }} {% render 'icon', name: 'close', class: 'icon--sm' %}</a>
       {%- endif -%}
     {%- endif -%}
   {%- endfor -%}

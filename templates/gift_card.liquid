@@ -15,8 +15,8 @@
       <div class="password-page__inner">
         <img class="password-page__mark" src="{{ 'logo-mark.webp' | asset_url }}" alt="{{ shop.name | escape }}" width="458" height="480">
         <h1 class="h2">{{ 'gift_card.title' | t }}</h1>
-        <p class="h1 gold-text">{{ gift_card.balance | money }}</p>
-        {%- if gift_card.balance != gift_card.initial_value -%}{%- assign initial = gift_card.initial_value | money -%}<p class="muted">{{ 'gift_card.initial' | t: value: initial }}</p>{%- endif -%}
+        <p class="h1 gold-text">{{ gift_card.balance | money_with_currency }}</p>
+        {%- if gift_card.balance != gift_card.initial_value -%}{%- assign initial = gift_card.initial_value | money_with_currency -%}<p class="muted">{{ 'gift_card.initial' | t: value: initial }}</p>{%- endif -%}
         {%- if gift_card.expired or gift_card.enabled == false -%}<p class="form-message form-message--error">{{ 'gift_card.disabled' | t }}</p>{%- endif -%}
         <div class="offer-reveal">
           <span class="label muted">{{ 'gift_card.code' | t }}</span>

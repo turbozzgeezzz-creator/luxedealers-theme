@@ -23,9 +23,9 @@
         <span class="qtyb__radio" aria-hidden="true"></span>
         <span class="qtyb__main"><strong>Buy {{ n }}</strong>
           {%- if pc > 0 -%}<span class="qtyb__save">{{ 'products.qty_save' | t: percent: pc }}</span>{%- else -%}<span class="qtyb__save qtyb__save--none">{{ 'products.qty_standard' | t }}</span>{%- endif -%}
-          {%- if n > 1 -%}{%- assign em = each | money -%}<small>{{ 'products.qty_each' | t: price: em }}</small>{%- endif -%}
+          {%- if n > 1 -%}{%- assign em = each | money_with_currency -%}<small>{{ 'products.qty_each' | t: price: em }}</small>{%- endif -%}
         </span>
-        <span class="qtyb__price"><strong data-qtyb-total>{{ tot | money }}</strong>{%- if pc > 0 -%}<s data-qtyb-was>{{ v.price | times: n | money }}</s>{%- endif -%}</span>
+        <span class="qtyb__price"><strong data-qtyb-total>{{ tot | money_with_currency }}</strong>{%- if pc > 0 -%}<s data-qtyb-was>{{ v.price | times: n | money_with_currency }}</s>{%- endif -%}</span>
       </label>
     {%- endfor -%}
     <p class="qtyb__note">Mix and match any items. The discount is applied automatically at checkout.</p>

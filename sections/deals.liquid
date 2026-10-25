@@ -43,7 +43,7 @@
               <a class="bundle__item" href="{{ bp.url }}" data-pid="{{ bp.id }}">
                 <span class="bundle__img">{{ bp.featured_media.preview_image | image_url: width: 400 | image_tag: width: 200, height: 200, loading: 'lazy', alt: bp.title }}</span>
                 <span class="bundle__name">{{ bp.title }}</span>
-                <span class="bundle__price">{{ bv.price | money }}</span>
+                <span class="bundle__price">{{ bv.price | money_with_currency }}</span>
               </a>
               {%- if forloop.first -%}<span class="bundle__plus" aria-hidden="true">+</span>{%- endif -%}
             {%- endfor -%}
@@ -51,7 +51,7 @@
           <form class="bundle__foot" action="{{ routes.cart_add_url }}" method="post">
             <input type="hidden" name="items[0][id]" value="{{ v1.id }}"><input type="hidden" name="items[0][quantity]" value="1">
             <input type="hidden" name="items[1][id]" value="{{ v2.id }}"><input type="hidden" name="items[1][quantity]" value="1">
-            <span><small>{{ 'sections.together' | t }}</small><strong>{{ v1.price | plus: v2.price | money }}</strong></span>
+            <span><small>{{ 'sections.together' | t }}</small><strong>{{ v1.price | plus: v2.price | money_with_currency }}</strong></span>
             {%- if v1.available and v2.available -%}<button type="submit" class="btn btn--sm">{% render 'icon', name: 'bag', class: 'icon--sm' %} {{ 'sections.add_both' | t }}</button>{%- endif -%}
           </form>
           {%- if p1.variants.size > 1 or p2.variants.size > 1 -%}<p class="deal__note">{{ 'sections.bundle_note' | t }}</p>{%- endif -%}
@@ -68,7 +68,7 @@
               <li data-pid="{{ p.id }}"><a href="{{ p.url }}">
                 <span class="mini-list__img">{{ p.featured_media.preview_image | image_url: width: 140 | image_tag: width: 64, height: 64, loading: 'lazy', alt: p.title }}</span>
                 <span class="mini-list__name">{{ p.title }}</span>
-                <strong>{{ p.price | money }}</strong>
+                <strong>{{ p.price | money_with_currency }}</strong>
               </a></li>
             {%- endfor -%}
           </ul>
