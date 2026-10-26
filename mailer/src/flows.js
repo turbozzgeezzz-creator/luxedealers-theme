@@ -4,7 +4,7 @@
 // right before every send.
 import { now, HOUR, DAY, cleanEmail, localParts, getKV, setKV, money, esc, hmacHex, sendingReady } from './util.js';
 import {
-  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince,
+  verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince, boughtProductIds,
 } from './shopify.js';
 import {
   enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
@@ -402,11 +402,11 @@ export async function scanAbandonment(env) {
     if (await orderedSince(env, v.email, v.first_at)) continue;
     const carted = await env.DB.prepare(`SELECT id FROM events WHERE email = ? AND type = 'cart' AND at >= ? LIMIT 1`).bind(v.email, v.first_at).first();
     if (carted || await sentRecently(env, v.email, 'browse', 7 * DAY)) continue;
-    const top = await env.DB.prepare(`SELECT handle, COUNT(*) AS n, MAX(at) AS last FROM events WHERE email = ? AND type = 'view' AND at >= ?
-        GROUP BY handle ORDER BY n DESC, last DESC LIMIT 1`).bind(v.email, v.first_at).first();
-    if (!top) continue;
+    const { results: top } = await env.DB.prepare(`SELECT handle, COUNT(*) AS n, MAX(at) AS last FROM events WHERE email = ? AND type = 'view' AND at >= ?
+        GROUP BY handle ORDER BY n DESC, last DESC LIMIT 4`).bind(v.email, v.first_at).all();
+    if (!top.length) continue;
     const week = Math.floor(t / (7 * DAY));
-    await enqueue(env, { email: v.email, flow: 'browse', dedupe: `browse:${v.email}:${week}`, priority: 3, data: { handle: top.handle } });
+    await enqueue(env, { email: v.email, flow: 'browse', dedupe: `browse:${v.email}:${week}`, priority: 3, data: { handle: top[0].handle, alts: top.slice(1).map((x) => x.handle) } });
   }
 
   // Wishlist: items saved 3+ days ago and still not bought; at most every 14 days.
@@ -502,9 +502,9 @@ export async function scanWeeklyJournal(env) {
 
 const hi = (name) => (name ? `Hi ${esc(name)},` : 'Hi there,');
 
-async function productsForHandles(env, handles) {
+async function productsForHandles(env, handles, skip = new Set()) {
   const out = [];
-  for (const h of handles || []) { const p = await productByHandle(env, h); if (p && p.available) out.push(p); }
+  for (const h of handles || []) { const p = await productByHandle(env, h); if (p && p.available && !skip.has(String(p.id))) out.push(p); }
   return out;
 }
 
@@ -649,7 +649,7 @@ export const builders = {
     };
   },
   async cart1(env, email, d) {
-    const products = await productsForHandles(env, d.handles);
+    const products = await productsForHandles(env, d.handles, await boughtProductIds(env, email));
     if (!products.length) return null;
     return {
       subject: 'Your cart is waiting',
@@ -660,7 +660,7 @@ export const builders = {
     };
   },
   async cart2(env, email, d) {
-    const products = await productsForHandles(env, d.handles);
+    const products = await productsForHandles(env, d.handles, await boughtProductIds(env, email));
     if (!products.length) return null;
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'BACK5', percent: 5, days: 7, title: 'Abandoned cart 5%' });
     return {
@@ -675,9 +675,11 @@ export const builders = {
     };
   },
   async browse(env, email, d) {
-    const product = await productByHandle(env, d.handle);
-    if (!product || !product.available) return null;
-    const recs = (await recommendations(env, product.id, 4)).filter((p) => p.handle !== product.handle).slice(0, 2);
+    // Most-viewed first; never a product they already own.
+    const bought = await boughtProductIds(env, email);
+    const [product] = await productsForHandles(env, [d.handle, ...(d.alts || [])], bought);
+    if (!product) return null;
+    const recs = (await recommendations(env, product.id, 6)).filter((p) => p.handle !== product.handle && !bought.has(String(p.id))).slice(0, 2);
     return {
       subject: `Still thinking about the ${product.title.split(/[,|(]/)[0].trim()}?`,
       preheader: 'The one you were looking at is still in stock.',
@@ -687,7 +689,7 @@ export const builders = {
     };
   },
   async wishlist(env, email, d) {
-    const products = await productsForHandles(env, d.handles);
+    const products = await productsForHandles(env, d.handles, await boughtProductIds(env, email));
     if (!products.length) return null;
     return {
       subject: 'Your wishlist misses you',

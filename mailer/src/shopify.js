@@ -146,6 +146,16 @@ export async function shopifyOrderedSince(env, email, sinceIso) {
   }
 }
 
+/** Product IDs this email has ever bought (Shopify orders, newest 50), so reminders never show something they own. */
+export async function boughtProductIds(env, email) {
+  const d = await gql(env, `query($q: String!){ orders(first: 50, sortKey: CREATED_AT, reverse: true, query: $q){ nodes {
+      cancelledAt lineItems(first: 50){ nodes{ product{ legacyResourceId } } } } } }`,
+    { q: `email:"${String(email).replace(/["\\]/g, '')}"` });
+  const ids = new Set();
+  for (const o of d.orders.nodes) if (!o.cancelledAt) for (const l of o.lineItems.nodes) if (l.product) ids.add(String(l.product.legacyResourceId));
+  return ids;
+}
+
 /** True when Shopify has an order for this email (read-only; Shopify searches recent orders). */
 export async function shopifyHasOrders(env, email) {
   try {
