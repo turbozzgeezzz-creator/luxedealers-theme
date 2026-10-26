@@ -22,7 +22,7 @@ STORE_URL = "https://luxedealers.com"
 # Set by deploy.sh to the Worker's address.
 PUBLIC_URL = "https://luxemail-main.turbozzgeezzz.workers.dev"
 BRAND = "LuxeDealers"
-FROM_EMAIL = "LuxeDealers <noreply@luxedealers.com>"
+FROM_EMAIL = "LuxeDealers <support@luxedealers.com>"
 REPLY_TO = "support@luxedealers.com"
 ADMIN_EMAIL = "support@luxedealers.com"
 TIMEZONE_OFFSET_HOURS = "10"

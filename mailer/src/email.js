@@ -174,7 +174,36 @@ function trustRow(env) {
 }
 
 /** Full email: header, banner, body, store promises, footer with social icons and unsubscribe. */
-export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reason, plain, tone }) {
+/**
+ * Letter style for non-promotional emails (the journal): text-first like a personal email, no banner, images,
+ * prices or styled footer, so Gmail is more likely to file it under Primary rather than Promotions.
+ */
+function letterLayout(env, { preheader, body, unsubUrl, reason }) {
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(env.BRAND)}</title></head>
+<body style="margin:0;padding:0;background:#FFFFFF;font-family:Arial,Helvetica,sans-serif;color:${INK};">
+<div style="display:none;max-height:0;overflow:hidden;">${esc(preheader || '')}</div>
+<div style="max-width:560px;margin:0 auto;padding:24px 20px;font-size:16px;line-height:1.6;">${body}
+<p style="margin:32px 0 0;font-size:12px;line-height:1.5;color:${MUTED};">${esc(reason || `You're getting this because you signed up for ${env.BRAND} emails.`)} <a href="${esc(unsubUrl)}" style="color:${MUTED};">Unsubscribe</a></p>
+</div></body></html>`;
+}
+
+/** Products as plain text lines (name and price, linked) for letter-style reminders. */
+export function letterItems(products) {
+  return `<ul style="margin:0 0 20px;padding-left:20px;">${products.map((p) => `<li style="margin:0 0 6px;"><a href="${esc(p.url)}" style="color:${INK};">${esc(shortTitle(p.title))}</a>${p.price != null ? ` &middot; ${money(p.price)}` : ''}</li>`).join('')}</ul>`;
+}
+
+/** A plain underlined link on its own line, in place of a button. */
+export function letterLink(label, url) {
+  return `<p style="margin:0 0 20px;"><a href="${esc(url)}" style="color:${INK};font-weight:bold;">${esc(label)}</a></p>`;
+}
+
+/** Journal stories as plain links with a one-line summary (no images). */
+export function letterArticles(articles) {
+  return articles.map((a) => `<p style="margin:0 0 16px;"><a href="${esc(a.url)}" style="color:${INK};font-weight:bold;">${esc(a.title)}</a>${a.summary ? `<br>${esc(a.summary)}` : ''}</p>`).join('');
+}
+
+export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reason, plain, tone, letter }) {
+  if (letter) return letterLayout(env, { preheader, body, unsubUrl, reason });
   const T = TONES[tone] || TONES.gold;
   const bannerImg = banner
     ? `<tr><td style="padding:0;background:%%DEEP%%;"><img src="${env.PUBLIC_URL}/banners/${banner}" width="600" height="260" alt="${esc(bannerAlt || '')}" style="display:block;width:100%;max-width:600px;height:auto;border:0;background:%%DEEP%%;color:%%FG%%;font-size:22px;font-weight:800;line-height:1.3;text-align:center;"></td></tr>`

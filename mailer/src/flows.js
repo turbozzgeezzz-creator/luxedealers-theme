@@ -7,7 +7,7 @@ import {
   verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince, boughtProductIds,
 } from './shopify.js';
 import {
-  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, sendViaResend, toneFor,
+  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, letterArticles, letterItems, letterLink, sendViaResend, toneFor,
   unsubscribeUrl, sentTodayCount,
 } from './email.js';
 
@@ -500,6 +500,8 @@ export async function scanWeeklyJournal(env) {
 
 /* ======================= Building each email ======================= */
 
+const SIGN = (env) => `<p style="margin:0 0 16px;">Any questions, just reply to this email.</p><p style="margin:0;">Thanks,<br>The ${esc(env.BRAND)} team</p>`;
+
 const hi = (name) => (name ? `Hi ${esc(name)},` : 'Hi there,');
 
 async function productsForHandles(env, handles, skip = new Set()) {
@@ -622,14 +624,13 @@ export const builders = {
     if (ck && ck.completed) return null;
     const products = await productsForHandles(env, (d.items || []).map((i) => i.handle));
     if (!products.length) return null;
+    // Reminders are short personal-style letters: they read as service emails, not adverts (better inbox placement).
     return {
-      subject: 'You left something at checkout',
+      letter: true,
+      subject: 'Did something go wrong at checkout?',
       preheader: 'Your items are still available.',
-      banner: 'banner-checkout.jpg', bannerAlt: 'Your checkout is waiting',
-      body: heading('Ready when you are') + para(`${hi(d.firstName)} you started a checkout but didn't quite finish. Your items are below, and the button puts them straight back in your cart.`)
-        + productGrid(products, { heading: 'Still in your checkout' })
-        + tierNudge(env, d.subtotal != null ? Math.round(parseFloat(d.subtotal) * 100) : null)
-        + button('Complete my order', d.url || cartLink(env, d.items)),
+      body: `<p style="margin:0 0 16px;">${hi(d.firstName)}</p><p style="margin:0 0 16px;">You started a checkout with us but didn't finish. If something went wrong, or you have a question about sizing or shipping, just reply and we'll help.</p><p style="margin:0 0 8px;">Your items are still available:</p>`
+        + letterItems(products) + letterLink('Finish my order', d.url || cartLink(env, d.items)) + SIGN(env),
     };
   },
   async checkout2(env, email, d) {
@@ -639,24 +640,22 @@ export const builders = {
     if (!products.length) return null;
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'BACK5', percent: 5, days: 7, title: 'Abandoned checkout 5%' });
     return {
-      subject: 'Here\'s 5% off to finish your order',
+      letter: true,
+      subject: 'Still deciding? A code for your order',
       preheader: `Your items are still available, and ${code} takes 5% off.`,
-      banner: 'banner-reminder.jpg', bannerAlt: 'Here is 5% off to finish up',
-      body: heading('A little nudge, with 5% off') + para(`${hi(d.firstName)} your items are still available. Here's 5% off to help you decide.`)
-        + offerCard(env, { theme: 'personal', big: '5%', unit: 'off', title: 'A code just for you, to finish your order', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Complete my order', d.url ? `${d.url}${d.url.includes('?') ? '&' : '?'}discount=${encodeURIComponent(code)}` : cartLink(env, d.items, code)) + productGrid(products, { heading: 'Still in your checkout' }),
+      body: `<p style="margin:0 0 16px;">${hi(d.firstName)}</p><p style="margin:0 0 16px;">Your items are still waiting at checkout. To help you decide, here's a code for 5% off: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The link below applies it for you.</p>`
+        + letterItems(products) + letterLink('Finish my order with 5% off', d.url ? `${d.url}${d.url.includes('?') ? '&' : '?'}discount=${encodeURIComponent(code)}` : cartLink(env, d.items, code)) + SIGN(env),
     };
   },
   async cart1(env, email, d) {
     const products = await productsForHandles(env, d.handles, await boughtProductIds(env, email));
     if (!products.length) return null;
     return {
-      subject: 'Your cart is waiting',
+      letter: true,
+      subject: 'You left these in your cart',
       preheader: 'The things you added are still available.',
-      banner: 'banner-checkout.jpg', bannerAlt: 'Your cart is waiting',
-      body: heading('Forgot something?') + para('You added these to your cart. They\'re still in stock, and your cart is saved on the device you used.')
-        + productGrid(products) + button('Back to my cart', `${env.STORE_URL}/cart`),
+      body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 8px;">You added these to your cart and they're still in stock. Your cart is saved on the device you used.</p>`
+        + letterItems(products) + letterLink('Back to my cart', `${env.STORE_URL}/cart`) + SIGN(env),
     };
   },
   async cart2(env, email, d) {
@@ -664,14 +663,11 @@ export const builders = {
     if (!products.length) return null;
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'BACK5', percent: 5, days: 7, title: 'Abandoned cart 5%' });
     return {
-      subject: '5% off to finish up',
+      letter: true,
+      subject: 'A code for what\'s in your cart',
       preheader: `${code} takes 5% off your cart.`,
-      banner: 'banner-reminder.jpg', bannerAlt: 'Here is 5% off to finish up',
-      body: heading('Here\'s 5% off your cart') + para('Still thinking it over? Here\'s a little something to help.')
-        + offerCard(env, { theme: 'personal', big: '5%', unit: 'off', title: 'A code just for you, for what\'s in your cart', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + productGrid(products)
-        + button('Use my 5%', `${env.STORE_URL}/discount/${code}?redirect=/cart`),
+      body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 16px;">Still thinking it over? Here's a code for 5% off what's in your cart: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The link below applies it for you.</p>`
+        + letterItems(products) + letterLink('Use my 5% code', `${env.STORE_URL}/discount/${code}?redirect=/cart`) + SIGN(env),
     };
   },
   async browse(env, email, d) {
@@ -681,11 +677,11 @@ export const builders = {
     if (!product) return null;
     const recs = (await recommendations(env, product.id, 6)).filter((p) => p.handle !== product.handle && !bought.has(String(p.id))).slice(0, 2);
     return {
+      letter: true,
       subject: `Still thinking about the ${product.title.split(/[,|(]/)[0].trim()}?`,
       preheader: 'The one you were looking at is still in stock.',
-      banner: 'banner-browse.jpg', bannerAlt: 'You looked, we noticed',
-      body: heading('Still thinking it over?') + para('You were checking this out. Here it is again, in case you want another look.')
-        + productGrid([product]) + productGrid(recs, { heading: 'You might also like' }),
+      body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 8px;">You were looking at this recently, and it's still in stock:</p>`
+        + letterItems([product]) + (recs.length ? `<p style="margin:0 0 8px;">You might also like:</p>` + letterItems(recs) : '') + SIGN(env),
     };
   },
   async wishlist(env, email, d) {
@@ -766,15 +762,15 @@ export const builders = {
   async journal(env, email, d) {
     const articles = await latestArticles(env, 6, d.since || new Date(Date.now() - 7 * DAY * 1000).toISOString());
     if (!articles.length) return null;
-    const p = await personalPicks(env, email, 2);
     const lead = articles[0];
+    // A plain letter (no products, prices or images) so it reads as news, not an advert.
     return {
+      letter: true,
       subject: articles.length > 1 ? `This week in the journal: ${lead.title}` : lead.title,
       preheader: `${articles.length} new ${articles.length === 1 ? 'story' : 'stories'} from the style desk this week.`,
-      banner: 'banner-blog.jpg', bannerAlt: 'This week in the journal',
-      body: heading('This week in the journal') + para(`${hi(d.firstName)} here's everything new from the style desk this week: buying tips, style notes and what to look for.`)
-        + articleList(articles) + productGrid(p, { heading: 'Picked for you' })
-        + productGrid(await collectionProducts(env, 'deals', 2).catch(() => []), { heading: 'Price drops' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
+      body: `<p style="margin:0 0 16px;">${hi(d.firstName)}</p><p style="margin:0 0 20px;">Here's what's new on the ${esc(env.BRAND)} journal this week: buying tips, style notes and what to look for.</p>`
+        + letterArticles(articles)
+        + `<p style="margin:24px 0 0;">Happy reading,<br>The ${esc(env.BRAND)} team</p>`,
     };
   },
   async fortnight(env, email, d) {

@@ -260,7 +260,7 @@ export async function latestArticles(env, limit = 3, sinceIso = null) {
   return data.articles.nodes.map((a) => ({
     title: a.title,
     url: `${env.STORE_URL}/blogs/${a.blog.handle}/${a.handle}`,
-    summary: strip(a.summary).slice(0, 160),
+    summary: ((t) => (t.length > 160 ? t.slice(0, 157).replace(/\s+\S*$/, '') + '…' : t))(strip(a.summary)),
     image: a.image ? a.image.url + (a.image.url.includes('?') ? '&' : '?') + 'width=1096&height=616&crop=center' : null,
     publishedAt: a.publishedAt,
   }));
