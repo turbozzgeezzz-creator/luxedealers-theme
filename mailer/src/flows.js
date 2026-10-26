@@ -681,7 +681,7 @@ export const builders = {
       subject: `Still thinking about the ${product.title.split(/[,|(]/)[0].trim()}?`,
       preheader: 'The one you were looking at is still in stock.',
       body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 8px;">You were looking at this recently, and it's still in stock:</p>`
-        + letterItems([product]) + (recs.length ? `<p style="margin:0 0 8px;">You might also like:</p>` + letterItems(recs) : '') + SIGN(env),
+        + letterItems([product]) + letterLink('Take another look', product.url) + (recs.length ? `<p style="margin:0 0 8px;">You might also like:</p>` + letterItems(recs) : '') + SIGN(env),
     };
   },
   async wishlist(env, email, d) {

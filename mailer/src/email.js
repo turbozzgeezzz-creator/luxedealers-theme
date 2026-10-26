@@ -182,19 +182,20 @@ function letterLayout(env, { preheader, body, unsubUrl, reason }) {
   return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(env.BRAND)}</title></head>
 <body style="margin:0;padding:0;background:#FFFFFF;font-family:Arial,Helvetica,sans-serif;color:${INK};">
 <div style="display:none;max-height:0;overflow:hidden;">${esc(preheader || '')}</div>
-<div style="max-width:560px;margin:0 auto;padding:24px 20px;font-size:16px;line-height:1.6;">${body}
+<div style="max-width:560px;margin:0 auto;padding:24px 20px;font-size:16px;line-height:1.6;">
+<a href="${env.STORE_URL}" style="display:block;margin:0 0 20px;text-decoration:none;border-bottom:1px solid #E3E8EF;"><img src="${env.PUBLIC_URL}/brand/header.png" width="300" height="50" alt="${esc(env.BRAND)}" style="display:block;width:300px;max-width:100%;height:auto;margin:0 auto;border:0;color:#B8892E;font-size:20px;font-weight:900;font-style:italic;"></a>${body}
 <p style="margin:32px 0 0;font-size:12px;line-height:1.5;color:${MUTED};">${esc(reason || `You're getting this because you signed up for ${env.BRAND} emails.`)} <a href="${esc(unsubUrl)}" style="color:${MUTED};">Unsubscribe</a></p>
 </div></body></html>`;
 }
 
 /** Products as plain text lines (name and price, linked) for letter-style reminders. */
 export function letterItems(products) {
-  return `<ul style="margin:0 0 20px;padding-left:20px;">${products.map((p) => `<li style="margin:0 0 6px;"><a href="${esc(p.url)}" style="color:${INK};">${esc(shortTitle(p.title))}</a>${p.price != null ? ` &middot; ${money(p.price)}` : ''}</li>`).join('')}</ul>`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">${products.map((p) => `<tr><td style="padding:0 14px 12px 0;vertical-align:middle;">${p.image ? `<a href="${esc(p.url)}"><img src="${esc(p.image)}" width="88" height="88" alt="" style="display:block;width:88px;height:88px;border-radius:10px;border:1px solid #E3E8EF;"></a>` : ''}</td><td style="padding:0 0 12px;vertical-align:middle;font-size:15px;line-height:1.4;"><a href="${esc(p.url)}" style="color:${INK};font-weight:bold;text-decoration:none;">${esc(shortTitle(p.title))}</a>${p.price != null ? `<br><span style="color:${MUTED};">${money(p.price)}</span>` : ''}</td></tr>`).join('')}</table>`;
 }
 
 /** A plain underlined link on its own line, in place of a button. */
 export function letterLink(label, url) {
-  return `<p style="margin:0 0 20px;"><a href="${esc(url)}" style="color:${INK};font-weight:bold;">${esc(label)}</a></p>`;
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 24px;"><tr><td style="border-radius:10px;background:#F4C430;"><a href="${esc(url)}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:bold;color:#14213D;text-decoration:none;border-radius:10px;">${esc(label)}</a></td></tr></table>`;
 }
 
 /** Journal stories as plain links with a one-line summary (no images). */
