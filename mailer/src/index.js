@@ -83,7 +83,9 @@ export default {
     // Theme beacon: browsing activity and newsletter sign-ups (with the consent box ticked).
     if (url.pathname === '/t' && request.method === 'POST') {
       const body = await readBeacon(request);
-      if (body) {
+      // Crawlers (Google, shopping and ad scanners, SEO tools) run the page script too; their views would drown out real shoppers.
+      const bot = /bot|crawl|spider|slurp|headless|lighthouse|preview|google|facebookexternalhit|ahrefs|semrush|pingdom|python|curl|wget/i.test(request.headers.get('User-Agent') || '');
+      if (body && !bot) {
         ctx.waitUntil(countHit(env, 'theme_beacons').catch(() => {}));
         ctx.waitUntil(recordEvent(env, body, request.headers.get('CF-Connecting-IP'))
           .then((jobId) => (jobId ? drainOutbox(env, { id: jobId }) : null))
