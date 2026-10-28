@@ -1,3 +1,7 @@
+<script>
+  // Old order-status and account links (/orders/…, /profile) now live in customer accounts.
+  if (/^\/(orders|profile)(\/|$)/.test(location.pathname)) location.replace({{ routes.account_url | json }});
+</script>
 <section class="container not-found">
   <div class="page-hero__inner">
     <p class="not-found__num gold-text" aria-hidden="true">404</p>
