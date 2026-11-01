@@ -2,7 +2,7 @@ import { trackOrder } from './shopify.js';
 import { syncParcels, scansFor } from './parcels.js';
 // LuxeMail entry point: HTTP routes and the 30-minute scheduler.
 import { json, now, hmacHex, cleanEmail, esc, sendingReady, getKV } from './util.js';
-import { layout, sendViaResend, unsubscribeUrl } from './email.js';
+import { layout, sendViaResend, unsubscribeUrl, sentTodayCount } from './email.js';
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
   scanFortnightly, scanWeeklyJournal, drainOutbox, checkDeliveries, weeklyReport, builders, syncShopifySubscribers, syncShopifyCheckouts, syncShopifyOrders,
@@ -49,6 +49,7 @@ async function sendTestsOnce(env) {
   if (!(await sendingReady(env))) return;
   // Sent 5 per run (Cloudflare limits outbound requests per run); kv 'tests_next' remembers where it got to.
   if (await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_sent').first()) return;
+  if (await sentTodayCount(env) + 5 > Number(env.DAILY_SEND_LIMIT || 95)) return; // wait for room in the daily limit
   const next = Number((await env.DB.prepare('SELECT v FROM kv WHERE k = ?').bind('tests_next').first())?.v || 0);
   const until = new Date(Date.now() + 7 * 86400000).toISOString();
   const items = [{ handle: 'chan-handbags-1', qty: 1 }];
@@ -194,6 +195,8 @@ export default {
       const html = layout(env, { ...email, unsubUrl });
       if (url.searchParams.get('send') === '1') {
         const to = cleanEmail(url.searchParams.get('to')) || env.ADMIN_EMAIL;
+        // Tests share Resend's daily quota with customer emails: never send one past the daily limit.
+        if (await sentTodayCount(env) >= Number(env.DAILY_SEND_LIMIT || 95)) return new Response('Daily send limit reached: try again tomorrow', { status: 429 });
         await sendViaResend(env, { to, subject: '[Test] ' + email.subject, html, unsubUrl });
         // Counts against the daily limit like any other send.
         await env.DB.prepare(`INSERT INTO sends (email, flow, dedupe, status, created_at, sent_at) VALUES (?, 'test', ?, 'sent', ?, ?)`)
