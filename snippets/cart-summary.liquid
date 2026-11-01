@@ -19,10 +19,11 @@
     endif
   endif
 -%}
-{%- if show_bar -%}
+{%- comment -%} Only while the cart is short of free shipping; once it qualifies, the totals say Free. {%- endcomment -%}
+{%- if show_bar and remaining > 0 -%}
   <div class="ship-bar">
     <span>
-      {%- if remaining > 0 -%}{%- assign remaining_money = remaining | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}{{ 'cart.free_shipping_remaining' | t: amount: remaining_money }}{%- else -%}{{ 'cart.free_shipping_unlocked' | t }}{%- endif -%}
+      {%- assign remaining_money = remaining | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}{{ 'cart.free_shipping_remaining' | t: amount: remaining_money }}
     </span>
     <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: {{ pct }}%"></div></div>
   </div>

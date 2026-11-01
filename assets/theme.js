@@ -410,8 +410,10 @@
       if (!rate) return;
       var limit = Math.round(parseInt(bar.dataset.threshold, 10) * rate), total = parseInt(bar.dataset.total, 10) || 0, left = limit - total;
       var fmt = new Intl.NumberFormat(doc.documentElement.lang || undefined, { style: 'currency', currency: bar.dataset.currency, currencyDisplay: 'narrowSymbol' });
-      $('span', bar).textContent = left > 0 ? bar.dataset.remaining.replace('%AMOUNT%', fmt.format(left / 100).replace(/[.,]00$/, '')) : bar.dataset.unlocked;
-      $('.ship-bar__fill', bar).style.setProperty('--pct', Math.min(100, Math.floor(total * 100 / limit)) + '%');
+      // Only while the cart is short of free shipping; once it qualifies, the totals say Free.
+      if (left <= 0) { bar.hidden = true; return; }
+      $('span', bar).textContent = bar.dataset.remaining.replace('%AMOUNT%', fmt.format(left / 100).replace(/[.,]00$/, ''));
+      $('.ship-bar__fill', bar).style.setProperty('--pct', Math.floor(total * 100 / limit) + '%');
       bar.hidden = false;
     });
     $$('[data-ship-cost]', root).forEach(function (el) {
