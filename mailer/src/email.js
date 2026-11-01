@@ -193,6 +193,11 @@ export function letterItems(products) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">${products.map((p) => `<tr><td style="padding:0 14px 12px 0;vertical-align:middle;">${p.image ? `<a href="${esc(p.url)}"><img src="${esc(p.image)}" width="88" height="88" alt="" style="display:block;width:88px;height:88px;border-radius:10px;border:1px solid #E3E8EF;"></a>` : ''}</td><td style="padding:0 0 12px;vertical-align:middle;font-size:15px;line-height:1.4;"><a href="${esc(p.url)}" style="color:${INK};font-weight:bold;text-decoration:none;">${esc(shortTitle(p.title))}</a>${p.price != null ? `<br><span style="color:${MUTED};">${money(p.price)}</span>` : ''}</td></tr>`).join('')}</table>`;
 }
 
+/** Journal stories for letter-style emails: small photo, linked title and a one-line summary. */
+export function letterStories(articles) {
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">${articles.map((a) => `<tr><td style="padding:0 14px 14px 0;vertical-align:top;">${a.image ? `<a href="${esc(a.url)}"><img src="${esc(a.image)}" width="88" height="88" alt="" style="display:block;width:88px;height:88px;object-fit:cover;border-radius:10px;border:1px solid #E3E8EF;"></a>` : ''}</td><td style="padding:0 0 14px;vertical-align:top;font-size:15px;line-height:1.45;"><a href="${esc(a.url)}" style="color:${INK};font-weight:bold;text-decoration:none;">${esc(a.title)}</a>${a.summary ? `<br><span style="color:${MUTED};">${esc(a.summary)}</span>` : ''}</td></tr>`).join('')}</table>`;
+}
+
 /** A plain underlined link on its own line, in place of a button. */
 export function letterLink(label, url) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 24px;"><tr><td style="border-radius:10px;background:#F4C430;"><a href="${esc(url)}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:bold;color:#14213D;text-decoration:none;border-radius:10px;">${esc(label)}</a></td></tr></table>`;

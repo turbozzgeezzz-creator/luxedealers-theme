@@ -7,8 +7,7 @@ import {
   verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince, boughtProductIds,
 } from './shopify.js';
 import {
-  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, letterItems, letterLink, sendViaResend, toneFor,
-  unsubscribeUrl, sentTodayCount,
+  enqueue, layout, letterItems, letterLink, letterStories, sendViaResend, unsubscribeUrl, sentTodayCount,
 } from './email.js';
 
 export const CONSENT_TEXT = 'Signed up to the email list (form says: By signing up you agree to get our emails)';
@@ -500,6 +499,7 @@ export async function scanWeeklyJournal(env) {
 
 /* ======================= Building each email ======================= */
 
+const P = (html) => `<p style="margin:0 0 16px;">${html}</p>`;
 const SIGN = (env) => `<p style="margin:0 0 16px;">Any questions, just reply to this email.</p><p style="margin:0;">Thanks,<br>The ${esc(env.BRAND)} team</p>`;
 
 const hi = (name) => (name ? `Hi ${esc(name)},` : 'Hi there,');
@@ -529,27 +529,6 @@ async function personalPicks(env, email, limit = 4) {
   return collectionProducts(env, env.BEST_COLLECTION || 'shop-all', limit);
 }
 
-// Department banners for the "Picked for you" email, matched to what the subscriber has been looking at.
-const INTEREST_BANNERS = {
-  handbags: ['banner-picks-bags.jpg', 'Bags picked for you'],
-  'sneakers-1': ['banner-picks-shoes.jpg', 'Shoes picked for you'],
-  clothing: ['banner-picks-clothing.jpg', 'Clothing picked for you'],
-  accessories: ['banner-picks-accessories.jpg', 'Accessories for you'],
-  jewellery: ['banner-picks-accessories.jpg', 'Jewellery picked for you'],
-};
-
-async function interestBanner(env, email) {
-  const seed = await seedProductId(env, email);
-  if (seed) {
-    const data = await gql(env, `query($id: ID!){ product(id: $id){ collections(first: 10){ nodes{ handle } } } }`,
-      { id: `gid://shopify/Product/${String(seed).replace(/\D/g, '')}` });
-    const handles = data.product ? data.product.collections.nodes.map((c) => c.handle) : [];
-    const match = handles.find((h) => INTEREST_BANNERS[h]);
-    if (match) return INTEREST_BANNERS[match];
-  }
-  return ['banner-picks-everyone.jpg', 'Picked for you this fortnight'];
-}
-
 const fmtDate = (iso) => new Date(iso).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', timeZone: 'Australia/Sydney' });
 
 /** Rebuilds the checkout as a cart link (/cart/variant:qty,...), which also takes a discount code. */
@@ -560,29 +539,28 @@ function cartLink(env, items, code) {
 }
 
 export const builders = {
+  // Every email is a short personal letter (best chance of Gmail's Primary tab): service-style subject with no
+  // "%", "off" or "code", a few lines of text, at most 2-3 small product rows, one button. Codes sit in the text.
   async welcome1(env, email, d) {
     const wc = await welcomeCodeFor(env, email).catch((e) => { if (e.returning) return null; throw e; });
-    const picks = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
+    const picks = (await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4)).slice(0, 2);
     if (!wc) {
       return {
+        letter: true,
         subject: `You're on the ${env.BRAND} list`,
-        preheader: 'New arrivals, restocks and subscriber-only offers, straight to your inbox.',
-        banner: 'banner-welcome.jpg', bannerAlt: 'Welcome to the list',
-        body: heading('Welcome back') + para(`${hi(d.firstName)} thanks for joining the list, and for shopping with us before. You'll be first to hear about new arrivals, restocks and subscriber-only offers.`)
-          + button('Shop new arrivals', `${env.STORE_URL}/collections/new-arrivals`)
-          + productGrid(picks, { heading: 'Top picks right now' }),
+        preheader: 'Thanks for joining, and for shopping with us before.',
+        body: P(hi(d.firstName)) + P(`Thanks for joining the list, and for shopping with us before. You'll be first to hear about new arrivals and restocks.`)
+          + letterItems(picks) + letterLink('See new arrivals', `${env.STORE_URL}/collections/new-arrivals`) + SIGN(env),
       };
     }
     const { code, endsAt } = wc;
     return {
-      subject: `Welcome to ${env.BRAND}: here's 10% off`,
-      preheader: `Your code ${code} is inside, plus a few of our most-loved picks.`,
-      banner: 'banner-welcome.jpg', bannerAlt: 'Welcome, here is 10% off your first order',
-      body: heading('Welcome to LuxeDealers') + para(`${hi(d.firstName)} thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free worldwide on orders over US$50, every order is tracked, and if anything isn't right we'll refund or reship it.`)
-        + offerCard(env, { theme: 'welcome', big: '10%', unit: 'off', title: 'Your welcome gift: 10% off your order', code,
-          fine: `Your own code: single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Start shopping', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`)
-        + productGrid(picks, { heading: 'Top picks right now' }),
+      letter: true,
+      subject: `Welcome to ${env.BRAND}${d.firstName ? `, ${d.firstName}` : ''}`,
+      preheader: 'Thanks for joining. A quick hello from our team.',
+      body: P(hi(d.firstName)) + P(`Thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free worldwide on orders over US$50, every order is tracked, and if anything isn't right we'll refund or reship it.`)
+        + P(`As a welcome, here's 10% off your first order: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The button applies it for you.`)
+        + letterItems(picks) + letterLink('Start shopping', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`) + SIGN(env),
     };
   },
   async welcome2(env, email, d) {
@@ -591,32 +569,27 @@ export const builders = {
     if (!wc) return null;
     const { code, endsAt } = wc;
     if (Date.parse(endsAt) < Date.now() + DAY * 1000) return null;
-    const picks = await collectionProducts(env, 'new-arrivals', 4);
+    const picks = (await collectionProducts(env, 'new-arrivals', 4)).slice(0, 2);
     return {
-      subject: 'Still deciding? Your 10% is waiting',
-      preheader: `${code} still takes 10% off, until ${fmtDate(endsAt)}.`,
-      banner: 'banner-picks-everyone.jpg', bannerAlt: 'Fresh picks for you',
-      body: heading('Your 10% is still here') + para(`${hi(d.firstName)} in case you missed it, your welcome code is ready whenever you are.`)
-        + offerCard(env, { theme: 'reminder', big: '10%', unit: 'still yours', title: 'Your welcome code hasn\'t been used yet', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts.` })
-        + productGrid(picks, { heading: 'Just landed' })
-        + button('Use my 10%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`),
+      letter: true,
+      subject: 'Did you find what you were looking for?',
+      preheader: 'A quick note from the LuxeDealers team.',
+      body: P(hi(d.firstName)) + P(`Just checking in. If you couldn't find something, or have a question about sizing or delivery, reply to this email and we'll help.`)
+        + P(`Your welcome code <strong>${esc(code)}</strong> still takes 10% off your first order, until ${fmtDate(endsAt)}. A couple of new arrivals:`)
+        + letterItems(picks) + letterLink('Have a look', `${env.STORE_URL}/discount/${code}?redirect=/collections/new-arrivals`) + SIGN(env),
     };
   },
   async welcome3(env, email, d) {
     if (await orderedSince(env, email, 0)) return null;
     if (!env.PREVIEW && (await isReturningCustomer(env, email))) return null;
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'WELCOME15', percent: 15, days: 3, title: 'Welcome last call 15%' });
-    const picks = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
+    const picks = (await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4)).slice(0, 2);
     return {
-      subject: 'Last call: 15% off, for 3 days',
-      preheader: `${code} takes 15% off until ${fmtDate(endsAt)}.`,
-      banner: 'banner-last-call.jpg', bannerAlt: 'Last call: 15% off, ends in 3 days',
-      body: heading('Last call: 15% off') + para(`${hi(d.firstName)} you've been with us a week, so here's our best new-member offer: 15% off your order, for the next 3 days.`)
-        + offerCard(env, { theme: 'lastcall', big: '15%', unit: '3 days only', title: 'Your new-member offer', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Use my 15%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`)
-        + productGrid(picks, { heading: 'Top picks right now' }),
+      letter: true,
+      subject: `One more thing${d.firstName ? `, ${d.firstName}` : ''}`,
+      preheader: 'Something for your first order, for the next 3 days.',
+      body: P(hi(d.firstName)) + P(`You've been with us a week, so for your first order we've made you a personal code: <strong>${esc(code)}</strong>. It takes 15% off and works for the next 3 days, until ${fmtDate(endsAt)}.`)
+        + P('Our most-loved pieces right now:') + letterItems(picks) + letterLink('Start shopping', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`) + SIGN(env),
     };
   },
   async checkout1(env, email, d) {
@@ -641,8 +614,8 @@ export const builders = {
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'BACK5', percent: 5, days: 7, title: 'Abandoned checkout 5%' });
     return {
       letter: true,
-      subject: 'Still deciding? A code for your order',
-      preheader: `Your items are still available, and ${code} takes 5% off.`,
+      subject: 'Your items are still saved',
+      preheader: 'Everything you picked is still available.',
       body: `<p style="margin:0 0 16px;">${hi(d.firstName)}</p><p style="margin:0 0 16px;">Your items are still waiting at checkout. To help you decide, here's a code for 5% off: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The link below applies it for you.</p>`
         + letterItems(products) + letterLink('Finish my order with 5% off', d.url ? `${d.url}${d.url.includes('?') ? '&' : '?'}discount=${encodeURIComponent(code)}` : cartLink(env, d.items, code)) + SIGN(env),
     };
@@ -652,7 +625,7 @@ export const builders = {
     if (!products.length) return null;
     return {
       letter: true,
-      subject: 'You left these in your cart',
+      subject: 'Still deciding on these?',
       preheader: 'The things you added are still available.',
       body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 8px;">You added these to your cart and they're still in stock. Your cart is saved on the device you used.</p>`
         + letterItems(products) + letterLink('Back to my cart', `${env.STORE_URL}/cart`) + SIGN(env),
@@ -664,9 +637,9 @@ export const builders = {
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'BACK5', percent: 5, days: 7, title: 'Abandoned cart 5%' });
     return {
       letter: true,
-      subject: 'A code for what\'s in your cart',
-      preheader: `${code} takes 5% off your cart.`,
-      body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 16px;">Still thinking it over? Here's a code for 5% off what's in your cart: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The link below applies it for you.</p>`
+      subject: 'Quick question about your cart',
+      preheader: 'Is anything holding you back? We can help.',
+      body: `<p style="margin:0 0 16px;">Hi there,</p><p style="margin:0 0 16px;">Is anything holding you back, like sizing, shipping or delivery time? Just reply and we'll help. And if it helps you decide, here's 5% off what's in your cart: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The link below applies it for you.</p>`
         + letterItems(products) + letterLink('Use my 5% code', `${env.STORE_URL}/discount/${code}?redirect=/cart`) + SIGN(env),
     };
   },
@@ -685,31 +658,27 @@ export const builders = {
     };
   },
   async wishlist(env, email, d) {
-    const products = await productsForHandles(env, d.handles, await boughtProductIds(env, email));
+    const products = (await productsForHandles(env, d.handles, await boughtProductIds(env, email))).slice(0, 3);
     if (!products.length) return null;
     return {
-      subject: 'Your wishlist misses you',
-      preheader: 'The things you saved are still in stock.',
-      banner: 'banner-wishlist.jpg', bannerAlt: 'Your saved picks',
-      body: heading('Your saved picks') + para('You saved these to your wishlist. Good news: they\'re still in stock.')
-        + productGrid(products) + button('View my wishlist', `${env.STORE_URL}/pages/wishlist`),
+      letter: true,
+      subject: 'Still have your eye on these?',
+      preheader: 'The pieces you saved are still in stock.',
+      body: P('Hi there,') + P(`The pieces you saved to your wishlist are still in stock:`) + letterItems(products) + letterLink('View my wishlist', `${env.STORE_URL}/pages/wishlist`) + SIGN(env),
     };
   },
   async postpurchase(env, email, d) {
     const bought = (d.handles || [])[0] ? await productByHandle(env, d.handles[0]) : null;
-    const recs = bought ? (await recommendations(env, bought.id, 5)).filter((p) => !(d.handles || []).includes(p.handle)).slice(0, 4) : [];
-    const picks = recs.length ? recs : await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
+    const recs = bought ? (await recommendations(env, bought.id, 5)).filter((p) => !(d.handles || []).includes(p.handle)).slice(0, 2) : [];
+    const picks = recs.length ? recs : (await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4)).slice(0, 2);
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'NEXT10', percent: 10, days: 30, title: 'Thank-you 10% next order' });
     return {
-      subject: 'A thank-you: 10% off your next order',
-      preheader: `${code} takes 10% off your next order, until ${fmtDate(endsAt)}.`,
-      banner: 'banner-next-order.jpg', bannerAlt: 'A thank-you gift: 10% off your next order',
-      body: heading('Thanks for shopping with us!') + para(`${hi(d.firstName)} we hope you're enjoying your order. As a thank-you, here's 10% off your next one.`)
-        + offerCard(env, { theme: 'thanks', big: '10%', unit: 'next order', title: 'A thank-you gift for your next order', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Use my 10%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`)
-        + productGrid(picks, { heading: recs.length ? 'Goes great with your order' : 'Top picks right now' })
-        + para('Anything not right with your order? Just reply to this email and we\'ll sort it out.'),
+      letter: true,
+      subject: `How's your order going${d.firstName ? `, ${d.firstName}` : ''}?`,
+      preheader: 'A quick check-in from the LuxeDealers team.',
+      body: P(hi(d.firstName)) + P(`Thanks again for your order. If anything isn't right, or you have a question about delivery, just reply and we'll sort it out.`)
+        + P(`As a thank-you, <strong>${esc(code)}</strong> takes 10% off your next order, until ${fmtDate(endsAt)}. ${recs.length ? 'These go well with what you bought:' : 'A couple of our favourites:'}`)
+        + letterItems(picks) + letterLink('Have a look', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`) + SIGN(env),
       // A week before the code ends, remind them (skipped if they've ordered again by then).
       afterSend: () => enqueue(env, { email, flow: 'nextreminder', dedupe: `nextreminder:${code}`, priority: 4,
         data: { firstName: d.firstName, code, endsAt, since: now() }, sendAfter: Math.floor(Date.parse(endsAt) / 1000) - 7 * DAY }),
@@ -718,120 +687,78 @@ export const builders = {
   async nextreminder(env, email, d) {
     if (await orderedSince(env, email, d.since)) return null;
     if (Date.parse(d.endsAt) < Date.now() + DAY * 1000) return null;
-    const picks = await personalPicks(env, email, 4);
+    const picks = (await personalPicks(env, email, 4)).slice(0, 2);
     return {
-      subject: `Your 10% ends ${fmtDate(d.endsAt)}`,
-      preheader: `${d.code} still takes 10% off your next order.`,
-      banner: 'banner-next-reminder.jpg', bannerAlt: 'Your 10% is still waiting',
-      body: heading('Your 10% is still waiting') + para(`${hi(d.firstName)} a quick reminder: your thank-you code still takes 10% off your next order, until ${fmtDate(d.endsAt)}.`)
-        + offerCard(env, { theme: 'thanks', big: '10%', unit: 'next order', title: 'Your thank-you code', code: d.code,
-          fine: `Single use, valid until ${fmtDate(d.endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + button('Use my 10%', `${env.STORE_URL}/discount/${d.code}?redirect=/collections/all`)
-        + productGrid(picks, { heading: 'Picked for you' }),
+      letter: true,
+      subject: `Just checking in${d.firstName ? `, ${d.firstName}` : ''}`,
+      preheader: 'A quick reminder from the LuxeDealers team.',
+      body: P(hi(d.firstName)) + P(`A quick reminder: your thank-you code <strong>${esc(d.code)}</strong> still takes 10% off your next order, until ${fmtDate(d.endsAt)}. Picked for you:`)
+        + letterItems(picks) + letterLink('Have a look', `${env.STORE_URL}/discount/${d.code}?redirect=/collections/all`) + SIGN(env),
     };
   },
-
   async vip(env, email, d) {
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'VIP15', percent: 15, days: 30, title: 'VIP thank-you 15%' });
-    const picks = await collectionProducts(env, 'new-arrivals', 4);
+    const picks = (await collectionProducts(env, 'new-arrivals', 4)).slice(0, 2);
     return {
-      subject: 'You\'re a VIP. Here\'s 15% off',
-      preheader: 'Thanks for being one of our best customers.',
-      banner: 'banner-vip.jpg', bannerAlt: 'You are a VIP: 15% off your next order',
-      body: heading('Welcome to VIP') + para(`${hi(d.firstName)} you're one of our best customers. Thank you! Here's 15% off your next order.`)
-        + offerCard(env, { theme: 'vip', big: '15%', unit: 'off', title: 'A VIP thank-you, just for you', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + productGrid(picks, { heading: 'New this fortnight' })
-        + button('Use my 15%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`),
+      letter: true,
+      subject: `Thank you${d.firstName ? `, ${d.firstName}` : ''}`,
+      preheader: 'A note from the LuxeDealers team.',
+      body: P(hi(d.firstName)) + P(`You're one of our best customers, and we wanted to say thank you. Here's 15% off your next order, just for you: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}).`)
+        + P('New this fortnight:') + letterItems(picks) + letterLink('Have a look', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`) + SIGN(env),
     };
   },
   async winback(env, email, d) {
     const { code, endsAt } = await createPersonalCode(env, { prefix: 'COMEBACK15', percent: 15, days: 14, title: 'Win-back 15%' });
-    const picks = await collectionProducts(env, 'new-arrivals', 4);
+    const picks = (await collectionProducts(env, 'new-arrivals', 4)).slice(0, 2);
     return {
-      subject: 'We miss you. Here\'s 15% off',
-      preheader: 'See what\'s new since your last visit.',
-      banner: 'banner-winback.jpg', bannerAlt: 'We miss you',
-      body: heading('It\'s been a while!') + para(`${hi(d.firstName)} here's what's new since your last visit, plus 15% off your next order.`)
-        + offerCard(env, { theme: 'winback', big: '15%', unit: 'off', title: 'Welcome back: 15% off your next order', code,
-          fine: `Single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
-        + productGrid(picks, { heading: 'New since your last visit' })
-        + button('Use my 15%', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`),
+      letter: true,
+      subject: `It's been a while${d.firstName ? `, ${d.firstName}` : ''}`,
+      preheader: "Here's what's new since you last visited.",
+      body: P(hi(d.firstName)) + P(`It's been a while since your last visit, so here's what's new. If you'd like to come back, <strong>${esc(code)}</strong> takes 15% off your next order, until ${fmtDate(endsAt)}.`)
+        + letterItems(picks) + letterLink("See what's new", `${env.STORE_URL}/discount/${code}?redirect=/collections/new-arrivals`) + SIGN(env),
     };
   },
   async journal(env, email, d) {
     const articles = await latestArticles(env, 3, d.since || new Date(Date.now() - 7 * DAY * 1000).toISOString());
     if (!articles.length) return null;
-    const p = await personalPicks(env, email, 2);
-    const lead = articles[0];
     return {
-      subject: articles.length > 1 ? `This week in the journal: ${lead.title}` : lead.title,
+      letter: true,
+      subject: articles[0].title,
       preheader: `${articles.length} new ${articles.length === 1 ? 'story' : 'stories'} from the style desk this week.`,
-      banner: 'banner-blog.jpg', bannerAlt: 'This week in the journal',
-      body: heading('This week in the journal') + para(`${hi(d.firstName)} here's everything new from the style desk this week: buying tips, style notes and what to look for.`)
-        + articleList(articles) + productGrid(p, { heading: 'Picked for you' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
+      body: P(hi(d.firstName)) + P(`Here's what's new on the ${esc(env.BRAND)} journal this week:`) + letterStories(articles)
+        + letterLink('Read the journal', `${env.STORE_URL}/blogs/news`) + `<p style="margin:0;">Happy reading,<br>The ${esc(env.BRAND)} team</p>`,
     };
   },
   async fortnight(env, email, d) {
-    const intro = `${hi(d.firstName)} here's what's worth a look this fortnight, picked by our team.`;
-    // Each theme carries a different offer: a New arrivals code, spend-and-save, or a sitewide subscriber code.
-    const insider = (unit, title, where, redirect) => d.offer
-      ? offerCard(env, { theme: 'insider', big: '10%', unit, title, code: d.offer.code,
-          fine: `${where} until ${fmtDate(d.offer.endsAt)}. Once per customer. Can't be combined with other discounts.` })
-        + button('Use my 10%', `${env.STORE_URL}/discount/${d.offer.code}?redirect=${redirect}`)
-      : tierCard(env);
+    // Each theme still carries its offer (a New arrivals or subscriber code), mentioned in the text.
+    const offer = (what) => d.offer ? P(`For subscribers: <strong>${esc(d.offer.code)}</strong> takes 10% off ${what}, until ${fmtDate(d.offer.endsAt)} (once per customer).`) : '';
+    const link = (label, path) => letterLink(label, d.offer ? `${env.STORE_URL}/discount/${d.offer.code}?redirect=${path}` : `${env.STORE_URL}${path}`);
+    const letter = (subject, preheader, intro, items, extra, button) => ({ letter: true, subject, preheader, body: P(hi(d.firstName)) + P(intro) + extra + letterItems(items) + button + SIGN(env) });
     if (d.theme === 'new') {
-      const p = await collectionProducts(env, 'new-arrivals', 4);
-      return { subject: d.offer ? 'Just landed, and 10% off for subscribers' : 'Just landed: new this fortnight', preheader: 'Fresh arrivals, picked by our team.', banner: 'banner-new-arrivals.jpg', bannerAlt: 'New arrivals this fortnight',
-        body: heading('New arrivals') + para(intro) + insider('new arrivals', 'Subscriber code: 10% off New arrivals', 'Valid on the New arrivals collection', '/collections/new-arrivals')
-          + productGrid(p) + (d.offer ? '' : button('See what\'s new', `${env.STORE_URL}/collections/new-arrivals`)) };
+      const p = (await collectionProducts(env, 'new-arrivals', 4)).slice(0, 3);
+      return letter('New this fortnight', 'A few new arrivals, picked by our team.', "A few new arrivals our team picked this fortnight:", p, offer('New arrivals'), link("See what's new", '/collections/new-arrivals'));
     }
     if (d.theme === 'deals') {
-      // Genuine price drops (compare-at prices). No code: the reduced prices are the offer, and multi-buy still applies.
+      // Genuine price drops (compare-at prices); the reduced prices are the offer.
       const p = await collectionProducts(env, 'deals', 6);
       if (p.length >= 2) {
-        return { _theme: 'deals', subject: 'Price drops on selected styles', preheader: 'Selected items reduced, and they still count towards Buy 2 or 3+ savings.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Price drops',
-          body: heading('Price drops') + para(`${hi(d.firstName)} we've reduced selected styles across bags, shoes, jackets and more. Here are a few worth a look.`)
-            + productGrid(p) + tierCard(env) + button('Shop price drops', `${env.STORE_URL}/collections/deals`) };
+        return { _theme: 'deals', ...letter('A few styles just came down in price', 'Selected bags, shoes and jackets, reduced.', "We've reduced selected bags, shoes, jackets and more. A few worth a look:", p.slice(0, 3), '', letterLink('See them all', `${env.STORE_URL}/collections/deals`)) };
       }
       d = { ...d, theme: 'best' };
     }
     if (d.theme === 'best') {
-      const p = await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4);
-      return { _theme: 'best', subject: 'Our top picks right now', preheader: 'Hand-picked by our team this fortnight.', banner: 'banner-best-sellers.jpg', bannerAlt: 'Top picks this fortnight',
-        body: heading('Top picks right now') + para(intro) + productGrid(p) + tierCard(env) + button('Shop all', `${env.STORE_URL}/collections/${env.BEST_COLLECTION || 'shop-all'}`) };
+      const p = (await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 4)).slice(0, 3);
+      return { _theme: 'best', ...letter("What everyone's buying right now", 'Our most-loved pieces this fortnight.', "Here's what customers are loving this fortnight:", p, '', letterLink('Shop all', `${env.STORE_URL}/collections/${env.BEST_COLLECTION || 'shop-all'}`)) };
     }
     if (d.theme === 'blog') {
       const articles = await latestArticles(env, 3);
-      const p = await personalPicks(env, email, 2);
-      return { subject: d.offer ? 'New stories, plus 10% off for subscribers' : 'From the style desk: new stories worth a read', preheader: 'Style notes and buying tips from our team.', banner: 'banner-blog.jpg', bannerAlt: 'New stories worth a read',
-        body: heading('From the style desk') + para(`${hi(d.firstName)} a few stories from our team, plus a couple of picks for you.`)
-          + articleList(articles) + insider('subscribers only', 'A subscriber code, on everything', 'Valid on everything', '/collections/all')
-          + productGrid(p, { heading: 'Picked for you' }) + (d.offer ? '' : button('Read the journal', `${env.STORE_URL}/blogs/news`)) };
+      return { letter: true, subject: 'New from the style desk', preheader: 'Style notes and buying tips from our team.',
+        body: P(hi(d.firstName)) + P('A few new stories from our team:') + letterStories(articles) + offer('everything') + link('Read the journal', '/blogs/news') + SIGN(env) };
     }
-    const p = await personalPicks(env, email, 4);
-    const [banner, bannerAlt] = await interestBanner(env, email);
-    return { subject: 'Picked for you this fortnight', preheader: 'Chosen from what you\'ve looked at and bought.', banner, bannerAlt,
-      body: heading('Picked for you') + para(intro) + productGrid(p) + tierCard(env) + button('Shop your picks', `${env.STORE_URL}/collections/all`) };
+    const p = (await personalPicks(env, email, 4)).slice(0, 3);
+    return letter('Picked for you this fortnight', "Chosen from what you've looked at and bought.", 'A few pieces we think you will like, based on what you have looked at:', p, '', letterLink('Have a look', `${env.STORE_URL}/collections/all`));
   },
-
 };
-
-// Each email gets its own colour scheme and banner (see TONES in email.js and tools/assets.mjs).
-const FLOW_BANNERS = {
-  welcome1: 'b-welcome1.jpg', welcome2: 'b-welcome2.jpg', welcome3: 'b-welcome3.jpg', checkout1: 'b-checkout1.jpg', checkout2: 'b-checkout2.jpg',
-  cart1: 'b-cart1.jpg', cart2: 'b-cart2.jpg', browse: 'b-browse.jpg', wishlist: 'b-wishlist.jpg', postpurchase: 'b-postpurchase.jpg',
-  nextreminder: 'b-nextreminder.jpg', vip: 'b-vip.jpg', winback: 'b-winback.jpg', 'fortnight:new': 'b-new.jpg', 'fortnight:best': 'b-best.jpg', 'fortnight:deals': 'b-deals.jpg', journal: 'b-journal.jpg',
-};
-for (const [key, build] of Object.entries(builders)) {
-  builders[key] = async (env, email, d) => {
-    const out = await build(env, email, d);
-    if (!out) return out;
-    const theme = out._theme || d.theme;
-    const k = key === 'fortnight' ? `fortnight:${theme}` : key;
-    return { ...out, tone: toneFor(key, key === 'fortnight' ? theme : null), banner: FLOW_BANNERS[k] || out.banner };
-  };
-}
 
 /* ======================= Outbox ======================= */
 
