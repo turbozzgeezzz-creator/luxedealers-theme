@@ -7,7 +7,7 @@ import {
   verifyOrder, createPersonalCode, createSharedCode, gql, productByHandle, recommendations, collectionProducts, latestArticles, shopifyHasOrders, abandonedCheckouts, shopifyOrderedSince, recentOrdersFor, ordersSince, boughtProductIds,
 } from './shopify.js';
 import {
-  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, letterArticles, letterItems, letterLink, sendViaResend, toneFor,
+  enqueue, layout, heading, para, button, offerCard, tierCard, tierNudge, productGrid, articleList, letterItems, letterLink, sendViaResend, toneFor,
   unsubscribeUrl, sentTodayCount,
 } from './email.js';
 
@@ -578,7 +578,7 @@ export const builders = {
       subject: `Welcome to ${env.BRAND}: here's 10% off`,
       preheader: `Your code ${code} is inside, plus a few of our most-loved picks.`,
       banner: 'banner-welcome.jpg', bannerAlt: 'Welcome, here is 10% off your first order',
-      body: heading('Welcome to LuxeDealers') + para(`${hi(d.firstName)} thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free on every order, worldwide, with tracking, and if anything isn't right we'll refund or reship it.`)
+      body: heading('Welcome to LuxeDealers') + para(`${hi(d.firstName)} thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free worldwide on orders over US$50, every order is tracked, and if anything isn't right we'll refund or reship it.`)
         + offerCard(env, { theme: 'welcome', big: '10%', unit: 'off', title: 'Your welcome gift: 10% off your order', code,
           fine: `Your own code: single use, valid until ${fmtDate(endsAt)}. Can't be combined with other discounts. The button applies it for you.` })
         + button('Start shopping', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`)
@@ -760,17 +760,16 @@ export const builders = {
     };
   },
   async journal(env, email, d) {
-    const articles = await latestArticles(env, 6, d.since || new Date(Date.now() - 7 * DAY * 1000).toISOString());
+    const articles = await latestArticles(env, 3, d.since || new Date(Date.now() - 7 * DAY * 1000).toISOString());
     if (!articles.length) return null;
+    const p = await personalPicks(env, email, 2);
     const lead = articles[0];
-    // A plain letter (no products, prices or images) so it reads as news, not an advert.
     return {
-      letter: true,
       subject: articles.length > 1 ? `This week in the journal: ${lead.title}` : lead.title,
       preheader: `${articles.length} new ${articles.length === 1 ? 'story' : 'stories'} from the style desk this week.`,
-      body: `<p style="margin:0 0 16px;">${hi(d.firstName)}</p><p style="margin:0 0 20px;">Here's what's new on the ${esc(env.BRAND)} journal this week: buying tips, style notes and what to look for.</p>`
-        + letterArticles(articles)
-        + `<p style="margin:24px 0 0;">Happy reading,<br>The ${esc(env.BRAND)} team</p>`,
+      banner: 'banner-blog.jpg', bannerAlt: 'This week in the journal',
+      body: heading('This week in the journal') + para(`${hi(d.firstName)} here's everything new from the style desk this week: buying tips, style notes and what to look for.`)
+        + articleList(articles) + productGrid(p, { heading: 'Picked for you' }) + button('Read the journal', `${env.STORE_URL}/blogs/news`),
     };
   },
   async fortnight(env, email, d) {

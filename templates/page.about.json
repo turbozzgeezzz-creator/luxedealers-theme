@@ -64,7 +64,7 @@
           "settings": {
             "icon": "globe",
             "title": "Tracked shipping",
-            "text": "<p>Free tracked shipping on every order, priced in your currency.</p>"
+            "text": "<p>Free tracked shipping on orders over US$50, priced in your currency.</p>"
           }
         },
         "c": {

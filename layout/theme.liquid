@@ -36,9 +36,9 @@
       if seo_desc == blank or seo_desc == settings.seo_home_description and request.page_type != 'index'
         case request.page_type
           when 'collection'
-            assign seo_desc = 'Shop ' | append: collection.title | append: ' at LuxeDealers: ' | append: collection.products_count | append: ' styles, each hand-checked, with free tracked shipping worldwide and a refund or reship guarantee.'
+            assign seo_desc = 'Shop ' | append: collection.title | append: ' at LuxeDealers: ' | append: collection.products_count | append: ' styles, each hand-checked, with free tracked shipping over US$50 and a refund or reship guarantee.'
           when 'product'
-            assign seo_desc = 'Shop ' | append: product.title | append: ' at LuxeDealers from ' | append: product.price_min | money_without_trailing_zeros | append: '. Hand-checked, free tracked shipping worldwide, refund or reship guarantee.'
+            assign seo_desc = 'Shop ' | append: product.title | append: ' at LuxeDealers from ' | append: product.price_min | money_without_trailing_zeros | append: '. Hand-checked, free tracked shipping over US$50, refund or reship guarantee.'
           when 'page'
             assign seo_desc = page.content | strip_html | strip_newlines | truncate: 155
           when 'blog'

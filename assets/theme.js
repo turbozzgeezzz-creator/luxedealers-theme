@@ -402,6 +402,20 @@
     if ($('#main-cart')) ids.push($('#main-cart').dataset.sectionId);
     return ids;
   }
+  // Free-shipping bar for shoppers paying in another currency: the threshold is set in the store's currency,
+  // so convert it with the rate Shopify uses on this page.
+  function initShipBars(root) {
+    var rate = parseFloat((window.Shopify && Shopify.currency && Shopify.currency.rate) || 0);
+    $$('[data-ship-bar]', root).forEach(function (bar) {
+      if (!rate) return;
+      var limit = Math.round(parseInt(bar.dataset.threshold, 10) * rate), total = parseInt(bar.dataset.total, 10) || 0, left = limit - total;
+      var fmt = new Intl.NumberFormat(doc.documentElement.lang || undefined, { style: 'currency', currency: bar.dataset.currency, currencyDisplay: 'narrowSymbol' });
+      $('span', bar).textContent = left > 0 ? bar.dataset.remaining.replace('%AMOUNT%', fmt.format(left / 100).replace(/[.,]00$/, '')) : bar.dataset.unlocked;
+      $('.ship-bar__fill', bar).style.setProperty('--pct', Math.min(100, Math.floor(total * 100 / limit)) + '%');
+      bar.hidden = false;
+    });
+  }
+  initShipBars(doc);
   function renderSections(sections) {
     if (!sections) return;
     if (sections['cart-drawer']) {
@@ -426,6 +440,7 @@
       var freshMain = $('#main-cart', m);
       if (freshMain) main.innerHTML = freshMain.innerHTML;
     }
+    initShipBars(doc);
   }
   function addToCart(items, btn) {
     if (btn) { btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }

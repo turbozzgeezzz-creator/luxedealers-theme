@@ -38,7 +38,7 @@
           "type": "message",
           "settings": {
             "icon": "truck",
-            "text": "Free shipping on every order",
+            "text": "FREE tracked shipping on orders over US$50",
             "link": "/policies/shipping-policy",
             "opens_popup": false,
             "needs_code": false

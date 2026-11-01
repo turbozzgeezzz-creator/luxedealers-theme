@@ -5,7 +5,7 @@
       "settings": {
         "eyebrow": "Why LuxeDealers",
         "heading": "Luxury looks, honest prices",
-        "text": "Premium 1:1 inspired clothing, bags, shoes and accessories, with free tracked shipping worldwide and a refund or reship guarantee.",
+        "text": "Premium 1:1 inspired clothing, bags, shoes and accessories, with free tracked shipping on orders over US$50 and a refund or reship guarantee.",
         "show_meta": true,
         "art": "watch"
       }
@@ -18,7 +18,7 @@
           "settings": {
             "icon": "truck",
             "title": "Free shipping",
-            "text": "<p>On every order, with tracking. Most orders arrive within 2–3 weeks.</p>",
+            "text": "<p>On orders over US$50, with tracking. Most orders arrive within 2–3 weeks.</p>",
             "link": "/policies/shipping-policy",
             "link_label": "Shipping policy"
           }
@@ -88,7 +88,7 @@
           "type": "point",
           "settings": {
             "title": "Free shipping, no surprises",
-            "text": "Shipping is free on every order and tracked. If anything isn't right, we'll refund or reship it, with no need to send it back."
+            "text": "Shipping is free on orders over US$50, and every order is tracked. If anything isn't right, we'll refund or reship it, with no need to send it back."
           }
         }
       },
@@ -157,7 +157,7 @@
           "settings": {
             "icon": "truck",
             "title": "Free tracked shipping",
-            "text": "Shipping is free on every order, worldwide. Most orders arrive within 2–3 weeks."
+            "text": "Shipping is free worldwide on orders over US$50. Most orders arrive within 2–3 weeks."
           }
         },
         "s4": {
@@ -203,7 +203,7 @@
           "type": "question",
           "settings": {
             "question": "Do you ship to my country?",
-            "answer": "<p>We ship internationally, and shipping is free on every order. Any customs duties or taxes charged by your country are paid by the customer.</p>"
+            "answer": "<p>We ship internationally, and shipping is free on orders over US$50 (US$5.95 below that). Any customs duties or taxes charged by your country are paid by the customer.</p>"
           }
         }
       },

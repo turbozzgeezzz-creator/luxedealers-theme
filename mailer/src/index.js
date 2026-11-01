@@ -69,7 +69,11 @@ async function sendTestsOnce(env) {
   for (const [flow, sample] of samples.slice(next, end)) {
     try {
       const email = await builders[flow]({ ...env, PREVIEW: '1' }, 'preview@example.com', sample);
-      if (email) await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: `[Test] ${email.subject}`, html: layout(env, { ...email, unsubUrl }), unsubUrl });
+      if (!email) continue;
+      await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: `[Test] ${email.subject}`, html: layout(env, { ...email, unsubUrl }), unsubUrl });
+      // Count tests against the daily limit like any other send, so they never push customer emails over it.
+      await env.DB.prepare(`INSERT INTO sends (email, flow, dedupe, status, created_at, sent_at) VALUES (?, 'test', ?, 'sent', ?, ?)`)
+        .bind(env.ADMIN_EMAIL, `test:${flow}:${sample.theme || ''}:${now()}`, now(), now()).run();
     } catch (e) { console.error('test send', flow, e); }
   }
 }
@@ -189,8 +193,12 @@ export default {
       const unsubUrl = await unsubscribeUrl(env, 'preview@example.com');
       const html = layout(env, { ...email, unsubUrl });
       if (url.searchParams.get('send') === '1') {
-        await sendViaResend(env, { to: env.ADMIN_EMAIL, subject: '[Test] ' + email.subject, html, unsubUrl });
-        return new Response(`Test sent to ${env.ADMIN_EMAIL}`);
+        const to = cleanEmail(url.searchParams.get('to')) || env.ADMIN_EMAIL;
+        await sendViaResend(env, { to, subject: '[Test] ' + email.subject, html, unsubUrl });
+        // Counts against the daily limit like any other send.
+        await env.DB.prepare(`INSERT INTO sends (email, flow, dedupe, status, created_at, sent_at) VALUES (?, 'test', ?, 'sent', ?, ?)`)
+          .bind(to, `test:${flow}:${url.searchParams.get('theme') || ''}:${to}:${Date.now()}`, now(), now()).run();
+        return new Response(`Test sent to ${to}`);
       }
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }

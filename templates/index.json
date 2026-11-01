@@ -164,7 +164,7 @@
         "m2": {
           "type": "text",
           "settings": {
-            "text": "Free shipping on every order"
+            "text": "FREE tracked shipping on orders over US$50"
           }
         },
         "m3": {
@@ -389,7 +389,7 @@
           "type": "point",
           "settings": {
             "title": "Free shipping, no surprises",
-            "text": "Shipping is free on every order and tracked. If anything isn't right, we'll refund or reship it, with no need to send it back."
+            "text": "Shipping is free on orders over US$50, and every order is tracked. If anything isn't right, we'll refund or reship it, with no need to send it back."
           }
         }
       },
@@ -401,7 +401,7 @@
       "settings": {
         "eyebrow": "Why LuxeDealers",
         "heading": "Luxury looks,\nhonest prices",
-        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, with free tracked shipping on every order.</p>",
+        "text": "<p>Premium 1:1 inspired clothing, bags, shoes and accessories at prices that make sense, with free tracked shipping on orders over US$50.</p>",
         "button": "Why choose us",
         "link": "/pages/why-choose-us"
       }
@@ -422,7 +422,7 @@
           "type": "q",
           "settings": {
             "question": "How long will my order take?",
-            "answer": "<p>Most orders arrive within 2–3 weeks. Shipping is free and tracked, and you'll get your tracking number by email.</p>",
+            "answer": "<p>Most orders arrive within 2–3 weeks. Shipping is free on orders over US$50 and every order is tracked. You'll get your tracking number by email.</p>",
             "link": "/policies/shipping-policy",
             "link_label": "Shipping policy"
           }

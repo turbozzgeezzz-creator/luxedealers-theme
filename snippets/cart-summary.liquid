@@ -2,8 +2,13 @@
 {%- liquid
   assign threshold = settings.free_shipping_threshold | times: 100
   assign show_bar = false
-  if threshold > 0 and cart.currency.iso_code == shop.currency
-    assign show_bar = true
+  assign local_bar = false
+  if threshold > 0
+    if cart.currency.iso_code == shop.currency
+      assign show_bar = true
+    else
+      assign local_bar = true
+    endif
   endif
   assign remaining = threshold | minus: cart.total_price
   assign pct = 0
@@ -20,6 +25,13 @@
       {%- if remaining > 0 -%}{%- assign remaining_money = remaining | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}{{ 'cart.free_shipping_remaining' | t: amount: remaining_money }}{%- else -%}{{ 'cart.free_shipping_unlocked' | t }}{%- endif -%}
     </span>
     <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: {{ pct }}%"></div></div>
+  </div>
+{%- elsif local_bar -%}
+  {%- comment -%} Shopper paying in another currency: theme.js converts the threshold with the store's rate. {%- endcomment -%}
+  <div class="ship-bar" data-ship-bar data-threshold="{{ threshold }}" data-total="{{ cart.total_price }}" data-currency="{{ cart.currency.iso_code }}"
+    data-remaining="{{ 'cart.free_shipping_remaining' | t: amount: '%AMOUNT%' | escape }}" data-unlocked="{{ 'cart.free_shipping_unlocked' | t | escape }}" hidden>
+    <span></span>
+    <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: 0%"></div></div>
   </div>
 {%- endif -%}
 {% render 'tier-bar' %}

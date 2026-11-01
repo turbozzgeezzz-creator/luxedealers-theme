@@ -170,7 +170,7 @@ function trustRow(env) {
 <img src="${env.PUBLIC_URL}/icons/trust-${icon}.png" width="44" height="44" alt="" style="display:block;margin:0 auto 8px;border:0;">
 <span style="display:block;font-size:13px;font-weight:800;line-height:1.3;color:${INK};">${title}</span>
 <span style="display:block;margin-top:2px;font-size:12px;line-height:1.4;color:${MUTED};">${sub}</span></td></tr></table></div>`;
-  return `<div style="font-size:0;text-align:center;">${item('truck', 'Free shipping', 'On every order, tracked')}${item('shield', 'Secure checkout', 'PayPal, Shop Pay, cards')}${item('refund', 'Refund or reship', 'If something\'s not right')}${item('chat', 'Real people', 'Just reply to this email')}</div>`;
+  return `<div style="font-size:0;text-align:center;">${item('truck', 'Free shipping', 'Over US$50, tracked')}${item('shield', 'Secure checkout', 'PayPal, Shop Pay, cards')}${item('refund', 'Refund or reship', 'If something\'s not right')}${item('chat', 'Real people', 'Just reply to this email')}</div>`;
 }
 
 /** Full email: header, banner, body, store promises, footer with social icons and unsubscribe. */
@@ -198,10 +198,6 @@ export function letterLink(label, url) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:4px 0 24px;"><tr><td style="border-radius:10px;background:#F4C430;"><a href="${esc(url)}" style="display:inline-block;padding:13px 26px;font-size:15px;font-weight:bold;color:#14213D;text-decoration:none;border-radius:10px;">${esc(label)}</a></td></tr></table>`;
 }
 
-/** Journal stories as plain links with a one-line summary (no images). */
-export function letterArticles(articles) {
-  return articles.map((a) => `<p style="margin:0 0 16px;"><a href="${esc(a.url)}" style="color:${INK};font-weight:bold;">${esc(a.title)}</a>${a.summary ? `<br>${esc(a.summary)}` : ''}</p>`).join('');
-}
 
 export function layout(env, { preheader, banner, bannerAlt, body, unsubUrl, reason, plain, tone, letter }) {
   if (letter) return letterLayout(env, { preheader, body, unsubUrl, reason });

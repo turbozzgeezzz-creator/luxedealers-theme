@@ -14,7 +14,7 @@
           "type": "trust",
           "settings": {
             "icon_1": "truck",
-            "text_1": "Free shipping",
+            "text_1": "Free shipping over US$50",
             "icon_2": "return",
             "text_2": "Refund or reship",
             "icon_3": "lock",
@@ -40,7 +40,7 @@
           "type": "accordions",
           "settings": {
             "open_first": true,
-            "shipping_text": "<p><strong>Free shipping on every order.</strong> Orders are sent by tracked post, and most arrive within 2–3 weeks. You'll get a tracking number by email when your order ships.</p><p><strong>Refund or reship guarantee.</strong> If something isn't right with your order, email support@luxedealers.com with your order number and a photo, and we'll make it right with a refund or a free replacement. There's no need to send the item back.</p>",
+            "shipping_text": "<p><strong>Free shipping on orders over US$50.</strong> Orders under US$50 ship for US$5.95. Orders are sent by tracked post, and most arrive within 2–3 weeks. You'll get a tracking number by email when your order ships.</p><p><strong>Refund or reship guarantee.</strong> If something isn't right with your order, email support@luxedealers.com with your order number and a photo, and we'll make it right with a refund or a free replacement. There's no need to send the item back.</p>",
             "care_text": ""
           }
         }

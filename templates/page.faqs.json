@@ -25,7 +25,7 @@
           "settings": {
             "topic": "shipping",
             "question": "Is shipping free?",
-            "answer": "<p>Yes. Shipping is free on every order, with no minimum spend, and every order is tracked.</p>"
+            "answer": "<p>Shipping is free on orders over US$50. Below that it's a flat US$5.95. Every order is tracked.</p>"
           }
         },
         "q3": {
