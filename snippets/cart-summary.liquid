@@ -29,7 +29,7 @@
 {%- elsif local_bar -%}
   {%- comment -%} Shopper paying in another currency: theme.js converts the threshold with the store's rate. {%- endcomment -%}
   <div class="ship-bar" data-ship-bar data-threshold="{{ threshold }}" data-total="{{ cart.total_price }}" data-currency="{{ cart.currency.iso_code }}"
-    data-remaining="{{ 'cart.free_shipping_remaining' | t: amount: '%AMOUNT%' | escape }}" data-unlocked="{{ 'cart.free_shipping_unlocked' | t | escape }}" hidden>
+    data-remaining="{{ 'cart.free_shipping_remaining' | t: amount: '%AMOUNT%' }}" data-unlocked="{{ 'cart.free_shipping_unlocked' | t }}" hidden>
     <span></span>
     <div class="ship-bar__track" aria-hidden="true"><div class="ship-bar__fill" style="--pct: 0%"></div></div>
   </div>
@@ -67,7 +67,15 @@
 {%- assign saved = cart.original_total_price | minus: cart.total_price -%}
 {%- if saved > 0 -%}<div class="cart-totals cart-totals--save"><span>{{ 'cart.you_save' | t }}</span><strong>{{ saved | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></div>{%- endif -%}
 <div class="bag-totals">
-  <div class="cart-totals"><span>{{ 'cart.shipping' | t }}</span><span class="bag-totals__free">{{ 'cart.free' | t }}</span></div>
+  {%- liquid
+    assign fee = settings.shipping_fee_below_threshold | times: 100
+  -%}
+  <div class="cart-totals"><span>{{ 'cart.shipping' | t }}</span>
+    {%- if threshold == 0 or show_bar and remaining <= 0 -%}<span class="bag-totals__free">{{ 'cart.free' | t }}</span>
+    {%- elsif show_bar -%}<span>{{ fee | money }}</span>
+    {%- else -%}{%- comment -%} Other currency: theme.js shows the converted fee, or Free once the cart qualifies. {%- endcomment -%}
+      <span data-ship-cost data-threshold="{{ threshold }}" data-fee="{{ fee }}" data-total="{{ cart.total_price }}" data-currency="{{ cart.currency.iso_code }}" data-free="{{ 'cart.free' | t }}">{{ 'cart.shipping_at_checkout' | t }}</span>
+    {%- endif -%}</div>
   <div class="cart-totals cart-totals--total"><span>{{ 'cart.total' | t }}</span><strong>{{ cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></div>
 </div>
 {%- assign tot = cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}

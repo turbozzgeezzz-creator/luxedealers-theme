@@ -414,6 +414,14 @@
       $('.ship-bar__fill', bar).style.setProperty('--pct', Math.min(100, Math.floor(total * 100 / limit)) + '%');
       bar.hidden = false;
     });
+    $$('[data-ship-cost]', root).forEach(function (el) {
+      if (!rate) return;
+      var limit = Math.round(parseInt(el.dataset.threshold, 10) * rate), fee = parseInt(el.dataset.fee, 10) * rate;
+      var fmt = new Intl.NumberFormat(doc.documentElement.lang || undefined, { style: 'currency', currency: el.dataset.currency, currencyDisplay: 'narrowSymbol' });
+      var free = (parseInt(el.dataset.total, 10) || 0) >= limit;
+      el.textContent = free ? el.dataset.free : fmt.format(Math.round(fee) / 100);
+      el.className = free ? 'bag-totals__free' : '';
+    });
   }
   initShipBars(doc);
   function renderSections(sections) {
@@ -1090,6 +1098,15 @@
     } catch (e) {}
   }
   if (L.mail && L.mail.email && !storeGet('luxe:acct', null)) { storeSet('luxe:acct', 1); beacon({}); }
+  // Arrived from one of our emails: report the link code once (counts as engagement), then tidy it out of the address bar.
+  (function () {
+    try {
+      var u = new URL(window.location.href), lx = u.searchParams.get('lx');
+      if (!lx) return;
+      beacon({ lx: lx });
+      u.searchParams.delete('lx'); window.history.replaceState(window.history.state, '', u.pathname + u.search + u.hash);
+    } catch (e) {}
+  })();
 
   /* ---------- Newsletter: consent, popup and welcome offer ---------- */
   on(doc, 'submit', function (e) {

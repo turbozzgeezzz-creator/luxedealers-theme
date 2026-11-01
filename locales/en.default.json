@@ -151,6 +151,7 @@
     "choose": "Choose",
     "shipping": "Shipping",
     "free": "Free",
+    "shipping_at_checkout": "Calculated at checkout",
     "total": "Total",
     "checkout_total": "Checkout · {{ total }}",
     "guarantee": "Refund or reship guarantee",

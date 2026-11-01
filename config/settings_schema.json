@@ -309,6 +309,13 @@
         "info": "0 hides the progress bar. Create the matching free rate in Settings > Shipping and delivery first."
       },
       {
+        "type": "number",
+        "id": "shipping_fee_below_threshold",
+        "label": "Shipping fee below the free-shipping amount (store currency)",
+        "default": 5.95,
+        "info": "Shown in the cart. Must match the rate in Settings > Shipping and delivery."
+      },
+      {
         "type": "header",
         "content": "Spend and save"
       },

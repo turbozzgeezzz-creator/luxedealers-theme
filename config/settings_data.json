@@ -12,6 +12,7 @@
     "luxemail_endpoint": "https://luxemail-main.turbozzgeezzz.workers.dev/t",
     "seo_home_title": "LuxeDealers | Premium 1:1 Inspired Bags, Shoes, Clothing & Accessories",
     "free_shipping_threshold": 50,
+    "shipping_fee_below_threshold": 5.95,
     "seo_home_description": "Premium 1:1 inspired handbags, sneakers, clothing and jewellery. Every order hand-checked, free tracked shipping over US$50 and a refund or reship guarantee.",
     "sections": {
       "cart-drawer": {

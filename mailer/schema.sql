@@ -33,5 +33,7 @@ CREATE INDEX IF NOT EXISTS shown_email ON shown (email, at);
 CREATE TABLE IF NOT EXISTS deliveries (resend_id TEXT PRIMARY KEY, email TEXT, flow TEXT, sent_at INTEGER, checked_at INTEGER, last_event TEXT);
 CREATE INDEX IF NOT EXISTS deliveries_check ON deliveries(last_event, sent_at);
 -- Parcel tracking (17TRACK API, key in TRACK17_KEY): one row per tracking number; scans shown on the tracking page.
+-- Per-subscriber code added to store links in emails, so a visit from an email counts as engagement.
+CREATE TABLE IF NOT EXISTS email_tokens (token TEXT PRIMARY KEY, email TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS parcels (number TEXT PRIMARY KEY, order_name TEXT, fulfillment_id TEXT, status TEXT, scans TEXT, registered INTEGER DEFAULT 0, updated_at INTEGER);
 CREATE INDEX IF NOT EXISTS parcels_order ON parcels(order_name);

@@ -275,6 +275,11 @@ export async function recordEvent(env, body, ip = null) {
       .bind(cid, email, firstName, now()).run();
     await env.DB.prepare('UPDATE events SET email = ? WHERE client_id = ? AND email IS NULL').bind(email, cid).run();
   }
+  // Arrived from an email link (lx = that subscriber's link code): counts as engagement for newsletters.
+  if (typeof body.lx === 'string' && /^[0-9a-f]{16}$/.test(body.lx)) {
+    const row = await env.DB.prepare('SELECT email FROM email_tokens WHERE token = ?').bind(body.lx).first();
+    if (row) await env.DB.prepare(`INSERT INTO events (client_id, email, type, handle, at) VALUES (?, ?, 'emailclick', ?, ?)`).bind(cid, row.email, str(body.pg, 200) || '', now()).run();
+  }
   const type = ['view', 'cart', 'wishlist', 'unwishlist'].includes(body.t) ? body.t : null;
   if (!type || !body.h) return job;
   const known = (await env.DB.prepare('SELECT email FROM clients WHERE client_id = ?').bind(cid).first())?.email || null;
@@ -453,6 +458,20 @@ export async function scanDaily(env) {
 const THEMES = ['new', 'deals', 'picks', 'best'];
 
 /** Every second Tuesday from 6:30 pm Sydney time: the fortnightly email to the whole list, rotating 4 themes. */
+/**
+ * Newsletters (fortnightly, monthly journal) only go to engaged subscribers: joined in the last 90 days, visited
+ * the store or clicked an email link in the last 90 days, or ordered in the last 180 days. Mailing people who never
+ * engage wastes the send quota and teaches Gmail to file us under Promotions or spam.
+ */
+async function engagedSubscribers(env) {
+  const t = now();
+  const { results } = await env.DB.prepare(`SELECT email, first_name FROM subscribers s WHERE status = 'subscribed' AND (
+      COALESCE(confirmed_at, requested_at, 0) > ?
+      OR EXISTS (SELECT 1 FROM events e WHERE e.email = s.email AND e.at > ?)
+      OR EXISTS (SELECT 1 FROM orders o WHERE o.email = s.email AND o.created_at > ?))`).bind(t - 90 * DAY, t - 90 * DAY, t - 180 * DAY).all();
+  return results;
+}
+
 export async function scanFortnightly(env) {
   const { day, hour, minute, ymd } = localParts(env);
   if (day !== 2 || hour < 18 || (hour === 18 && minute < 30)) return;
@@ -462,7 +481,7 @@ export async function scanFortnightly(env) {
   const index = Number((await getKV(env, 'fortnight_index')) || 0);
   await setKV(env, 'fortnight_index', (index + 1) % THEMES.length);
   const theme = THEMES[index % THEMES.length];
-  const { results } = await env.DB.prepare(`SELECT email, first_name FROM subscribers WHERE status = 'subscribed'`).all();
+  const results = await engagedSubscribers(env);
   if (!results.length) return;
   // New arrivals and blog fortnights carry a subscriber code (one shared code, 7 days, once per customer).
   let offer = null;
@@ -484,17 +503,30 @@ export async function scanFortnightly(env) {
  * replaces seven emails with one). Skipped if nothing new was published. Same consent rules as everything else.
  */
 export async function scanWeeklyJournal(env) {
+  // Monthly now: the first Sunday of each month from 10 am, with the month's newest stories.
   const { day, hour, ymd } = localParts(env);
-  if (day !== 0 || hour < 10) return;
+  if (day !== 0 || hour < 10 || Number(ymd.slice(8, 10)) > 7) return;
   if ((await getKV(env, 'journal_last')) === ymd) return;
   await setKV(env, 'journal_last', ymd);
-  const since = new Date(Date.now() - 7 * DAY * 1000).toISOString();
+  const since = new Date(Date.now() - 31 * DAY * 1000).toISOString();
   const articles = await latestArticles(env, 6, since);
   if (!articles.length) return;
-  const { results } = await env.DB.prepare(`SELECT email, first_name FROM subscribers WHERE status = 'subscribed'`).all();
+  const results = await engagedSubscribers(env);
   for (const m of results) {
     await enqueue(env, { email: m.email, flow: 'journal', dedupe: `journal:${ymd}:${m.email}`, priority: 6, data: { firstName: m.first_name, since } });
   }
+}
+
+/** Adds the subscriber's link code to every store link (links still go straight to the store, nothing is rewritten). */
+async function tagLinks(env, email, html) {
+  const token = (await hmacHex(env.UNSUB_SECRET, `lx:${email}`)).slice(0, 16);
+  await env.DB.prepare('INSERT OR IGNORE INTO email_tokens (token, email) VALUES (?, ?)').bind(token, email).run();
+  const store = env.STORE_URL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return html.replace(new RegExp(`href="(${store}[^"#]*)(#[^"]*)?"`, 'g'), (m, url, hash) => {
+    // Discount links redirect onwards, so the code goes inside the redirect target.
+    if (/\/discount\/[^?]+\?redirect=/.test(url)) return `href="${url.replace(/(redirect=)([^&]*)/, (x, k, v) => `${k}${v}${decodeURIComponent(v).includes('?') ? '%26' : '%3F'}lx%3D${token}`)}${hash || ''}"`;
+    return `href="${url}${url.includes('?') ? '&amp;' : '?'}lx=${token}${hash || ''}"`;
+  });
 }
 
 /* ======================= Building each email ======================= */
@@ -825,7 +857,7 @@ export async function drainOutbox(env, { id } = {}) {
       const unsubUrl = await unsubscribeUrl(env, job.email);
       let res;
       try {
-        res = await sendViaResend(env, { to: job.email, subject: email.subject, unsubUrl, html: layout(env, { ...email, unsubUrl }) });
+        res = await sendViaResend(env, { to: job.email, subject: email.subject, unsubUrl, html: await tagLinks(env, job.email, layout(env, { ...email, unsubUrl })) });
       } catch (e) {
         // Resend rejects addresses that can't receive mail (422): never try them again.
         if (/Resend 422/.test(String(e && e.message)) && /to|email|address|recipient/i.test(String(e.message))) {
