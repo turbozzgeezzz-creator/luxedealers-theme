@@ -1,0 +1,8 @@
+{%- comment -%}
+  The card and wallet logos shoppers in our markets (US, Canada, Australia, NZ) recognise, in a fixed order, instead of
+  every method Shopify Payments has switched on (which shows European methods like Bancontact and MB WAY).
+  Renders <li> items only; wrap it in your own <ul>. Param: limit (optional).
+{%- endcomment -%}
+{%- assign pay_types = 'visa,master,american_express,paypal,apple_pay,google_pay' | split: ',' -%}
+{%- assign pay_limit = limit | default: 6 -%}
+{%- for type in pay_types limit: pay_limit -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}

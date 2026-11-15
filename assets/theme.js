@@ -451,7 +451,21 @@
       if (freshMain) main.innerHTML = freshMain.innerHTML;
     }
     initShipBars(doc);
+    initEta(doc);
   }
+  // Delivery estimate as real dates in the shopper's own date format ("Arrives Nov 30 – Dec 7"), counted from today.
+  function initEta(ctx) {
+    $$('[data-eta]', ctx).forEach(function (el) {
+      var t = $('[data-eta-text]', el), tpl = el.dataset.template;
+      if (!t || !tpl) return;
+      try {
+        var fmt = new Intl.DateTimeFormat(navigator.language || 'en-US', { month: 'short', day: 'numeric' });
+        var day = function (n) { var d = new Date(); d.setDate(d.getDate() + n); return fmt.format(d); };
+        t.textContent = tpl.replace('%FROM%', day(parseInt(el.dataset.min, 10) || 14)).replace('%TO%', day(parseInt(el.dataset.max, 10) || 21));
+      } catch (e) {}
+    });
+  }
+  initEta(doc);
   function addToCart(items, btn) {
     if (btn) { btn.classList.add('is-loading'); btn.setAttribute('aria-busy', 'true'); }
     return fetchJSON(L.routes.cartAdd, {

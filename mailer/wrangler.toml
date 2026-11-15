@@ -28,6 +28,8 @@ ADMIN_EMAIL = "support@luxedealers.com"
 TIMEZONE_OFFSET_HOURS = "10"
 # Subscribers whose time zone isn't known yet get emails timed for this zone (most customers are in the US).
 DEFAULT_TIMEZONE = "America/Chicago"
+# Countries the store advertises to: the checkout report's main numbers. Other countries are listed separately.
+MAIN_MARKETS = "US,CA,AU,NZ"
 DAILY_SEND_LIMIT = "95"
 # Emails per 30-minute run; keeps each run under Cloudflare's free-plan limit of 50 outbound requests.
 BATCH_SIZE = "6"

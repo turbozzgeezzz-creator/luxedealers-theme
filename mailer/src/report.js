@@ -13,7 +13,15 @@ const fmtMoney = (v, cur) => (v == null || v === '' ? '' : `${cur && cur !== 'US
 const pct = (a, b) => (b ? `${Math.round((a / b) * 100)}%` : '-');
 
 export async function funnelData(env, since, until = now()) {
-  const { results } = await env.DB.prepare('SELECT * FROM funnel WHERE started_at >= ? AND started_at < ? ORDER BY started_at DESC').bind(since, until).all();
+  const { results: all } = await env.DB.prepare('SELECT * FROM funnel WHERE started_at >= ? AND started_at < ? ORDER BY started_at DESC').bind(since, until).all();
+  // The report is about the countries the store advertises to (MAIN_MARKETS). Checkouts from elsewhere are mostly bots,
+  // click farms or people outside the ad audience; they're counted separately so they don't hide the real drop-off.
+  const markets = String(env.MAIN_MARKETS || 'US,CA,AU,NZ').split(',').map((c) => c.trim().toUpperCase());
+  const countryOf = (r) => r.country || r.visitor_country || null;
+  const results = all.filter((r) => !countryOf(r) || markets.includes(countryOf(r)));
+  const outside = all.filter((r) => countryOf(r) && !markets.includes(countryOf(r)));
+  const outsideBy = new Map();
+  for (const r of outside) { const g = outsideBy.get(countryOf(r)) || { name: countryOf(r), started: 0, paid: 0 }; g.started++; if (r.step >= 6) g.paid++; outsideBy.set(g.name, g); }
   const reached = [0, 0, 0, 0, 0, 0, 0];
   for (const r of results) for (let s = 1; s <= Math.min(6, r.step || 1); s++) reached[s]++;
   const groupBy = (key) => {
@@ -33,6 +41,8 @@ export async function funnelData(env, since, until = now()) {
   return {
     rows: results,
     reached,
+    markets,
+    outside: { total: outside.length, paid: outside.filter((r) => r.step >= 6).length, countries: [...outsideBy.values()].sort((a, b) => b.started - a.started) },
     byDevice: groupBy('device'),
     byBrowser: groupBy('browser'),
     byCountry: results.map((r) => ({ ...r, c: r.country || r.visitor_country })).reduce((m, r) => {
@@ -71,7 +81,7 @@ export async function funnelHtml(env, since, until, title) {
   let worst = null;
   for (let s = 2; s <= 6; s++) { const lost = d.reached[s - 1] - d.reached[s]; if (lost > 0 && (!worst || lost > worst.lost)) worst = { s, lost }; }
   const headline = !total ? 'No checkouts recorded in this period yet.'
-    : `${total} checkout${total === 1 ? '' : 's'}, ${d.reached[6]} paid (${pct(d.reached[6], total)}).`
+    : `${total} checkout${total === 1 ? '' : 's'} from ${esc(d.markets.join(', '))}, ${d.reached[6]} paid (${pct(d.reached[6], total)}).`
       + (worst ? ` Most people left between <strong>${esc(STEPS[worst.s - 1].toLowerCase())}</strong> and <strong>${esc(STEPS[worst.s].toLowerCase())}</strong> (${worst.lost}).` : '');
   const groupRows = (list) => list.slice(0, 8).map((g) => `<tr><td style="${TD}">${esc(g.name)}</td><td style="${TD}text-align:right;">${g.started}</td><td style="${TD}text-align:right;">${g.paid}</td><td style="${TD}text-align:right;">${pct(g.paid, g.started)}</td></tr>`);
   const parts = [];
@@ -101,6 +111,7 @@ ${table(['Step', 'Checkouts', 'Of all', 'Dropped before this step'], funnelRows)
 <h3 style="margin:24px 0 8px;">By browser or app</h3>${table(['Browser', 'Checkouts', 'Paid', 'Paid %'], groupRows(d.byBrowser))}
 <h3 style="margin:24px 0 8px;">By country</h3>${table(['Country', 'Checkouts', 'Paid', 'Paid %'], groupRows([...d.byCountry.values()].sort((a, b) => b.started - a.started)))}
 <h3 style="margin:24px 0 8px;">Checkouts that didn't finish</h3>${people.length ? table(['When (Sydney)', 'Who', 'Where they stopped', 'Cart', 'Value', 'Device / location'], people) : '<p>None.</p>'}
+${d.outside.total ? `<h3 style="margin:24px 0 8px;">Other countries (not in the numbers above)</h3><p>${d.outside.total} checkout${d.outside.total === 1 ? '' : 's'} from countries you don't advertise to, ${d.outside.paid} paid. Mostly bots, click farms or people outside your ad audience.</p>${table(['Country', 'Checkouts', 'Paid', 'Paid %'], d.outside.countries.slice(0, 10).map((g) => `<tr><td style="${TD}">${esc(g.name)}</td><td style="${TD}text-align:right;">${g.started}</td><td style="${TD}text-align:right;">${g.paid}</td><td style="${TD}text-align:right;">${pct(g.paid, g.started)}</td></tr>`))}` : ''}
 <p style="color:#667085;font-size:12px;">Times are Sydney time. Anonymous means they left before typing an email; Shopify doesn't know who they are either. Shop Pay and other express checkouts that finish on Shop's own pages may only show their first step.</p></div>`;
 }
 

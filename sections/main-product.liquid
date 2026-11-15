@@ -127,6 +127,7 @@
                   {% render 'product-form', product: product, form_id: 'ProductForm', show_dynamic: block.settings.dynamic, show_qty: block.settings.qty, size_page: sp %}
                 </div>
               {%- when 'trust' -%}
+                {% render 'delivery-eta', class: 'eta--pdp' %}
                 <div class="pdp__trust" {{ block.shopify_attributes }}>
                   {%- for i in (1..3) -%}
                     {%- liquid
@@ -135,7 +136,7 @@
                     -%}
                     {%- if block.settings[tk] != blank -%}<div class="pdp__trust-item">{% render 'icon', name: block.settings[ik] %}<span>{{ block.settings[tk] }}</span></div>{%- endif -%}
                   {%- endfor -%}
-                  <ul class="pdp__trust-pay" role="list" aria-label="{{ 'products.pay_securely' | t }}">{%- for type in shop.enabled_payment_types limit: 7 -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+                  <ul class="pdp__trust-pay" role="list" aria-label="{{ 'products.pay_securely' | t }}">{% render 'payment-icons-list' %}</ul>
                 </div>
               {%- when 'delivery' -%}
                 <div class="pdp__delivery" {{ block.shopify_attributes }}>
@@ -145,7 +146,7 @@
               {%- when 'payments' -%}
                 <div class="pdp__pay" {{ block.shopify_attributes }}>
                   <span>{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'products.pay_securely' | t }}</span>
-                  <ul class="payment-icons" role="list">{%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+                  <ul class="payment-icons" role="list">{% render 'payment-icons-list' %}</ul>
                 </div>
               {%- when 'advisor' -%}
                 {%- if settings.advisor_whatsapp != blank -%}

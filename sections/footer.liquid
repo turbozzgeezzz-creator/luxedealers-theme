@@ -64,7 +64,7 @@
     <div class="footer__bottom-right">
       {%- if s.show_payment -%}
         <ul class="payment-icons" role="list" aria-label="{{ 'footer.payment' | t }}">
-          {%- for type in shop.enabled_payment_types -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}
+          {% render 'payment-icons-list' %}
         </ul>
       {%- endif -%}
       {% render 'localization', id: 'FooterLocalization' %}

@@ -2394,3 +2394,13 @@ body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; ove
 .wish-save .newsletter__row button { background: var(--gold-flat, var(--c-gold)); font-weight: 600; border-radius: var(--pill); padding: 10px 16px; }
 .wish-save__done { margin: 16px 0 0; padding: 14px 16px; border-radius: 16px; background: var(--c-bg); font-weight: 600; }
 
+
+/* Delivery estimate (snippets/delivery-eta.liquid): product page, under the buy buttons, and in the bag. */
+.eta { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; line-height: 1.35; color: var(--c-ink, #14213D); }
+.eta .icon { flex: none; width: 20px; height: 20px; color: #1E4FA8; }
+.eta strong { font-weight: 700; }
+.eta__sub { color: var(--c-muted); font-weight: 500; }
+.eta__sub::before { content: "· "; }
+.eta--pdp { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #EEF3FF; }
+.eta--bag { font-size: 13px; padding: 2px 0 4px; }
+.eta--bag .icon { width: 16px; height: 16px; }

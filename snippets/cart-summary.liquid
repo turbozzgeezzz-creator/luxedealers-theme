@@ -77,12 +77,13 @@
     {%- else -%}{%- comment -%} Other currency: theme.js shows the converted fee, or Free once the cart qualifies. {%- endcomment -%}
       <span data-ship-cost data-threshold="{{ threshold }}" data-fee="{{ fee }}" data-total="{{ cart.total_price }}" data-currency="{{ cart.currency.iso_code }}" data-free="{{ 'cart.free' | t }}">{{ 'cart.shipping_at_checkout' | t }}</span>
     {%- endif -%}</div>
+  {% render 'delivery-eta', class: 'eta--bag' %}
   <div class="cart-totals cart-totals--total"><span>{{ 'cart.total' | t }}</span><strong>{{ cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></div>
 </div>
 {%- assign tot = cart.total_price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}
 <button type="submit" name="checkout" form="CartForm-{{ context }}" class="btn btn--gold btn--block bag-checkout">{% render 'icon', name: 'lock', class: 'icon--sm' %} {{ 'cart.checkout_total' | t: total: tot }}</button>
 <div class="bag-trust">
   <span>{% render 'icon', name: 'return', class: 'icon--sm' %} {{ 'cart.guarantee' | t }}</span>
-  <ul class="bag-trust__pay" role="list">{%- for type in shop.enabled_payment_types limit: 6 -%}<li>{{ type | payment_type_svg_tag }}</li>{%- endfor -%}</ul>
+  <ul class="bag-trust__pay" role="list">{% render 'payment-icons-list' %}</ul>
 </div>
 {%- assign cnt = settings.cart_note_text | strip_html | strip -%}{%- if cnt != blank and cnt != 'Duties and taxes for your country are shown at checkout.' -%}<div class="cart-note rte">{{ settings.cart_note_text }}</div>{%- endif -%}

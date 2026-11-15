@@ -1,0 +1,8 @@
+{%- comment -%}
+  Delivery estimate (2-3 weeks, matching the checkout's "Standard Shipping (2-3 weeks)"). theme.js turns it into real
+  dates in the shopper's own format, e.g. "Arrives 30 Nov - 7 Dec". Params: class (optional).
+{%- endcomment -%}
+<p class="eta {{ class }}" data-eta data-min="14" data-max="21" data-template="{{ 'products.eta_dates' | t: from: '%FROM%', to: '%TO%' | escape }}">
+  {%- render 'icon', name: 'truck', class: 'icon--sm' -%}
+  <span><strong data-eta-text>{{ 'products.eta' | t }}</strong> <span class="eta__sub">{{ 'products.eta_sub' | t }}</span></span>
+</p>
