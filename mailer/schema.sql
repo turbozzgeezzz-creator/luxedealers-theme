@@ -37,3 +37,12 @@ CREATE INDEX IF NOT EXISTS deliveries_check ON deliveries(last_event, sent_at);
 CREATE TABLE IF NOT EXISTS email_tokens (token TEXT PRIMARY KEY, email TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS parcels (number TEXT PRIMARY KEY, order_name TEXT, fulfillment_id TEXT, status TEXT, scans TEXT, registered INTEGER DEFAULT 0, updated_at INTEGER);
 CREATE INDEX IF NOT EXISTS parcels_order ON parcels(order_name);
+
+-- Every checkout, step by step, from the Shopify custom pixel (mailer/pixel.js): where people stop.
+-- Kept for the owner's checkout report only; it never adds anyone to the mailing list or triggers an email.
+-- step: 1 started, 2 contact (email/phone) entered, 3 address entered, 4 delivery method chosen, 5 payment entered, 6 paid.
+CREATE TABLE IF NOT EXISTS funnel (token TEXT PRIMARY KEY, started_at INTEGER, updated_at INTEGER, step INTEGER DEFAULT 1,
+  email TEXT, name TEXT, phone TEXT, country TEXT, region TEXT, city TEXT, device TEXT, browser TEXT, visitor_country TEXT, visitor_tz TEXT,
+  currency TEXT, subtotal TEXT, shipping TEXT, shipping_method TEXT, tax TEXT, total TEXT, discounts TEXT, items TEXT,
+  alerts TEXT, landing TEXT, referrer TEXT, order_id TEXT);
+CREATE INDEX IF NOT EXISTS funnel_started ON funnel(started_at);

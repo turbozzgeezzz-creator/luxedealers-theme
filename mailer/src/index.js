@@ -6,7 +6,10 @@ import { layout, sendViaResend, unsubscribeUrl, sentTodayCount } from './email.j
 import {
   recordEvent, recordPixel, unsubscribe, welcomeCodeFor, subscriber, rateLimited, scanAbandonment, scanDaily,
   scanFortnightly, scanWeeklyJournal, drainOutbox, checkDeliveries, weeklyReport, builders, syncShopifySubscribers, syncShopifyCheckouts, syncShopifyOrders,
+  backfillTimeZones,
 } from './flows.js';
+import { fromRequest } from './timing.js';
+import { funnelHtml, dailyCheckoutReport } from './report.js';
 
 function cors(env, request) {
   const origin = request.headers.get('Origin') || '';
@@ -92,7 +95,7 @@ export default {
       const bot = /bot|crawl|spider|slurp|headless|lighthouse|preview|google|facebookexternalhit|ahrefs|semrush|pingdom|python|curl|wget/i.test(request.headers.get('User-Agent') || '');
       if (body && !bot) {
         ctx.waitUntil(countHit(env, 'theme_beacons').catch(() => {}));
-        ctx.waitUntil(recordEvent(env, body, request.headers.get('CF-Connecting-IP'))
+        ctx.waitUntil(recordEvent(env, body, request.headers.get('CF-Connecting-IP'), fromRequest(request))
           .then((jobId) => (jobId ? drainOutbox(env, { id: jobId }) : null))
           .catch((e) => console.error('beacon', e)));
       }
@@ -151,8 +154,8 @@ export default {
     if (url.pathname === '/p' && request.method === 'POST') {
       const body = await readBeacon(request);
       if (body) {
-        ctx.waitUntil(recordPixel(env, body).catch((e) => console.error('pixel', e)));
-        ctx.waitUntil(countHit(env, `pixel_${body.t === 'order' ? 'orders' : 'checkouts'}`).catch(() => {}));
+        ctx.waitUntil(recordPixel(env, body, fromRequest(request)).catch((e) => console.error('pixel', e)));
+        ctx.waitUntil(countHit(env, `pixel_${body.t === 'order' ? 'orders' : body.t === 'alert' ? 'alerts' : 'checkouts'}`).catch(() => {}));
       }
       return new Response(null, { status: 204, headers: { 'Access-Control-Allow-Origin': '*' } });
     }
@@ -206,6 +209,15 @@ export default {
       return new Response(html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } });
     }
 
+    // Owner-only checkout report: /report?key=UNSUB_SECRET&days=7
+    if (url.pathname === '/report' && url.searchParams.get('key') === env.UNSUB_SECRET) {
+      const days = Math.max(1, Math.min(90, Number(url.searchParams.get('days')) || 7));
+      const html = await funnelHtml(env, now() - days * 86400, now() + 60, `Checkouts in the last ${days} day${days === 1 ? '' : 's'}`);
+      return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Checkout report</title></head>`
+        + `<body style="margin:0;padding:16px;background:#fff;"><p style="font-family:Arial,sans-serif;font-size:14px;">Show: ${[1, 7, 30].map((dd) => `<a href="?key=${encodeURIComponent(env.UNSUB_SECRET)}&days=${dd}">${dd === 1 ? 'last 24 hours' : `last ${dd} days`}</a>`).join(' · ')}</p>${html}</body></html>`,
+      { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
+    }
+
     if (url.pathname === '/health') {
       const row = await env.DB.prepare(`SELECT
           (SELECT COUNT(*) FROM sends WHERE status = 'queued') AS queued,
@@ -213,7 +225,10 @@ export default {
           (SELECT COUNT(*) FROM sends WHERE status = 'error' AND sent_at > ?) AS errors_24h,
           (SELECT COUNT(*) FROM events WHERE at > ?) AS events_24h,
           (SELECT COUNT(*) FROM subscribers WHERE status = 'subscribed') AS subscribers,
-          (SELECT COUNT(*) FROM suppressions WHERE reason IN ('bounced', 'marked as spam', 'invalid address')) AS blocked_addresses`).bind(now() - 86400, now() - 86400, now() - 86400).first();
+          (SELECT COUNT(*) FROM suppressions WHERE reason IN ('bounced', 'marked as spam', 'invalid address')) AS blocked_addresses,
+          (SELECT COUNT(*) FROM subscribers WHERE status = 'subscribed' AND tz IS NOT NULL) AS subscribers_with_timezone,
+          (SELECT COUNT(*) FROM funnel WHERE started_at > ?) AS checkouts_24h,
+          (SELECT COUNT(*) FROM events WHERE type = 'cart' AND at > ?) AS bag_adds_24h`).bind(now() - 86400, now() - 86400, now() - 86400, now() - 86400, now() - 86400).first();
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
@@ -224,7 +239,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, drainOutbox, checkDeliveries, sendTestsOnce];
+    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, backfillTimeZones, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, dailyCheckoutReport, drainOutbox, checkDeliveries, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }

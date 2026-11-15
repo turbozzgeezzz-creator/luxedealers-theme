@@ -5,6 +5,23 @@
     <div class="drawer__head"><h2 class="drawer__title" id="WishlistTitle">{{ 'wishlist.title' | t }} <span class="muted" data-wish-count-text></span></h2><button type="button" class="icon-btn" data-drawer-close aria-label="{{ 'general.close' | t }}">{% render 'icon', name: 'close' %}</button></div>
     <div class="drawer__body">
       <ul class="wish-list" role="list" data-wish-drawer-list></ul>
+      {%- if settings.luxemail_endpoint != blank -%}
+        {%- comment -%} Shown by theme.js to visitors LuxeMail doesn't know yet: joining the list links their saved items to their email, so the wishlist reminder can reach them. {%- endcomment -%}
+        <div class="wish-save" data-wish-save hidden>
+          <p class="wish-save__title">{{ 'wishlist.save_title' | t }}</p>
+          <p class="wish-save__text">{{ 'wishlist.save_text' | t }}</p>
+          <form class="newsletter__form" data-wish-save-form novalidate>
+            <div class="newsletter__row">
+              <label class="visually-hidden" for="WishSaveEmail">{{ 'newsletter.email' | t }}</label>
+              <input id="WishSaveEmail" type="email" required autocomplete="email" placeholder="{{ 'newsletter.email' | t }}">
+              <button type="submit">{{ 'wishlist.save_button' | t }}</button>
+            </div>
+            <p class="newsletter__notice">{{ 'newsletter.notice' | t }} <a href="{{ shop.privacy_policy.url | default: '/policies/privacy-policy' }}">{{ 'newsletter.privacy' | t }}</a></p>
+            <p class="form-message form-message--error" data-wish-save-error hidden>{{ 'wishlist.save_error' | t }}</p>
+          </form>
+        </div>
+        <p class="wish-save__done" data-wish-save-done hidden>{{ 'wishlist.save_done' | t }}</p>
+      {%- endif -%}
       <div class="wish-empty" data-wish-drawer-empty hidden>
         <span class="wish-empty__icon">{% render 'icon', name: 'heart', class: 'icon--lg' %}</span>
         <p class="h4">{{ 'wishlist.empty' | t }}</p>

@@ -2385,3 +2385,12 @@ html[data-theme="dark"] .trk__stages li.is-done, html[data-theme="dark"] .trk__l
 /* Product page trust tiles: text wraps inside the tile on phones (it was one long line spilling out) */
 body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; overflow-wrap: break-word; text-wrap: balance; max-width: 100%; }
 @media (max-width: 480px) { body .pdp__trust > .pdp__trust-item { padding: 12px 6px 10px !important; font-size: 12px !important; } }
+
+/* Wishlist drawer: email box for visitors we don't know yet (theme.js shows it). */
+.wish-save { margin-top: 16px; padding: 16px; border: 1px solid var(--c-border); border-radius: 16px; background: var(--c-bg); display: flex; flex-direction: column; gap: 10px; }
+.wish-save__title { margin: 0; font-weight: 700; }
+.wish-save__text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--c-muted); }
+.wish-save .newsletter__form { gap: 10px; }
+.wish-save .newsletter__row button { background: var(--gold-flat, var(--c-gold)); font-weight: 600; border-radius: var(--pill); padding: 10px 16px; }
+.wish-save__done { margin: 16px 0 0; padding: 14px 16px; border-radius: 16px; background: var(--c-bg); font-weight: 600; }
+

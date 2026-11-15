@@ -383,7 +383,12 @@
     "empty_hint": "Tap the heart on any product to save it here.",
     "browse": "Browse products",
     "remove": "Remove",
-    "view": "View"
+    "view": "View",
+    "save_title": "Keep your wishlist",
+    "save_text": "Your wishlist is only saved on this device. Add your email and we'll send you a reminder of the pieces you saved, plus new arrivals and offers.",
+    "save_button": "Email me",
+    "save_done": "Done. We'll email you about the pieces you saved.",
+    "save_error": "Please enter a valid email address."
   },
   "password": {
     "enter": "Enter with password",

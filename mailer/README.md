@@ -45,6 +45,11 @@ Every email says why they're getting it and has a one-click unsubscribe. Consent
 | journal | Sundays from 10 am: the week's new blog posts in one email (skipped if none) | none |
 | weekly report | Mondays to ADMIN_EMAIL | |
 
+Send times: every subscriber has a time zone (from their browser when they sign up, browse or check out, otherwise
+their Shopify address; unknown = DEFAULT_TIMEZONE). Newsletters and other non-urgent emails only go out 10 am-12 pm or
+7-9 pm in the subscriber's own time (the two peaks send-time studies keep finding); reminders keep their delay but never
+arrive between 10 pm and 7:30 am. The welcome email straight after sign-up is never held back.
+
 Rules: one email per person per 20 hours; at most DAILY_SEND_LIMIT a day; every code is a real Shopify discount whose
 expiry is stated in the email; previews never create codes. Spend-and-save tiers appear in emails only when
 TIER1_SPEND_CENTS is set (match them to the automatic discounts in Shopify).
@@ -53,7 +58,18 @@ TIER1_SPEND_CENTS is set (match them to the automatic discounts in Shopify).
 
 - `POST /t`: theme beacon (`assets/theme.js`): product views, bag adds, wishlist saves, sign-ups. The theme's endpoint is
   Theme settings > Email tracking.
-- `POST /p`: Shopify custom pixel (`pixel.js`): checkouts and orders. Ignored unless the email is a subscriber.
+- `POST /p`: Shopify custom pixel (`pixel.js`): checkouts and orders. Reminders only for subscribers. Every checkout
+  (subscriber or not) is also recorded step by step for the checkout report, never for email.
+- Wishlist: visitors LuxeMail can't email yet see "Keep your wishlist" in the wishlist drawer; signing up there links
+  their saved items to their email, so the wishlist reminder can reach them.
+
+## Checkout report
+
+`/report?key=UNSUB_SECRET&days=7` (1, 7 or 30 days): how many checkouts reached each step (started, email, address,
+delivery, payment, paid), the error messages shoppers saw, device/app and country, shipping price for people who left vs
+paid, and every unfinished checkout with who (if they typed an email), where they stopped and what was in the cart.
+ADMIN_EMAIL also gets yesterday's report every morning from 8 am Sydney time (none if there were no checkouts).
+Needs the updated `pixel.js` pasted into Shopify (Settings > Customer events).
 - `/u`: unsubscribe.
 
 ## Deploy

@@ -32,6 +32,10 @@ if [ -z "$DB_ID" ]; then $WRANGLER d1 create "$NAME" >/dev/null; DB_ID="$(find_d
 [ -n "$DB_ID" ] || { echo "Could not create the D1 database" >&2; exit 1; }
 sed -i "s/^database_id = \".*\"/database_id = \"$DB_ID\"/" wrangler.toml
 $WRANGLER d1 execute "$NAME" --remote --file schema.sql --yes >/dev/null
+# New columns: one statement at a time, so a column that already exists doesn't stop the rest.
+grep -E '^ALTER TABLE' migrations.sql | while IFS= read -r stmt; do
+  OUT="$($WRANGLER d1 execute "$NAME" --remote --command "$stmt" --yes 2>&1)" || echo "$OUT" | grep -qi 'duplicate column' || { echo "$OUT" >&2; exit 1; }
+done
 echo "   database ready"
 
 echo "== 2. Deploy"

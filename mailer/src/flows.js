@@ -9,6 +9,7 @@ import {
 import {
   enqueue, layout, letterItems, letterLink, letterStories, sendViaResend, unsubscribeUrl, sentTodayCount,
 } from './email.js';
+import { rememberTimeZone, timeZoneForAddress, nextSendTime } from './timing.js';
 
 export const CONSENT_TEXT = 'Signed up to the email list (form says: By signing up you agree to get our emails)';
 const str = (v, n) => (v == null || v === '' ? null : String(v).slice(0, n));
@@ -84,7 +85,7 @@ export async function syncShopifySubscribers(env) {
     let data;
     try {
       data = await gql(env, `query($q: String!, $after: String){ customers(first: 100, after: $after, sortKey: UPDATED_AT, query: $q){
-          nodes { email firstName updatedAt emailMarketingConsent { marketingState consentUpdatedAt } }
+          nodes { email firstName updatedAt emailMarketingConsent { marketingState consentUpdatedAt } defaultAddress { countryCodeV2 provinceCode } }
           pageInfo { hasNextPage endCursor } } }`,
         { q: `email_marketing_state:SUBSCRIBED${since ? ` updated_at:>'${since}'` : ''}`, after: cursor });
     } catch (e) {
@@ -103,6 +104,10 @@ export async function syncShopifySubscribers(env) {
           VALUES (?, ?, 'subscribed', 'shopify', ?, NULL, ?, ?)`)
         .bind(email, c.firstName || null, 'Subscribed to email marketing in Shopify (e.g. Facebook, Instagram or Shop sign-up)', now(), now()).run();
       added++;
+      if (c.defaultAddress) {
+        const tz = timeZoneForAddress(c.defaultAddress.countryCodeV2, c.defaultAddress.provinceCode);
+        await rememberTimeZone(env, email, { tz, country: c.defaultAddress.countryCodeV2, source: 'address' });
+      }
       // Welcome everyone new; on the first run only those who subscribed in the last 30 days (older subscribers join quietly).
       const optedAt = Date.parse(c.emailMarketingConsent.consentUpdatedAt || c.updatedAt || 0) / 1000;
       if (!first || optedAt > now() - 30 * DAY) {
@@ -120,6 +125,29 @@ export async function syncShopifySubscribers(env) {
   if (!cursor) await setKV(env, 'cust_sync_at', last || new Date().toISOString());
   else if (last) await setKV(env, 'cust_sync_at', last);
   await setKV(env, 'customer_sync', `ok, ${added} added ${new Date().toISOString().slice(0, 16)}`);
+}
+
+/**
+ * Time zones for subscribers we haven't seen in a browser yet: from their Shopify customer address (country, and
+ * state/province for the US, Canada, Australia and Mexico). 40 a run, each subscriber looked up once.
+ */
+export async function backfillTimeZones(env) {
+  const { results } = await env.DB.prepare(`SELECT email FROM subscribers WHERE status = 'subscribed' AND tz IS NULL AND tz_checked IS NULL LIMIT 40`).all();
+  if (!results.length) return;
+  const emails = results.map((r) => r.email);
+  const q = emails.map((e) => `email:"${e.replace(/["\\]/g, '')}"`).join(' OR ');
+  let data;
+  try {
+    data = await gql(env, `query($q: String!){ customers(first: 50, query: $q){ nodes { email defaultAddress { countryCodeV2 provinceCode } } } }`, { q });
+  } catch (e) { console.error('tz backfill', e); return; }
+  for (const c of data.customers.nodes) {
+    const email = cleanEmail(c.email);
+    if (!email || !c.defaultAddress) continue;
+    const tz = timeZoneForAddress(c.defaultAddress.countryCodeV2, c.defaultAddress.provinceCode);
+    await rememberTimeZone(env, email, { tz, country: c.defaultAddress.countryCodeV2, source: 'address' });
+  }
+  const marks = emails.map(() => '?').join(',');
+  await env.DB.prepare(`UPDATE subscribers SET tz_checked = ? WHERE email IN (${marks})`).bind(now(), ...emails).run();
 }
 
 /**
@@ -260,15 +288,16 @@ export async function mayEmail(env, email, flow) {
  *  - e with c = 1: newsletter form with the consent box ticked (src = footer/popup/...), or a signed-in
  *    customer whose Shopify account accepts marketing (src = account). Subscribes them.
  */
-export async function recordEvent(env, body, ip = null) {
+export async function recordEvent(env, body, ip = null, where = {}) {
   const cid = typeof body.cid === 'string' ? body.cid.slice(0, 64) : null;
   if (!cid) return null;
   const email = cleanEmail(body.e);
   const firstName = str(body.fn, 60);
   let job = null;
   if (email && Number(body.c) === 1) {
-    const source = ['account', 'footer', 'popup', 'homepage', 'password', 'newsletter'].includes(body.src) ? body.src : 'newsletter';
+    const source = ['account', 'footer', 'popup', 'homepage', 'password', 'newsletter', 'wishlist'].includes(body.src) ? body.src : 'newsletter';
     job = await subscribe(env, { email, firstName, source, page: str(body.pg, 300), ip });
+    await rememberTimeZone(env, email, { ...where, source: 'browser' });
     // Only browsers that gave consent are linked to an email, so their activity can personalise emails.
     await env.DB.prepare(`INSERT INTO clients (client_id, email, first_name, updated_at) VALUES (?, ?, ?, ?)
         ON CONFLICT(client_id) DO UPDATE SET email = excluded.email, first_name = COALESCE(excluded.first_name, clients.first_name), updated_at = excluded.updated_at`)
@@ -281,11 +310,35 @@ export async function recordEvent(env, body, ip = null) {
     if (row) await env.DB.prepare(`INSERT INTO events (client_id, email, type, handle, at) VALUES (?, ?, 'emailclick', ?, ?)`).bind(cid, row.email, str(body.pg, 200) || '', now()).run();
   }
   const type = ['view', 'cart', 'wishlist', 'unwishlist'].includes(body.t) ? body.t : null;
-  if (!type || !body.h) return job;
+  if (!type) return job;
+  // Shopify's add-to-bag reply has no product handle, so bag adds arrive with only the product id: look it up.
+  const handle = body.h ? String(body.h).slice(0, 200) : await handleForProductId(env, body.p);
+  if (!handle) return job;
   const known = (await env.DB.prepare('SELECT email FROM clients WHERE client_id = ?').bind(cid).first())?.email || null;
   await env.DB.prepare('INSERT INTO events (client_id, email, type, handle, product_id, title, at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .bind(cid, known, type, String(body.h).slice(0, 200), str(body.p, 40), str(body.ti, 200), now()).run();
+    .bind(cid, known, type, handle, str(body.p, 40), str(body.ti, 200), now()).run();
+  // A subscriber browsing: their browser's time zone is the best guide to when they read email (checked once a day).
+  if (known && where.tz) {
+    const seen = await env.DB.prepare('INSERT OR IGNORE INTO kv (k, v, expires_at) VALUES (?, 1, ?)')
+      .bind(`tzseen:${known}:${new Date().toISOString().slice(0, 10)}`, now() + 2 * DAY).run();
+    if (seen.meta && seen.meta.changes) await rememberTimeZone(env, known, { ...where, source: 'browser' });
+  }
   return job;
+}
+
+/** Product handle for a numeric product id (cached for a week). */
+async function handleForProductId(env, productId) {
+  const id = String(productId || '').replace(/\D/g, '');
+  if (!id) return null;
+  const cached = await env.DB.prepare('SELECT v FROM kv WHERE k = ? AND expires_at > ?').bind(`ph:${id}`, now()).first();
+  if (cached) return cached.v || null;
+  let handle = null;
+  try {
+    const data = await gql(env, 'query($id: ID!){ product(id: $id){ handle } }', { id: `gid://shopify/Product/${id}` });
+    handle = data && data.product ? data.product.handle : null;
+  } catch (e) { console.error('product handle', e); return null; }
+  await env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, ?)').bind(`ph:${id}`, handle || '', now() + 7 * DAY).run();
+  return handle;
 }
 
 function pixelItems(items) {
@@ -301,12 +354,15 @@ function pixelItems(items) {
  * Shopify custom pixel (mailer/pixel.js). Body: { t: 'checkout' | 'order', token, e, fn, total, items, order }
  * Checkouts are only stored for subscribers. A completed checkout always stops its reminders.
  */
-export async function recordPixel(env, body) {
+export async function recordPixel(env, body, where = {}) {
   const token = str(body.token, 100);
   const email = cleanEmail(body.e);
   if (!token) return;
+  await recordFunnel(env, token, body, where);
+  if (body.t === 'alert') return;
   const items = pixelItems(body.items);
   let member = email ? await subscriber(env, email) : null;
+  if (member && member.status === 'subscribed') await rememberTimeZone(env, email, { ...where, source: 'browser' });
   // Ticked "Email me with news and offers" at checkout: that's consent, so they join the list
   // (and get checkout reminders) even if they never used a sign-up form.
   if (email && body.am === true && body.t === 'checkout' && !(member && member.status === 'subscribed')) {
@@ -341,6 +397,57 @@ export async function recordPixel(env, body) {
     .bind(orderId, email, str(body.fn, 60) || member.first_name, verified ? verified.totalCents : null, JSON.stringify(handles), verified ? 1 : 0, now()).run();
   await enqueue(env, { email, flow: 'postpurchase', dedupe: `postpurchase:${orderId}`, priority: 3,
     data: { firstName: str(body.fn, 60) || member.first_name, handles }, sendAfter: now() + 7 * DAY });
+}
+
+/** Rough device and browser from the user agent, for the checkout report. */
+function deviceOf(ua) {
+  const u = String(ua || '');
+  const device = /iPad|Tablet/i.test(u) ? 'Tablet' : /Mobi|iPhone|Android/i.test(u) ? 'Phone' : u ? 'Computer' : null;
+  const browser = /Instagram/i.test(u) ? 'Instagram app' : /FBAN|FBAV|FB_IAB/i.test(u) ? 'Facebook app' : /TikTok|musical_ly|BytedanceWebview/i.test(u) ? 'TikTok app'
+    : /Snapchat/i.test(u) ? 'Snapchat app' : /EdgA?\//.test(u) ? 'Edge' : /SamsungBrowser/.test(u) ? 'Samsung Internet' : /CriOS|Chrome\//.test(u) ? 'Chrome'
+    : /FxiOS|Firefox\//.test(u) ? 'Firefox' : /Safari\//.test(u) ? 'Safari' : u ? 'Other' : null;
+  return { device, browser };
+}
+
+/**
+ * Checkout report (every checkout, subscriber or not): how far each one got, and what the shopper saw.
+ * Step only ever moves forward. The email is kept so the owner can see who it was; it's never used to send email
+ * (only the subscribers list is, see mayEmail).
+ */
+async function recordFunnel(env, token, body, where) {
+  const t = now();
+  if (body.t === 'alert') {
+    const alert = str(body.alert, 300);
+    if (!alert) return;
+    const row = await env.DB.prepare('SELECT alerts FROM funnel WHERE token = ?').bind(token).first();
+    const list = row && row.alerts ? JSON.parse(row.alerts) : [];
+    if (list.length < 10 && !list.includes(alert)) list.push(alert);
+    if (row) await env.DB.prepare('UPDATE funnel SET alerts = ?, updated_at = ? WHERE token = ?').bind(JSON.stringify(list), t, token).run();
+    else await env.DB.prepare('INSERT INTO funnel (token, started_at, updated_at, step, alerts) VALUES (?, ?, ?, 1, ?)').bind(token, t, t, JSON.stringify(list)).run();
+    return;
+  }
+  const step = Math.max(1, Math.min(6, Number(body.step) || (body.t === 'order' ? 6 : 1)));
+  const { device, browser } = deviceOf(body.ua);
+  const items = (Array.isArray(body.items) ? body.items : []).slice(0, 20).map((l) => ({
+    title: str(l && l.title, 120), variant: str(l && l.variant, 80), qty: Math.max(1, Math.min(99, Number(l && l.qty) || 1)), price: str(l && l.price, 20), handle: str(l && l.handle, 200),
+  }));
+  const name = [str(body.fn, 60), str(body.ln, 60)].filter(Boolean).join(' ') || null;
+  await env.DB.prepare(`INSERT INTO funnel (token, started_at, updated_at, step, email, name, phone, country, region, city, device, browser, visitor_country, visitor_tz,
+        currency, subtotal, shipping, tax, total, discounts, items, referrer, order_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ON CONFLICT(token) DO UPDATE SET updated_at = excluded.updated_at, step = MAX(funnel.step, excluded.step),
+        email = COALESCE(excluded.email, funnel.email), name = COALESCE(excluded.name, funnel.name), phone = COALESCE(excluded.phone, funnel.phone),
+        country = COALESCE(excluded.country, funnel.country), region = COALESCE(excluded.region, funnel.region), city = COALESCE(excluded.city, funnel.city),
+        device = COALESCE(funnel.device, excluded.device), browser = COALESCE(funnel.browser, excluded.browser),
+        visitor_country = COALESCE(funnel.visitor_country, excluded.visitor_country), visitor_tz = COALESCE(funnel.visitor_tz, excluded.visitor_tz),
+        currency = COALESCE(excluded.currency, funnel.currency), subtotal = COALESCE(excluded.subtotal, funnel.subtotal),
+        shipping = COALESCE(excluded.shipping, funnel.shipping), tax = COALESCE(excluded.tax, funnel.tax), total = COALESCE(excluded.total, funnel.total),
+        discounts = COALESCE(excluded.discounts, funnel.discounts), items = CASE WHEN excluded.items = '[]' THEN funnel.items ELSE excluded.items END,
+        referrer = COALESCE(funnel.referrer, excluded.referrer), order_id = COALESCE(excluded.order_id, funnel.order_id)`)
+    .bind(token, t, t, step, cleanEmail(body.e), name, str(body.ph, 40), str(body.cc, 2), str(body.pc, 10), str(body.city, 80), device, browser,
+      where.country || null, where.tz || null, str(body.cur, 3), str(body.total, 20), str(body.ship, 20), str(body.tax, 20), str(body.grand, 20),
+      Array.isArray(body.disc) && body.disc.length ? JSON.stringify(body.disc.slice(0, 5).map((d) => String(d).slice(0, 60))) : null,
+      JSON.stringify(items), str(body.ref, 300), body.order ? String(body.order).replace(/\D/g, '').slice(0, 30) : null).run();
 }
 
 /* ======================= Scheduled scans ======================= */
@@ -438,7 +545,7 @@ export async function scanDaily(env) {
   const { ymd, hour } = localParts(env);
   if (hour < 10 || (await getKV(env, 'daily_ran')) === ymd) return;
   await setKV(env, 'daily_ran', ymd);
-  await env.DB.prepare(`DELETE FROM kv WHERE k LIKE 'rl:%' AND expires_at < ?`).bind(now()).run();
+  await env.DB.prepare(`DELETE FROM kv WHERE expires_at IS NOT NULL AND expires_at < ? AND (k LIKE 'rl:%' OR k LIKE 'ph:%' OR k LIKE 'tzseen:%')`).bind(now()).run();
   const vipCents = Number(env.VIP_SPEND_CENTS || 25000);
   const { results: vips } = await env.DB.prepare(
     `SELECT s.email, s.first_name FROM subscribers s JOIN orders o ON o.email = s.email AND o.verified = 1
@@ -806,17 +913,27 @@ export async function drainOutbox(env, { id } = {}) {
   if (!(await sendingReady(env))) return { sent: 0, reason: 'sending not live (switch off or domain not verified)' };
   const budget = Number(env.DAILY_SEND_LIMIT || 95) - (await sentTodayCount(env));
   if (budget <= 0) return { sent: 0, reason: 'daily limit reached' };
+  const batch = Math.min(budget, Number(env.BATCH_SIZE || 6));
+  // More candidates than the batch: some will be held back until a better local time for that person.
   const { results } = id
     ? await env.DB.prepare(`SELECT * FROM sends WHERE status = 'queued' AND id = ?`).bind(id).all()
     : await env.DB.prepare(`SELECT * FROM sends WHERE status = 'queued' AND created_at <= ? ORDER BY priority ASC, created_at ASC LIMIT ?`)
-      .bind(now(), Math.min(budget, Number(env.BATCH_SIZE || 6))).all();
+      .bind(now(), batch * 5).all();
   let sent = 0;
   const quiet = new Map(); // email -> end of their post-order quiet period (looked up once per run)
   for (const job of results) {
+    if (sent >= batch) break;
     const mark = (status, error = null) => env.DB.prepare('UPDATE sends SET status = ?, error = ?, sent_at = ? WHERE id = ?')
       .bind(status, error, now(), job.id).run();
     try {
       if (!(await mayEmail(env, job.email, job.flow))) { await mark('skipped', 'not subscribed'); continue; }
+      // Their local time: newsletters only at 10 am-12 pm or 7-9 pm, reminders never overnight. Otherwise wait.
+      // (Not for an email sent straight after sign-up: they're on the site right now.)
+      if (!id) {
+        const who = await env.DB.prepare('SELECT tz FROM subscribers WHERE email = ?').bind(job.email).first();
+        const at = nextSendTime(env, job.flow, who && who.tz, now());
+        if (at) { await env.DB.prepare('UPDATE sends SET created_at = ? WHERE id = ?').bind(at, job.id).run(); continue; }
+      }
       // One newsletter-style email per person per 20 hours. Time-sensitive emails (checkout and cart reminders,
       // the first welcome, thank-you) only need a 2-hour gap, so a welcome never holds back a checkout reminder.
       const urgent = ['checkout1', 'checkout2', 'cart1', 'cart2', 'welcome1', 'postpurchase'].includes(job.flow);

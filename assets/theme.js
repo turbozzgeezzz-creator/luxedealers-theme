@@ -460,7 +460,12 @@
     }).then(function (res) {
       if (L.cartType === 'page' && !$('#main-cart')) { window.location.href = L.routes.cart; return res; }
       renderSections(res.sections);
-      (res.items || []).forEach(function (it) { beacon({ t: 'cart', h: it.handle, p: String(it.product_id), ti: it.product_title }); });
+      // Shopify's reply has no product handle: use the product page's own when it's the same product (LuxeMail looks up the rest).
+      var pg = $('[data-product-handle]');
+      (res.items || []).forEach(function (it) {
+        var h = it.handle || (pg && pg.dataset.productId === String(it.product_id) ? pg.dataset.productHandle : null);
+        beacon({ t: 'cart', h: h, p: String(it.product_id), ti: it.product_title });
+      });
       var open = $$('.popup.is-open'); open.forEach(closeDrawer);
       openDrawer('CartDrawer', btn);
       announce(L.strings.added);
@@ -778,7 +783,15 @@
     initWishButtons();
     toast(i > -1 ? b.dataset.removedText || 'Removed from wishlist' : b.dataset.addedText || 'Saved to wishlist');
     beacon({ t: i === -1 ? 'wishlist' : 'unwishlist', h: h });
+    // First save by a visitor we can't email yet: open the wishlist once so they see "Keep your wishlist".
+    if (i === -1 && !wishKnown() && $('[data-wish-save]') && !storeGet('luxe:wish-asked', null) && !b.closest('#WishlistDrawer')) {
+      storeSet('luxe:wish-asked', 1);
+      openDrawer('WishlistDrawer', b);
+      setTimeout(renderWishDrawer, 0);
+    }
   });
+  // Someone LuxeMail can already email: a signed-in subscriber, or this browser signed up before.
+  function wishKnown() { return !L.mail || !!L.mail.email || !!storeGet('luxe:signup-email', null); }
   function renderHandles(container, handles, emptyEl) {
     if (!container) return;
     if (!handles.length) { if (emptyEl) emptyEl.hidden = false; container.closest('[data-handle-section]') && (container.closest('[data-handle-section]').hidden = !emptyEl); return; }
@@ -801,6 +814,8 @@
     var handles = wishList();
     if (countEl) countEl.textContent = handles.length ? '(' + handles.length + ')' : '';
     empty.hidden = handles.length > 0;
+    var save = $('[data-wish-save]');
+    if (save) save.hidden = !handles.length || wishKnown();
     if (!handles.length) { listEl.innerHTML = ''; return; }
     var base = L.routes.root.replace(/\/$/, '');
     Promise.all(handles.map(function (h) { return fetchJSON(base + '/products/' + encodeURIComponent(h) + '.js').catch(function () { return null; }); })).then(function (ps) {
@@ -816,6 +831,22 @@
     });
   }
   on(doc, 'click', function (e) { if (e.target.closest('[data-drawer-open="WishlistDrawer"]')) setTimeout(renderWishDrawer, 0); else if (e.target.closest('#WishlistDrawer [data-wish]')) setTimeout(renderWishDrawer, 50); });
+
+  // "Keep your wishlist": joins the email list (the notice under the field says so) and links this browser's saved items to the email.
+  on(doc, 'submit', function (e) {
+    var f = e.target.closest('form[data-wish-save-form]');
+    if (!f) return;
+    e.preventDefault();
+    var input = $('input[type="email"]', f), err = $('[data-wish-save-error]', f), email = input ? input.value.trim() : '';
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { if (err) err.hidden = false; if (input) input.focus(); return; }
+    if (err) err.hidden = true;
+    beacon({ e: email, c: 1, src: 'wishlist' });
+    storeSet('luxe:signup-email', email);
+    storeSet('luxe:popup', { done: true, at: Date.now() });
+    var box = f.closest('[data-wish-save]'), done = $('[data-wish-save-done]');
+    if (box) box.hidden = true;
+    if (done) done.hidden = false;
+  });
 
   /* ---------- Recently viewed ---------- */
   var RV = 'luxe:viewed';
