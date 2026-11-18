@@ -779,6 +779,42 @@
     if (saved === '4') { var b4 = $('[data-grid-cols="4"]'); if (b4) b4.click(); }
   })();
 
+  /* ---------- Card style thumbnails (snippets/card-styles.liquid) ---------- */
+  // Hover (mouse) or tap shows that style in the card's main photo and points the card's links at it.
+  // A second tap on the same style (or a click with a mouse) opens the product with that style selected.
+  function showCardStyle(b) {
+    var card = b.closest('.card'); if (!card) return;
+    var img = $('.card__img--primary', card);
+    if (img) {
+      if (!card.dataset.origSrc) { card.dataset.origSrc = img.currentSrc || img.src; card.dataset.origSrcset = img.getAttribute('srcset') || ''; }
+      img.setAttribute('srcset', b.dataset.srcset); img.src = b.dataset.src;
+      img.classList.remove('has-hover');
+    }
+    card.classList.add('is-styled');
+    $$('[data-card-style]', card).forEach(function (x) { var on = x === b; x.classList.toggle('is-active', on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+    $$('[data-card-link]', card).forEach(function (a) { a.href = b.dataset.href; });
+  }
+  on(doc, 'click', function (e) {
+    var b = e.target.closest('[data-card-style]');
+    if (!b) return;
+    e.preventDefault();
+    // Mouse: the hover already showed it, so a click opens it. Touch: first tap shows it, second tap opens it.
+    if (b.classList.contains('is-active') && lastPointer !== 'mouse' || lastPointer === 'mouse') { window.location.href = b.dataset.href; return; }
+    showCardStyle(b);
+  });
+  on(doc, 'pointerover', function (e) {
+    if (e.pointerType !== 'mouse') return;
+    var b = e.target.closest && e.target.closest('[data-card-style]');
+    if (b && !b.classList.contains('is-active')) showCardStyle(b);
+  });
+  // Warm the larger photo as soon as a finger or mouse lands on a thumbnail, so the swap is instant.
+  var lastPointer = '';
+  on(doc, 'pointerdown', function (e) {
+    lastPointer = e.pointerType || '';
+    var b = e.target.closest && e.target.closest('[data-card-style]');
+    if (b && !b.dataset.warm) { b.dataset.warm = '1'; var i = new Image(); i.srcset = b.dataset.srcset; i.sizes = '50vw'; i.src = b.dataset.src; }
+  });
+
   /* ---------- Wishlist (stored on the shopper's device) ---------- */
   var WISH = 'luxe:wishlist';
   function wishList() { return storeGet(WISH, []); }

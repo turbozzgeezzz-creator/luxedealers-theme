@@ -2404,3 +2404,19 @@ body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; ove
 .eta--pdp { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: #EEF3FF; }
 .eta--bag { font-size: 13px; padding: 2px 0 4px; }
 .eta--bag .icon { width: 16px; height: 16px; }
+
+/* Card style thumbnails (snippets/card-styles.liquid), Nike-style row under the photo, and the "29 styles" label. */
+.card__count { position: absolute; left: 10px; bottom: 10px; z-index: 2; padding: 4px 9px; border-radius: 999px; background: rgba(255,255,255,.92); color: #14213D; font-size: 11px; font-weight: 700; letter-spacing: .02em; pointer-events: none; box-shadow: 0 1px 4px rgba(20,33,61,.12); }
+.card-styles { position: relative; z-index: 2; display: flex; flex-wrap: nowrap; gap: 6px; margin: 2px 0 6px; overflow: hidden; }
+.card-styles::-webkit-scrollbar { display: none; }
+.card-style { flex: 1 1 0; min-width: 0; max-width: 46px; aspect-ratio: 1; height: auto; padding: 0; border: 1.5px solid #E3E8F1; border-radius: 10px; background: #fff; overflow: hidden; cursor: pointer; transition: border-color .2s, transform .2s; }
+.card-style img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card-style:hover { border-color: #9DB3E0; }
+.card-style.is-active { border-color: #1E4FA8; box-shadow: 0 0 0 1px #1E4FA8; }
+.card-style:focus-visible { outline: 2px solid #1E4FA8; outline-offset: 2px; }
+.card-style--more { display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #1E4FA8; text-decoration: none; background: #EEF3FF; border-color: #EEF3FF; }
+.card.is-styled .card__img--hover { opacity: 0 !important; }
+.card.is-styled .card__img--primary { opacity: 1 !important; }
+.card-style--wide { display: none; }
+@media (min-width: 750px) { .card-style--wide { display: block; } a.card-style--wide { display: grid; } .card-style--narrow { display: none; } }
+@media (min-width: 990px) { .card-style { max-width: 48px; } }

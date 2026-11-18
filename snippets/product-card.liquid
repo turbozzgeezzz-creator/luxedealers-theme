@@ -24,6 +24,18 @@
       assign is_new = true
     endif
   endif
+  # The option customers pick a look by (Collection, Style, Color...): the first non-size option with 2+ values.
+  assign style_opt = nil
+  for opt in product.options_with_values
+    assign on2 = opt.name | downcase
+    assign is_size = false
+    if on2 contains 'size'
+      assign is_size = true
+    endif
+    if style_opt == nil and opt.values.size > 1 and is_size == false and on2 != 'title'
+      assign style_opt = opt
+    endif
+  endfor
   assign color_index = nil
   for opt in product.options_with_values
     assign on = opt.name | downcase
@@ -35,7 +47,7 @@
 -%}
 <div class="card" data-pid="{{ product.id }}"{% if extra %} data-extra hidden{% endif %}{% unless reveal == false %} data-reveal{% endunless %}>
   <div class="card__visual">
-  <a class="card__media ratio-{{ ratio }}" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+  <a class="card__media ratio-{{ ratio }}" href="{{ product.url }}" tabindex="-1" aria-hidden="true" data-card-link>
     {%- if img1 -%}
       {%- liquid
         assign primary_class = 'card__img card__img--primary'
@@ -58,6 +70,7 @@
       {%- endif -%}
     {%- endfor -%}
   </a>
+  {%- if style_opt and style_opt.values.size > 1 -%}<span class="card__count">{{ 'products.card_styles_count' | t: count: style_opt.values.size }}</span>{%- endif -%}
   <div class="card__badges">
     {%- if product.available == false -%}
       <span class="badge badge--soldout">{{ 'products.sold_out' | t }}</span>
@@ -84,7 +97,8 @@
   </div>
   <div class="card__body">
     {%- if settings.card_vendor and product.vendor != blank -%}<span class="card__vendor">{{ product.vendor }}</span>{%- endif -%}
-    <h3 class="card__title"><a href="{{ product.url }}">{{ product.title }}</a></h3>
+    {%- if style_opt -%}{% render 'card-styles', product: product, style_opt: style_opt, sizes: sizes %}{%- endif -%}
+    <h3 class="card__title"><a href="{{ product.url }}" data-card-link>{{ product.title }}</a></h3>
     {% render 'price', product: product, show_from: true %}
     {%- comment -%} The real buy-more price (automatic discount at checkout), to encourage a few pieces per order. {%- endcomment -%}
     {%- if settings.qty_2_count > 1 and settings.qty_2_percent > 0 and product.available -%}

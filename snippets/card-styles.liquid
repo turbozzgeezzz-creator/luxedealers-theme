@@ -1,0 +1,38 @@
+{%- comment -%}
+  Style thumbnails under a product card (like Nike's colourway row): the first few styles' own photos, then "+N".
+  Tapping or hovering one swaps the card's main photo to that style (theme.js, [data-card-style]); the card then
+  links straight to that style. Only shown when a product has 2+ styles with their own photos.
+  Uses option_value.variant (no loop over every variant). Thumbnails are ~120px, lazy-loaded.
+  Params: product, style_opt (the option to show), sizes (the card image sizes attribute).
+{%- endcomment -%}
+{%- liquid
+  assign shown = 0
+  assign with_img = 0
+  for val in style_opt.values
+    if val.variant.featured_media
+      assign with_img = with_img | plus: 1
+    endif
+  endfor
+-%}
+{%- if with_img > 1 -%}
+  <div class="card-styles" role="group" aria-label="{{ 'products.card_styles_label' | t: count: style_opt.values.size, title: product.title | escape }}">
+    {%- for val in style_opt.values -%}
+      {%- assign m = val.variant.featured_media -%}
+      {%- if m == blank -%}{%- continue -%}{%- endif -%}
+      {%- if shown == 5 -%}{%- break -%}{%- endif -%}
+      {%- assign shown = shown | plus: 1 -%}
+      {%- capture srcset -%}{{ m | image_url: width: 360 }} 360w, {{ m | image_url: width: 540 }} 540w, {{ m | image_url: width: 720 }} 720w, {{ m | image_url: width: 1000 }} 1000w{%- endcapture -%}
+      <button type="button" class="card-style{% if shown > 3 %} card-style--wide{% endif %}" data-card-style
+        data-href="{{ product.url }}?variant={{ val.variant.id }}" data-srcset="{{ srcset | strip }}" data-src="{{ m | image_url: width: 540 }}"
+        aria-label="{{ style_opt.name | escape }} {{ val | escape }}" aria-pressed="false">
+        {{ m | image_url: width: 120, height: 120, crop: 'center' | image_tag: width: 60, height: 60, loading: 'lazy', alt: '' }}
+      </button>
+    {%- endfor -%}
+    {%- comment -%} Phones show 3 thumbnails, wider screens 5; each gets its own "+N". {%- endcomment -%}
+    {%- assign rest = style_opt.values.size | minus: shown -%}
+    {%- assign narrow_shown = shown -%}{%- if narrow_shown > 3 -%}{%- assign narrow_shown = 3 -%}{%- endif -%}
+    {%- assign rest_narrow = style_opt.values.size | minus: narrow_shown -%}
+    {%- if rest_narrow > 0 -%}<a class="card-style card-style--more card-style--narrow" href="{{ product.url }}" aria-label="{{ 'products.card_styles_more' | t: count: rest_narrow }}">+{{ rest_narrow }}</a>{%- endif -%}
+    {%- if rest > 0 -%}<a class="card-style card-style--more card-style--wide" href="{{ product.url }}" aria-label="{{ 'products.card_styles_more' | t: count: rest }}">+{{ rest }}</a>{%- endif -%}
+  </div>
+{%- endif -%}
