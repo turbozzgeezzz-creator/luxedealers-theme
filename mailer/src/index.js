@@ -10,6 +10,7 @@ import {
 } from './flows.js';
 import { fromRequest } from './timing.js';
 import { funnelHtml, dailyCheckoutReport } from './report.js';
+import { lateOrders, lateHtml, checkLateOrders } from './late.js';
 
 function cors(env, request) {
   const origin = request.headers.get('Origin') || '';
@@ -218,6 +219,16 @@ export default {
       { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
     }
 
+    // Owner-only list of orders running late: /late?key=UNSUB_SECRET
+    if (url.pathname === '/late' && url.searchParams.get('key') === env.UNSUB_SECRET) {
+      const mark = url.searchParams.get('handle'), unmark = url.searchParams.get('unhandle');
+      if (mark && /^#?\w{3,20}$/.test(mark)) await env.DB.prepare('INSERT OR REPLACE INTO kv (k, v, expires_at) VALUES (?, ?, NULL)').bind(`late_handled:#${mark.replace('#', '')}`, (url.searchParams.get('note') || 'Owner is handling it').slice(0, 200)).run();
+      if (unmark && /^#?\w{3,20}$/.test(unmark)) await env.DB.prepare('DELETE FROM kv WHERE k = ?').bind(`late_handled:#${unmark.replace('#', '')}`).run();
+      const html = lateHtml(env, await lateOrders(env), 'Orders running late');
+      return new Response(`<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Late orders</title></head><body style="margin:0;padding:16px;background:#fff;">${html}</body></html>`,
+        { headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Robots-Tag': 'noindex' } });
+    }
+
     if (url.pathname === '/health') {
       const row = await env.DB.prepare(`SELECT
           (SELECT COUNT(*) FROM sends WHERE status = 'queued') AS queued,
@@ -232,14 +243,14 @@ export default {
       const today = new Date().toISOString().slice(0, 10);
       const { results: counts } = await env.DB.prepare(`SELECT k, v FROM kv WHERE k LIKE ?`).bind(`count:%:${today}`).all();
       const todayCounts = Object.fromEntries(counts.map((c) => [c.k.split(':')[1] + '_today_utc', Number(c.v)]));
-      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', shopify_subscriber_sync: await getKV(env, 'customer_sync'), bounce_check: await getKV(env, 'bounce_check'), ...row, ...todayCounts });
+      return json({ ok: true, sending: await sendingReady(env), switch_on: env.SENDING_ENABLED === '1', shopify_subscriber_sync: await getKV(env, 'customer_sync'), bounce_check: await getKV(env, 'bounce_check'), late_orders: await getKV(env, 'late_status'), ...row, ...todayCounts });
     }
 
     return new Response('LuxeMail', { status: 404 });
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, backfillTimeZones, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, dailyCheckoutReport, drainOutbox, checkDeliveries, sendTestsOnce];
+    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, backfillTimeZones, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, dailyCheckoutReport, checkLateOrders, drainOutbox, checkDeliveries, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }

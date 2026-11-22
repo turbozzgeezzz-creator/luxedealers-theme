@@ -30,6 +30,13 @@ TIMEZONE_OFFSET_HOURS = "10"
 DEFAULT_TIMEZONE = "America/Chicago"
 # Countries the store advertises to: the checkout report's main numbers. Other countries are listed separately.
 MAIN_MARKETS = "US,CA,AU,NZ"
+# Late orders (days since the order): not shipped after LATE_SHIP_DAYS = late; past LATE_PROMISE_DAYS (the delivery promise)
+# = the customer gets one update email (and unshipped after LATE_SHIP_DAYS = a "being prepared" email); LATE_URGENT_DAYS = refund or reship now.
+LATE_SHIP_DAYS = "7"
+LATE_PROMISE_DAYS = "21"
+LATE_URGENT_DAYS = "28"
+# Who gets the late-order alerts and the morning summary (comma separated).
+LATE_ALERT_EMAILS = "support@luxedealers.com,connor.austin888@gmail.com"
 DAILY_SEND_LIMIT = "95"
 # Emails per 30-minute run; keeps each run under Cloudflare's free-plan limit of 50 outbound requests.
 BATCH_SIZE = "6"
