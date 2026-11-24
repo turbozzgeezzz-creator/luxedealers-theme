@@ -311,8 +311,14 @@
       {
         "type": "number",
         "id": "shipping_fee_below_threshold",
-        "label": "Shipping fee below the free-shipping amount (store currency)",
-        "info": "Shown in the cart, e.g. 9.95. Must match the rate in Settings > Shipping and delivery."
+        "label": "Shipping fee below the free-shipping amount (old, whole amount)",
+        "info": "Use the cents setting below instead; this one only keeps one decimal place."
+      },
+      {
+        "type": "number",
+        "id": "shipping_fee_cents",
+        "label": "Shipping fee below the free-shipping amount, in cents (store currency)",
+        "info": "e.g. 995 for 9.95. Shown in the cart. Must match the rate in Settings > Shipping and delivery."
       },
       {
         "type": "header",

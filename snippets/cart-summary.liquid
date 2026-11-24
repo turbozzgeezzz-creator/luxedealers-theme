@@ -70,6 +70,9 @@
 <div class="bag-totals">
   {%- liquid
     assign fee = settings.shipping_fee_below_threshold | times: 100
+    if settings.shipping_fee_cents > 0
+      assign fee = settings.shipping_fee_cents
+    endif
   -%}
   <div class="cart-totals"><span>{{ 'cart.shipping' | t }}</span>
     {%- if threshold == 0 or show_bar and remaining <= 0 -%}<span class="bag-totals__free">{{ 'cart.free' | t }}</span>
