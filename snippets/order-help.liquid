@@ -1,0 +1,76 @@
+{%- comment -%}
+  Order help & refunds (/pages/order-help): a problem with an order or a charge, sorted directly with LuxeDealers.
+  Posts to LuxeMail /claim (mailer/src/claims.js), which checks the order number + email, alerts the owners and emails
+  the customer a reference and timeline. Refunds and replacements are approved by hand in Shopify.
+  Pre-fill from links: ?order=451205A&email=...&reason=not_arrived
+{%- endcomment -%}
+{%- assign tt = 'Problem with an order or a charge?' -%}{%- assign te = 'Order help & refunds' -%}{%- assign tx = 'Tell us what happened and we’ll put it right with a refund or a replacement. Most requests are sorted within 2 business days, much faster than a bank dispute.' -%}
+{% render 'page-banner', title: tt, eyebrow: te, text: tx, art: 'parcel' %}
+<section class="section section--flush-top">
+  <div class="container help-req">
+    <ol class="help-req__steps" role="list">
+      <li><strong>1. Tell us</strong><span>Your order number, the email you used and what went wrong.</span></li>
+      <li><strong>2. We reply within 1 business day</strong><span>From the LuxeDealers team at {{ settings.support_email | default: 'support@luxedealers.com' }}.</span></li>
+      <li><strong>3. Refund or replacement</strong><span>Approved refunds are issued within 2 business days and usually show on your statement in 5–10 business days.</span></li>
+    </ol>
+
+    {%- assign claim_endpoint = settings.luxemail_endpoint | replace: '/t', '/claim' -%}
+    <form class="help-req__form" data-help-form data-endpoint="{{ claim_endpoint }}" novalidate>
+      <div class="help-req__row">
+        <div><label class="trk-lookup__label" for="HelpOrder">Order number</label>
+          <input class="field__input" id="HelpOrder" name="o" placeholder="e.g. 451205A" required autocomplete="off" autocapitalize="characters" spellcheck="false"></div>
+        <div><label class="trk-lookup__label" for="HelpEmail">Email used at checkout</label>
+          <input class="field__input" id="HelpEmail" name="e" type="email" placeholder="you@example.com" required autocomplete="email" inputmode="email"></div>
+      </div>
+      <fieldset class="help-req__choices"><legend class="trk-lookup__label">What happened?</legend>
+        <label class="help-chip"><input type="radio" name="r" value="not_arrived" required><span>My order hasn’t arrived</span></label>
+        <label class="help-chip"><input type="radio" name="r" value="damaged"><span>Damaged or faulty</span></label>
+        <label class="help-chip"><input type="radio" name="r" value="wrong"><span>Wrong item, size or colour</span></label>
+        <label class="help-chip"><input type="radio" name="r" value="missing"><span>Something’s missing</span></label>
+        <label class="help-chip"><input type="radio" name="r" value="other"><span>Something else</span></label>
+      </fieldset>
+      <fieldset class="help-req__choices"><legend class="trk-lookup__label">What would you like?</legend>
+        <label class="help-chip"><input type="radio" name="w" value="refund" checked><span>A refund</span></label>
+        <label class="help-chip"><input type="radio" name="w" value="replacement"><span>A replacement</span></label>
+        <label class="help-chip"><input type="radio" name="w" value="help"><span>Just need help</span></label>
+      </fieldset>
+      <label class="trk-lookup__label" for="HelpDetails">Anything else we should know? <span>(optional)</span></label>
+      <textarea class="field__input help-req__details" id="HelpDetails" name="d" rows="4" maxlength="1500" placeholder="For damaged or wrong items, you can send photos by replying to our confirmation email."></textarea>
+      <button type="submit" class="btn btn--gold btn--block">Send to the LuxeDealers team</button>
+      <p class="help-req__fine">This goes to the LuxeDealers customer team, not your bank. It doesn’t affect any rights you have with your bank or card provider.</p>
+      <p class="track__msg" data-help-msg role="status" aria-live="polite"></p>
+    </form>
+    <div class="help-req__done" data-help-done hidden></div>
+  </div>
+</section>
+<script>
+(function () {
+  var form = document.querySelector('[data-help-form]');
+  if (!form) return;
+  var msg = document.querySelector('[data-help-msg]'), done = document.querySelector('[data-help-done]');
+  var q = new URLSearchParams(location.search);
+  if (q.get('order')) form.o.value = q.get('order').replace(/^#/, '');
+  if (q.get('email')) form.e.value = q.get('email');
+  if (q.get('reason')) { var r = form.querySelector('input[name="r"][value="' + q.get('reason').replace(/[^a-z_]/g, '') + '"]'); if (r) r.checked = true; }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var o = form.o.value.trim(), em = form.e.value.trim(), r = form.querySelector('input[name="r"]:checked'), w = form.querySelector('input[name="w"]:checked');
+    if (!o || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { msg.textContent = 'Enter your order number and the email you used at checkout.'; return; }
+    if (!r) { msg.textContent = 'Choose what happened.'; return; }
+    var btn = form.querySelector('button[type="submit"]'); btn.disabled = true; msg.textContent = 'Sending…';
+    fetch(form.dataset.endpoint, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ o: o, e: em, r: r.value, w: w ? w.value : 'help', d: form.d.value }) })
+      .then(function (res) { return res.json().then(function (j) { return { ok: res.ok, status: res.status, j: j }; }); })
+      .then(function (res) {
+        if (res.ok) {
+          form.hidden = true; msg.textContent = '';
+          done.innerHTML = '<h2>Thanks, we’ve got it</h2><p>Your reference is <strong>' + res.j.ref + '</strong>. We’ve emailed you a confirmation and our team will reply within 1 business day.</p><p>' + (res.j.again ? 'We already had a request for this order, so we’ve added your new details to it.' : 'Keep an eye on your inbox (and spam folder) for our reply.') + '</p>';
+          done.hidden = false; done.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else if (res.status === 404) msg.textContent = 'We couldn’t find that order number with that email. Check both match your order confirmation email.';
+        else if (res.status === 429) msg.textContent = 'Too many requests. Please try again in an hour, or email us.';
+        else msg.textContent = 'Something went wrong. Please try again in a minute, or email us.';
+      })
+      .catch(function () { msg.textContent = 'Something went wrong. Please try again in a minute, or email us.'; })
+      .finally(function () { btn.disabled = false; });
+  });
+})();
+</script>

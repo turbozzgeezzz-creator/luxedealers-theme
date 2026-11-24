@@ -819,7 +819,7 @@
         queues[key] = shuffle(all);
       }
       var q = queues[key];
-      for (var i = 0; i < q.length; i++) { if (!used[q[i]]) { var p = q.splice(i, 1)[0]; used[p] = 1; return p; } }
+      for (var i = 0; i < q.length; i++) { if (!used[q[i][0]]) { var p = q.splice(i, 1)[0]; used[p[0]] = 1; return p; } }
       // Every photo in this group has been shown somewhere on the page: start a fresh round.
       used = {}; queues[key] = null; return q.length ? nextFor(key) : null;
     }
@@ -834,14 +834,15 @@
     }
     function swap(img) {
       if (img.dataset.busy || !shown(img)) return;
-      var path = nextFor(img.dataset.pool); if (!path) return;
-      var url = 'https://cdn.shopify.com/s/files/' + path + '?width=' + width(img);
+      var item = nextFor(img.dataset.pool); if (!item) return;
+      var url = 'https://cdn.shopify.com/s/files/' + item[0] + '?width=' + width(img);
       img.dataset.busy = '1';
       var pre = new Image();
       pre.onload = function () {
         img.classList.add('is-fading');
         setTimeout(function () {
           img.removeAttribute('srcset'); img.src = url;
+          if (item[1]) img.dataset.href = (L.routes.root || '/').replace(/\/$/, '') + '/products/' + item[1];
           img.classList.remove('is-fading'); delete img.dataset.busy;
         }, 260);
       };
@@ -864,6 +865,14 @@
     var go = function () { ('requestIdleCallback' in window) ? requestIdleCallback(start, { timeout: 3000 }) : setTimeout(start, 1500); };
     if (document.readyState === 'complete') go(); else on(window, 'load', go);
   })();
+
+  // Clicking a photo card opens the product it's showing right now (no extra downloads: the link comes with the photo).
+  on(doc, 'click', function (e) {
+    var img = e.target.closest && e.target.closest('img.photo-tile[data-href]');
+    if (!img) return;
+    e.preventDefault(); e.stopPropagation();
+    window.location.href = img.dataset.href;
+  }, true);
 
   /* ---------- Card style thumbnails (snippets/card-styles.liquid) ---------- */
   // Hover (mouse) or tap shows that style in the card's main photo and points the card's links at it.

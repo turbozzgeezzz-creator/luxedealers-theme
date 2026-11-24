@@ -12,6 +12,7 @@ import { fromRequest } from './timing.js';
 import { funnelHtml, dailyCheckoutReport } from './report.js';
 // Late-order emails (checkLateOrders) are switched off at the owner's request; the /late page still lists late orders.
 import { lateOrders, lateHtml } from './late.js';
+import { submitClaim } from './claims.js';
 
 function cors(env, request) {
   const origin = request.headers.get('Origin') || '';
@@ -125,6 +126,20 @@ export default {
     }
 
     // Track your order page: order number + email in, shipping progress out (only when both match).
+    // Order help & refunds form (theme: snippets/order-help.liquid).
+    if (url.pathname === '/claim' && request.method === 'POST') {
+      const headers = { ...cors(env, request), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
+      const ip = request.headers.get('CF-Connecting-IP') || '';
+      if (await rateLimited(env, 'claim:' + ip, 6)) return new Response(JSON.stringify({ error: 'busy' }), { status: 429, headers });
+      try {
+        const r = await submitClaim(env, await readBeacon(request));
+        return new Response(JSON.stringify(r.body), { status: r.status, headers });
+      } catch (e) {
+        console.error('claim', e);
+        return new Response(JSON.stringify({ error: 'unavailable' }), { status: 503, headers });
+      }
+    }
+
     if (url.pathname === '/track' && request.method === 'POST') {
       const headers = { ...cors(env, request), 'Content-Type': 'application/json', 'Cache-Control': 'no-store' };
       const body = await readBeacon(request);

@@ -11,6 +11,40 @@
   assign file = 'ph-' | append: ph | append: '.jpg'
   assign ph_alt = alt | default: 'LuxeDealers'
   assign ph_sizes = sizes | default: '(min-width: 990px) 30vw, 60vw'
+  # The product shown in this photo (clicking the photo opens it).
+  assign ph_handle = ''
+  case ph
+    when 'bag'
+      assign ph_handle = 'guc-handbags-4'
+    when 'tote'
+      assign ph_handle = 'goyrd-handbags-1'
+    when 'sneaker'
+      assign ph_handle = 'vl-shoes-2'
+    when 'heel'
+      assign ph_handle = 'dio-high-heels-1'
+    when 'hoodie'
+      assign ph_handle = 'amir-hoodie-4'
+    when 'necklace'
+      assign ph_handle = 'van-che-necklaces-2'
+    when 'ring'
+      assign ph_handle = 'cart-rings-4'
+    when 'diamond'
+      assign ph_handle = 'tiff-earrings-1'
+    when 'watch'
+      assign ph_handle = 'r-watch-5'
+    when 'perfume'
+      assign ph_handle = 'vl-fragrance-1'
+    when 'sunglasses'
+      assign ph_handle = 'tom-sunglasses-1'
+    when 'gift'
+      assign ph_handle = 'ys-wallets-1'
+    when 'envelope'
+      assign ph_handle = 'vl-wallets-2'
+    when 'coupon'
+      assign ph_handle = 'nik-shoes-2'
+    when 'parcel'
+      assign ph_handle = 'prad-crossbody-bags-1'
+  endcase
   # Which photo pool (assets/photo-pool.json) this tile rotates through. 'all' = every category.
   case ph
     when 'bag' or 'tote' or 'parcel'
@@ -37,4 +71,4 @@
       assign pool = 'all'
   endcase
 -%}
-<img src="{{ file | asset_img_url: '600x' }}" srcset="{{ file | asset_img_url: '360x' }} 360w, {{ file | asset_img_url: '600x' }} 600w, {{ file | asset_img_url: '900x' }} 900w" sizes="{{ ph_sizes }}" alt="{{ ph_alt | escape }}" width="900" height="900" class="photo-tile {{ class }}" data-pool="{{ pool }}"{% if eager %} fetchpriority="high"{% else %} loading="lazy" decoding="async"{% endif %}>
+<img src="{{ file | asset_img_url: '600x' }}" srcset="{{ file | asset_img_url: '360x' }} 360w, {{ file | asset_img_url: '600x' }} 600w, {{ file | asset_img_url: '900x' }} 900w" sizes="{{ ph_sizes }}" alt="{{ ph_alt | escape }}" width="900" height="900" class="photo-tile {{ class }}" data-pool="{{ pool }}"{% if ph_handle != blank %} data-href="{{ routes.root_url | append: '/products/' | append: ph_handle | replace: '//', '/' }}"{% endif %}{% if eager %} fetchpriority="high"{% else %} loading="lazy" decoding="async"{% endif %}>

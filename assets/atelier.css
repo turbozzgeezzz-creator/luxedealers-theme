@@ -2462,3 +2462,73 @@ body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; ove
 .coll-hero__art { opacity: 1 !important; }
 .coll-hero .coll-hero__art .photo-tile { padding: 8%; }
 @media (max-width: 749px) { .coll-hero .coll-hero__art { width: 104px !important; } }
+/* Order help & refunds page (snippets/order-help.liquid). */
+.help-req { max-width: 760px; }
+.help-req__steps { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin: 0 0 26px; padding: 0; list-style: none; }
+.help-req__steps li { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px; border-radius: 16px; background: #EEF3FF; font-size: 14px; line-height: 1.45; }
+.help-req__steps strong { color: #13306E; }
+.help-req__steps span { color: var(--c-muted); }
+.help-req__form { display: flex; flex-direction: column; gap: 10px; padding: 22px; border: 1px solid var(--c-border); border-radius: 20px; background: #fff; }
+.help-req__row { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.help-req__row > div { display: flex; flex-direction: column; gap: 6px; }
+.help-req__choices { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 0; padding: 0; border: 0; }
+.help-req__choices legend { width: 100%; margin-bottom: 8px; }
+.help-chip { position: relative; cursor: pointer; }
+.help-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.help-chip span { display: inline-block; padding: 9px 14px; border: 1.5px solid #D6DEEA; border-radius: 999px; font-size: 14px; font-weight: 500; background: #fff; transition: border-color .2s, background .2s; }
+.help-chip input:checked + span { border-color: #1E4FA8; background: #EEF3FF; color: #13306E; font-weight: 600; }
+.help-chip input:focus-visible + span { outline: 2px solid #1E4FA8; outline-offset: 2px; }
+.help-req__details { min-height: 96px; resize: vertical; }
+.help-req__fine { margin: 2px 0 0; font-size: 12px; color: var(--c-muted); text-align: center; }
+.help-req__done { padding: 24px; border-radius: 20px; background: #EEF3FF; }
+.help-req__done h2 { margin: 0 0 8px; }
+
+/* Order help & refunds: cleaner on phones (compact numbered steps, full-width choices, bigger tap targets). */
+@media (max-width: 749px) {
+  .help-req__steps { grid-template-columns: 1fr; gap: 0; margin-bottom: 18px; padding: 6px 0; border-radius: 16px; background: #EEF3FF; }
+  .help-req__steps li { padding: 10px 16px; background: none; border-radius: 0; font-size: 13px; }
+  .help-req__steps li + li { border-top: 1px solid #DCE5F7; }
+  .help-req__form { padding: 16px; border-radius: 18px; gap: 12px; }
+  .help-req__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .help-chip span { display: flex; align-items: center; justify-content: center; min-height: 46px; width: 100%; padding: 8px 10px; text-align: center; font-size: 13px; line-height: 1.25; border-radius: 14px; }
+  .help-req__details { min-height: 84px; }
+  .help-req__form .btn { min-height: 52px; }
+}
+
+/* Order help & refunds: cleaner on phones (compact numbered steps, two-column choices, bigger tap targets). */
+@media (max-width: 749px) {
+  .help-req__steps { grid-template-columns: 1fr; gap: 0; margin-bottom: 18px; padding: 6px 0; border-radius: 16px; background: #EEF3FF; }
+  .help-req__steps li { padding: 10px 16px; background: none; border-radius: 0; font-size: 13px; }
+  .help-req__steps li + li { border-top: 1px solid #DCE5F7; }
+  .help-req__form { padding: 16px; border-radius: 18px; gap: 12px; }
+  .help-req__choices { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .help-chip span { display: flex; align-items: center; justify-content: center; min-height: 46px; width: 100%; padding: 8px 10px; text-align: center; font-size: 13px; line-height: 1.25; border-radius: 14px; }
+  .help-req__details { min-height: 84px; }
+  .help-req__form .btn { min-height: 52px; }
+}
+
+/* Collection and page banners: the photo card fits inside the banner (sized by the banner's height) instead of
+   filling the right side and getting cut off. */
+@media (min-width: 750px) {
+  .coll-hero .coll-hero__art { width: auto !important; height: calc(100% - 40px) !important; max-height: 250px; aspect-ratio: 1; right: 28px !important; left: auto !important; top: 50% !important; bottom: auto !important; transform: translateY(-50%) !important; }
+  .coll-hero .coll-hero__art .photo-tile { width: 100%; height: 100%; }
+}
+
+/* One clear button system: gold on blue tiles, blue on gold tiles, blue on white. Same height and shape everywhere. */
+.tile--noir .btn--light, .tile--onyx .btn--light, .tile--blue .btn--light, .dept:not(.tile--gold):not(.tile--ivory) .btn--light,
+.offers .btn--light, .deal--offer .btn--light { --btn-bg: var(--yellow); --btn-line: var(--yellow); --btn-fg: #14213D; color: #14213D; }
+.tile--gold .btn--gold { --btn-bg: #14213D; --btn-line: #14213D; --btn-fg: #fff; color: #fff; }
+.btn--ghost-light { --btn-bg: transparent; --btn-fg: #fff; --btn-line: rgba(255,255,255,.55); color: #fff; }
+.btn--sm { min-height: 40px; border-radius: 10px; font-weight: 600; }
+
+@media (max-width: 749px) {
+  /* The four small tiles under the main banner: photo on top, text below, so nothing covers the headings. */
+  .promo__tile { display: flex !important; flex-direction: column-reverse; justify-content: flex-end; gap: 10px; min-height: 0 !important; padding: 12px !important; }
+  .promo__tile .tile__art { position: static !important; width: 100% !important; max-width: none; transform: none !important; inset: auto !important; }
+  .promo__tile .tile__art .photo-tile { width: 100%; padding: 10%; border-radius: 14px; box-shadow: none; }
+  .promo__tile .tile__text { position: static; padding: 0 !important; }
+  .promo__tile .tile__title { font-size: 16px !important; line-height: 1.2; margin: 2px 0 8px; }
+  .promo__tile .btn { width: 100%; justify-content: center; }
+  /* The welcome offer already appears in the deals row, the offers band and the footer: hide the extra sign-up block on phones. */
+  [id^="shopify-section-template--"][id$="__signup"] { display: none !important; }
+}

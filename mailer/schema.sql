@@ -46,3 +46,8 @@ CREATE TABLE IF NOT EXISTS funnel (token TEXT PRIMARY KEY, started_at INTEGER, u
   currency TEXT, subtotal TEXT, shipping TEXT, shipping_method TEXT, tax TEXT, total TEXT, discounts TEXT, items TEXT,
   alerts TEXT, landing TEXT, referrer TEXT, order_id TEXT);
 CREATE INDEX IF NOT EXISTS funnel_started ON funnel(started_at);
+
+-- Order help & refund requests from the website form (src/claims.js). Owners decide and act in Shopify.
+CREATE TABLE IF NOT EXISTS claims (id INTEGER PRIMARY KEY AUTOINCREMENT, order_name TEXT, order_id TEXT, email TEXT, reason TEXT, want TEXT,
+  details TEXT, status TEXT DEFAULT 'open', created_at INTEGER);
+CREATE INDEX IF NOT EXISTS claims_order ON claims(order_name, status);
