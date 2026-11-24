@@ -525,7 +525,30 @@
   });
 
   /* ---------- Product form and variants ---------- */
+  // Size buttons always smallest to largest (XS, S ... 5XL; 36M, 36.5M ...; 90 cm, 95 cm ...), even when Shopify keeps a
+  // product's sizes in another order (it can't reorder sizes that only some styles come in).
+  var SIZE_ORDER = ['XXS', 'XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL', '6XL'];
+  function sizeKey(v) {
+    var u = String(v).trim().toUpperCase().replace(/^\d+\s*\/\s*/, '');
+    var i = SIZE_ORDER.indexOf(u);
+    if (i > -1) return [0, i];
+    var n = parseFloat(u);
+    return isNaN(n) ? null : [1, n];
+  }
+  function sortSizeOptions(ctx) {
+    $$('fieldset.option', ctx).forEach(function (fs) {
+      var legend = $('.option__legend', fs);
+      if (!legend || !/size/i.test(legend.textContent)) return;
+      var box = $('.option__values', fs); if (!box) return;
+      var pairs = $$('input[type="radio"]', box).map(function (inp) { return { inp: inp, lab: box.querySelector('label[for="' + inp.id + '"]'), k: sizeKey(inp.value) }; });
+      if (!pairs.length || pairs.some(function (p) { return !p.k || !p.lab; })) return;
+      var sorted = pairs.slice().sort(function (a, b) { return a.k[0] - b.k[0] || a.k[1] - b.k[1]; });
+      if (sorted.every(function (p, i) { return p === pairs[i]; })) return;
+      sorted.forEach(function (p) { box.appendChild(p.inp); box.appendChild(p.lab); });
+    });
+  }
   function initProduct(ctx) {
+    sortSizeOptions(ctx || doc);
     $$('[data-product]', ctx).forEach(function (wrap) {
       if (wrap.dataset.productReady) return;
       wrap.dataset.productReady = '1';

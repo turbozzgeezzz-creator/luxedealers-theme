@@ -1,0 +1,15 @@
+{%- comment -%}
+  Real product photo (white background) used wherever the theme used to show a drawn illustration (lx-*.svg).
+  assets/ph-<name>.jpg: bag, coupon, diamond, envelope, gift, heel, hoodie, necklace, parcel, perfume, ring, sneaker,
+  sunglasses, tote, watch. Params: name ('lx-bag' or 'bag'), class, alt, sizes, eager.
+{%- endcomment -%}
+{%- liquid
+  assign ph = name | remove: 'lx-' | remove: '.svg'
+  if ph == blank or ph == 'none'
+    assign ph = 'bag'
+  endif
+  assign file = 'ph-' | append: ph | append: '.jpg'
+  assign ph_alt = alt | default: 'LuxeDealers'
+  assign ph_sizes = sizes | default: '(min-width: 990px) 30vw, 60vw'
+-%}
+<img src="{{ file | asset_img_url: '600x' }}" srcset="{{ file | asset_img_url: '360x' }} 360w, {{ file | asset_img_url: '600x' }} 600w, {{ file | asset_img_url: '900x' }} 900w" sizes="{{ ph_sizes }}" alt="{{ ph_alt | escape }}" width="900" height="900" class="photo-tile {{ class }}"{% if eager %} fetchpriority="high"{% else %} loading="lazy" decoding="async"{% endif %}>

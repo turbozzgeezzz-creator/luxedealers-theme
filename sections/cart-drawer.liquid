@@ -56,7 +56,7 @@
       {%- else -%}
         <div class="drawer__body">
           <div class="bag-empty">
-            <img src="{{ 'lx-bag.svg' | asset_url }}" alt="Empty shopping bag" width="200" height="200" loading="lazy">
+            {% render 'product-photo', name: 'bag', class: 'bag-empty__img', alt: 'Your bag is empty', sizes: '160px' %}
             <p class="h3">{{ 'cart.empty' | t }}</p>
             <p class="muted">{{ 'cart.empty_sub' | t }}</p>
             <a href="{{ section.settings.empty_link | default: routes.all_products_collection_url }}" class="btn btn--gold">{{ 'cart.continue' | t }}</a>

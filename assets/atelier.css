@@ -2420,3 +2420,30 @@ body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; ove
 .card-style--wide { display: none; }
 @media (min-width: 750px) { .card-style--wide { display: block; } a.card-style--wide { display: grid; } .card-style--narrow { display: none; } }
 @media (min-width: 990px) { .card-style { max-width: 48px; } }
+
+/* Real product photos in place of the old drawn illustrations (snippets/product-photo.liquid): a clean white card
+   that sits on the blue and gold tiles, like a product shot in a magazine. */
+.photo-tile { display: block; width: 100%; height: auto; aspect-ratio: 1; object-fit: contain; background: #fff; border-radius: 22px; padding: 6%; box-sizing: border-box; box-shadow: 0 24px 48px -28px rgba(8, 22, 56, .55), 0 2px 6px rgba(8, 22, 56, .08); }
+.tile__art .photo-tile.tile__img { height: auto; }
+.tile--noir .photo-tile, .popup__side .photo-tile { box-shadow: 0 20px 40px -24px rgba(0, 0, 0, .7); }
+.popup__photo { width: min(220px, 70%); margin: 0 auto 18px; }
+.bag-empty__img { width: 150px; margin: 0 auto 12px; padding: 8%; }
+.post-card__ill.photo-tile, .post-hero__ill.photo-tile { border-radius: inherit; box-shadow: none; padding: 12%; }
+
+/* Photo cards: placement so they never cover text or buttons, and never hang off a tile. */
+.promo-slide .tile__art .photo-tile, .promo__tile .tile__art .photo-tile, .dept .tile__art .photo-tile, .deal--offer .tile__art .photo-tile, .promo__side .tile__art .photo-tile, .coll-hero__art .photo-tile { transform: none; }
+@media (min-width: 990px) {
+  .promo-slide .tile__art { width: min(38%, 400px) !important; right: 6% !important; left: auto !important; top: 50% !important; bottom: auto !important; transform: translateY(-50%) !important; }
+  .promo__tile .tile__art { width: 42% !important; right: 14px !important; bottom: 14px !important; left: auto !important; top: auto !important; transform: none !important; }
+  .promo__side .tile__art { width: 62% !important; top: 18px !important; }
+  .coll-hero__art { width: min(30%, 300px) !important; }
+}
+@media (min-width: 750px) and (max-width: 989px) {
+  .promo-slide .tile__art { width: 40% !important; right: 5% !important; top: 50% !important; bottom: auto !important; left: auto !important; transform: translateY(-50%) !important; }
+  .promo__tile .tile__art { width: 44% !important; right: 12px !important; bottom: 12px !important; }
+}
+@media (max-width: 749px) {
+  .promo-slide .tile__art { width: 36% !important; right: 16px !important; left: auto !important; top: 96px !important; bottom: auto !important; transform: none !important; }
+  .promo__tile .tile__art { width: 46% !important; right: 10px !important; bottom: 10px !important; opacity: 1 !important; }
+  .photo-tile { border-radius: 16px; }
+}

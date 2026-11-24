@@ -36,7 +36,7 @@
       </div>
     </div>
     <div class="post-hero__media">
-      {%- if article.image -%}{{ article.image | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 990px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: article.title }}{%- else -%}<img src="{{ 'lx-diamond.svg' | asset_url }}" alt="" width="600" height="600" class="post-hero__ill">{%- endif -%}
+      {%- if article.image -%}{{ article.image | image_url: width: 1600 | image_tag: widths: '600, 900, 1200, 1600', sizes: '(min-width: 990px) 50vw, 100vw', loading: 'eager', fetchpriority: 'high', alt: article.title }}{%- else -%}{% render 'product-photo', name: 'diamond', class: 'post-hero__ill', alt: '', sizes: '(min-width: 990px) 33vw, 90vw' %}{%- endif -%}
     </div>
   </header>
 
