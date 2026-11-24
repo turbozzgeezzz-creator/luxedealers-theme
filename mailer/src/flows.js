@@ -697,7 +697,7 @@ export const builders = {
       letter: true,
       subject: `Welcome to ${env.BRAND}${d.firstName ? `, ${d.firstName}` : ''}`,
       preheader: 'Thanks for joining. A quick hello from our team.',
-      body: P(hi(d.firstName)) + P(`Thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free worldwide on orders over US$50, every order is tracked, and if anything isn't right we'll refund or reship it.`)
+      body: P(hi(d.firstName)) + P(`Thanks for joining. We hand-pick bags, shoes, clothing and accessories. Shipping is free worldwide on orders over US$100, every order is tracked, and if anything isn't right we'll refund or reship it.`)
         + P(`As a welcome, here's 10% off your first order: <strong>${esc(code)}</strong> (single use, until ${fmtDate(endsAt)}). The button applies it for you.`)
         + letterItems(picks) + letterLink('Start shopping', `${env.STORE_URL}/discount/${code}?redirect=/collections/all`) + SIGN(env),
     };

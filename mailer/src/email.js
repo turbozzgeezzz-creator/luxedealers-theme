@@ -170,7 +170,7 @@ function trustRow(env) {
 <img src="${env.PUBLIC_URL}/icons/trust-${icon}.png" width="44" height="44" alt="" style="display:block;margin:0 auto 8px;border:0;">
 <span style="display:block;font-size:13px;font-weight:800;line-height:1.3;color:${INK};">${title}</span>
 <span style="display:block;margin-top:2px;font-size:12px;line-height:1.4;color:${MUTED};">${sub}</span></td></tr></table></div>`;
-  return `<div style="font-size:0;text-align:center;">${item('truck', 'Free shipping', 'Over US$50, tracked')}${item('shield', 'Secure checkout', 'PayPal, Shop Pay, cards')}${item('refund', 'Refund or reship', 'If something\'s not right')}${item('chat', 'Real people', 'Just reply to this email')}</div>`;
+  return `<div style="font-size:0;text-align:center;">${item('truck', 'Free shipping', 'Over US$100, tracked')}${item('shield', 'Secure checkout', 'Shop Pay, Apple Pay, cards')}${item('refund', 'Refund or reship', 'If something\'s not right')}${item('chat', 'Real people', 'Just reply to this email')}</div>`;
 }
 
 /** Full email: header, banner, body, store promises, footer with social icons and unsubscribe. */

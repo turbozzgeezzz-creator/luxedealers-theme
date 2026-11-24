@@ -312,8 +312,7 @@
         "type": "number",
         "id": "shipping_fee_below_threshold",
         "label": "Shipping fee below the free-shipping amount (store currency)",
-        "default": 5.95,
-        "info": "Shown in the cart. Must match the rate in Settings > Shipping and delivery."
+        "info": "Shown in the cart, e.g. 9.95. Must match the rate in Settings > Shipping and delivery."
       },
       {
         "type": "header",
@@ -405,8 +404,7 @@
       {
         "type": "richtext",
         "id": "cart_note_text",
-        "label": "Text under checkout button",
-        "default": ""
+        "label": "Text under checkout button"
       }
     ]
   },

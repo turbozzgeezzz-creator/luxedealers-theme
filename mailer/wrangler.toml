@@ -30,7 +30,7 @@ TIMEZONE_OFFSET_HOURS = "10"
 DEFAULT_TIMEZONE = "America/Chicago"
 # Countries the store advertises to: the checkout report's main numbers. Other countries are listed separately.
 MAIN_MARKETS = "US,CA,AU,NZ"
-# Late orders (days since the order): not shipped after LATE_SHIP_DAYS = late; past LATE_PROMISE_DAYS (the delivery promise)
+# Late orders (the /late page; the alert and customer emails are switched off in src/index.js) (days since the order): not shipped after LATE_SHIP_DAYS = late; past LATE_PROMISE_DAYS (the delivery promise)
 # = the customer gets one update email (and unshipped after LATE_SHIP_DAYS = a "being prepared" email); LATE_URGENT_DAYS = refund or reship now.
 LATE_SHIP_DAYS = "7"
 LATE_PROMISE_DAYS = "21"

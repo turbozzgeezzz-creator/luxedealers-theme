@@ -10,7 +10,8 @@ import {
 } from './flows.js';
 import { fromRequest } from './timing.js';
 import { funnelHtml, dailyCheckoutReport } from './report.js';
-import { lateOrders, lateHtml, checkLateOrders } from './late.js';
+// Late-order emails (checkLateOrders) are switched off at the owner's request; the /late page still lists late orders.
+import { lateOrders, lateHtml } from './late.js';
 
 function cors(env, request) {
   const origin = request.headers.get('Origin') || '';
@@ -250,7 +251,7 @@ export default {
   },
 
   async scheduled(event, env, ctx) {
-    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, backfillTimeZones, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, dailyCheckoutReport, checkLateOrders, drainOutbox, checkDeliveries, sendTestsOnce];
+    const steps = [syncParcels, syncShopifySubscribers, syncShopifyOrders, syncShopifyCheckouts, backfillTimeZones, scanAbandonment, scanDaily, scanFortnightly, scanWeeklyJournal, weeklyReport, dailyCheckoutReport, drainOutbox, checkDeliveries, sendTestsOnce];
     for (const step of steps) {
       try { await step(env); } catch (e) { console.error(step.name, e); }
     }
