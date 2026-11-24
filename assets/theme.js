@@ -802,6 +802,69 @@
     if (saved === '4') { var b4 = $('[data-grid-cols="4"]'); if (b4) b4.click(); }
   })();
 
+  /* ---------- Rotating product photos on banners and tiles (snippets/product-photo.liquid) ---------- */
+  // Each photo card cycles through real white-background product photos of its category (assets/photo-pool.json, ~10 KB,
+  // fetched after the page has loaded). Only cards on screen rotate, each image is fetched at the size it's shown and
+  // only once it's about to appear, and nothing repeats on the page until a category has been shown in full.
+  (function () {
+    if (!L.photoPool || !('IntersectionObserver' in window) || reduceMotion) return;
+    var cards = $$('img.photo-tile[data-pool]');
+    if (!cards.length) return;
+    var pool = null, queues = {}, used = {}, visible = new Set();
+    function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function nextFor(key) {
+      var cats = key === 'all' ? Object.keys(pool) : key.split(',');
+      if (!queues[key] || !queues[key].length) {
+        var all = []; cats.forEach(function (c) { (pool[c] || []).forEach(function (p) { all.push(p); }); });
+        queues[key] = shuffle(all);
+      }
+      var q = queues[key];
+      for (var i = 0; i < q.length; i++) { if (!used[q[i]]) { var p = q.splice(i, 1)[0]; used[p] = 1; return p; } }
+      // Every photo in this group has been shown somewhere on the page: start a fresh round.
+      used = {}; queues[key] = null; return q.length ? nextFor(key) : null;
+    }
+    function width(img) {
+      var w = Math.ceil((img.clientWidth || 300) * Math.min(window.devicePixelRatio || 1, 2) / 120) * 120;
+      return Math.max(240, Math.min(900, w));
+    }
+    function shown(img) {
+      if (document.hidden || !visible.has(img) || !img.offsetParent) return false;
+      var slide = img.closest('.promo-slide');
+      return !slide || slide.classList.contains('is-active');
+    }
+    function swap(img) {
+      if (img.dataset.busy || !shown(img)) return;
+      var path = nextFor(img.dataset.pool); if (!path) return;
+      var url = 'https://cdn.shopify.com/s/files/' + path + '?width=' + width(img);
+      img.dataset.busy = '1';
+      var pre = new Image();
+      pre.onload = function () {
+        img.classList.add('is-fading');
+        setTimeout(function () {
+          img.removeAttribute('srcset'); img.src = url;
+          img.classList.remove('is-fading'); delete img.dataset.busy;
+        }, 260);
+      };
+      pre.onerror = function () { delete img.dataset.busy; };
+      pre.src = url;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { if (en.isIntersecting) visible.add(en.target); else visible.delete(en.target); });
+    }, { threshold: 0.4 });
+    function start() {
+      fetch(L.photoPool, { credentials: 'omit' }).then(function (r) { return r.json(); }).then(function (data) {
+        pool = data;
+        cards.forEach(function (img, i) {
+          io.observe(img);
+          // Staggered timers so the cards don't all change at once.
+          setTimeout(function () { setInterval(function () { swap(img); }, 4200 + Math.random() * 1600); }, 1200 + i * 450);
+        });
+      }).catch(function () {});
+    }
+    var go = function () { ('requestIdleCallback' in window) ? requestIdleCallback(start, { timeout: 3000 }) : setTimeout(start, 1500); };
+    if (document.readyState === 'complete') go(); else on(window, 'load', go);
+  })();
+
   /* ---------- Card style thumbnails (snippets/card-styles.liquid) ---------- */
   // Hover (mouse) or tap shows that style in the card's main photo and points the card's links at it.
   // A second tap on the same style (or a click with a mouse) opens the product with that style selected.

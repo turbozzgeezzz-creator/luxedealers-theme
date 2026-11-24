@@ -2447,3 +2447,18 @@ body .pdp__trust > .pdp__trust-item > span { white-space: normal !important; ove
   .promo__tile .tile__art { width: 46% !important; right: 10px !important; bottom: 10px !important; opacity: 1 !important; }
   .photo-tile { border-radius: 16px; }
 }
+
+/* Rotating photo cards: soft fade between products. */
+.photo-tile { transition: opacity .26s ease, transform 1.2s var(--ease-out); }
+.photo-tile.is-fading { opacity: 0 !important; }
+
+/* Welcome-offer tile: the photo card sits above the text instead of on top of it. */
+.deal--offer { justify-content: flex-start; }
+.deal--offer .tile__art { position: relative !important; top: auto !important; left: auto !important; right: auto !important; bottom: auto !important; transform: none !important; width: min(62%, 280px) !important; margin: 0 auto 6px; z-index: 1; }
+.deal--offer .tile__text { position: relative; z-index: 2; }
+@media (max-width: 749px) { .deal--offer .tile__art { width: min(56%, 220px) !important; } }
+
+/* Page banners: crisp white photo card (no blue tint). */
+.coll-hero__art { opacity: 1 !important; }
+.coll-hero .coll-hero__art .photo-tile { padding: 8%; }
+@media (max-width: 749px) { .coll-hero .coll-hero__art { width: 104px !important; } }

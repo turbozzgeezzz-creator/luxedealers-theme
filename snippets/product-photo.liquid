@@ -11,5 +11,30 @@
   assign file = 'ph-' | append: ph | append: '.jpg'
   assign ph_alt = alt | default: 'LuxeDealers'
   assign ph_sizes = sizes | default: '(min-width: 990px) 30vw, 60vw'
+  # Which photo pool (assets/photo-pool.json) this tile rotates through. 'all' = every category.
+  case ph
+    when 'bag' or 'tote' or 'parcel'
+      assign pool = 'bag'
+    when 'sneaker'
+      assign pool = 'sneaker'
+    when 'heel'
+      assign pool = 'heel'
+    when 'hoodie'
+      assign pool = 'clothing'
+    when 'necklace'
+      assign pool = 'necklace,bracelet'
+    when 'ring' or 'diamond'
+      assign pool = 'earrings,ring,bracelet,necklace'
+    when 'watch'
+      assign pool = 'watch'
+    when 'perfume'
+      assign pool = 'fragrance'
+    when 'sunglasses'
+      assign pool = 'sunglasses,hat,belt'
+    when 'gift' or 'envelope'
+      assign pool = 'wallet,belt,scarf'
+    else
+      assign pool = 'all'
+  endcase
 -%}
-<img src="{{ file | asset_img_url: '600x' }}" srcset="{{ file | asset_img_url: '360x' }} 360w, {{ file | asset_img_url: '600x' }} 600w, {{ file | asset_img_url: '900x' }} 900w" sizes="{{ ph_sizes }}" alt="{{ ph_alt | escape }}" width="900" height="900" class="photo-tile {{ class }}"{% if eager %} fetchpriority="high"{% else %} loading="lazy" decoding="async"{% endif %}>
+<img src="{{ file | asset_img_url: '600x' }}" srcset="{{ file | asset_img_url: '360x' }} 360w, {{ file | asset_img_url: '600x' }} 600w, {{ file | asset_img_url: '900x' }} 900w" sizes="{{ ph_sizes }}" alt="{{ ph_alt | escape }}" width="900" height="900" class="photo-tile {{ class }}" data-pool="{{ pool }}"{% if eager %} fetchpriority="high"{% else %} loading="lazy" decoding="async"{% endif %}>

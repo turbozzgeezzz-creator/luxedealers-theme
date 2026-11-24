@@ -106,6 +106,7 @@
         moneyFormat: {{ shop.money_format | json }},
         currency: {{ cart.currency.iso_code | json }},
         welcome: {{ settings.welcome_code | json }},
+        photoPool: {{ 'photo-pool.json' | asset_url | json }},
         mail: {% if settings.luxemail_endpoint != blank %}{ endpoint: {{ settings.luxemail_endpoint | json }}{% if customer and customer.accepts_marketing %}, email: {{ customer.email | json }}, firstName: {{ customer.first_name | json }}{% endif %} }{% else %}null{% endif %},
         searchStrings: {
           products: {{ 'search.products' | t | json }},
