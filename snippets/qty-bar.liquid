@@ -1,4 +1,5 @@
 {%- comment -%} Buy more, save more progress in the bag (Theme settings > Cart). Counts pieces in the bag. {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign c1 = settings.qty_1_count | default: 0
   assign c2 = settings.qty_2_count | default: 0
@@ -18,15 +19,15 @@
   -%}
   <div class="tier-bar tier-bar--qty">
     <p class="tier-bar__msg">
-      {%- if n < c1 -%}{%- assign more = c1 | minus: n -%}{{ 'cart.qty_need' | t: count: more, percent: settings.qty_1_percent }}
-      {%- elsif c2 > c1 and n < c2 -%}{%- assign more = c2 | minus: n -%}{{ 'cart.qty_next' | t: current: settings.qty_1_percent, count: more, percent: settings.qty_2_percent }}
-      {%- elsif c2 > c1 -%}{{ 'cart.qty_done' | t: percent: settings.qty_2_percent }}
-      {%- else -%}{{ 'cart.qty_done' | t: percent: settings.qty_1_percent }}{%- endif -%}
+      {%- if n < c1 -%}{%- assign more = c1 | minus: n -%}{{ 'cart.qty_need' | t: count: more, percent: qp1 }}
+      {%- elsif c2 > c1 and n < c2 -%}{%- assign more = c2 | minus: n -%}{{ 'cart.qty_next' | t: current: qp1, count: more, percent: qp2 }}
+      {%- elsif c2 > c1 -%}{{ 'cart.qty_done' | t: percent: qp2 }}
+      {%- else -%}{{ 'cart.qty_done' | t: percent: qp1 }}{%- endif -%}
     </p>
     <div class="tier-bar__track" aria-hidden="true">
       <div class="tier-bar__fill" style="width: {{ pct }}%"></div>
-      <span class="tier-bar__mark{% if n >= c1 %} is-hit{% endif %}" style="left: {{ m1 }}%">{{ settings.qty_1_percent }}%</span>
-      {%- if c2 > c1 -%}<span class="tier-bar__mark{% if n >= c2 %} is-hit{% endif %}" style="left: 100%">{{ settings.qty_2_percent }}%</span>{%- endif -%}
+      <span class="tier-bar__mark{% if n >= c1 %} is-hit{% endif %}" style="left: {{ m1 }}%">{{ qp1 }}%</span>
+      {%- if c2 > c1 -%}<span class="tier-bar__mark{% if n >= c2 %} is-hit{% endif %}" style="left: 100%">{{ qp2 }}%</span>{%- endif -%}
     </div>
   </div>
 {%- endif -%}

@@ -6,7 +6,18 @@
   redeemed.
 {%- endcomment -%}
 {%- liquid
+  assign promo_on = false
+  if settings.promo_end != blank and settings.promo_banner != blank
+    assign now_s = 'now' | date: '%s' | plus: 0
+    assign end_s = settings.promo_end | date: '%s' | plus: 0
+    if now_s < end_s
+      assign promo_on = true
+    endif
+  endif
   assign shown = 0
+  if promo_on
+    assign shown = 1
+  endif
   for block in section.blocks
     if block.settings.needs_code and settings.welcome_code == blank and settings.welcome_personal != true
       continue
@@ -24,11 +35,13 @@
 <div class="announcement announcement--usp" role="region" aria-label="{{ 'header.announcements' | t }}">
   <div class="container announcement__inner">
     <ul class="usp-list" role="list" data-rotator="{{ section.settings.speed }}">
+      {%- if promo_on -%}<li class="usp announcement__msg announcement__msg--promo is-active"><a href="{{ routes.all_products_collection_url }}">{% render 'icon', name: 'tag', class: 'icon--sm' %}<span><strong>{{ settings.promo_banner }}</strong></span></a></li>{%- endif -%}
       {%- for block in section.blocks -%}
+        {%- if promo_on and block.settings.needs_qty -%}{%- continue -%}{%- endif -%}
         {%- if block.settings.needs_code and settings.welcome_code == blank and settings.welcome_personal != true -%}{%- continue -%}{%- endif -%}
         {%- if block.settings.needs_tiers and settings.tier_1_spend == 0 -%}{%- continue -%}{%- endif -%}
         {%- if block.settings.needs_qty and settings.qty_1_count < 2 -%}{%- continue -%}{%- endif -%}
-        <li class="usp announcement__msg{% if forloop.first %} is-active{% endif %}" {{ block.shopify_attributes }}>
+        <li class="usp announcement__msg{% if forloop.first and promo_on == false %} is-active{% endif %}" {{ block.shopify_attributes }}>
           {%- capture inner -%}{% render 'icon', name: block.settings.icon, class: 'icon--sm' %}<span>{{ block.settings.text }}</span>{%- endcapture -%}
           {%- if block.settings.link != blank -%}
             <a href="{{ block.settings.link }}"{% if block.settings.opens_popup %} data-open-popup{% endif %}>{{ inner }}</a>

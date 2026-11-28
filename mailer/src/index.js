@@ -203,6 +203,7 @@ export default {
         cart1: { handles: ['chan-handbags-1'] }, wishlist: { handles: ['chan-handbags-1'] },
         fortnight: { theme: url.searchParams.get('theme') || 'new', firstName: 'Sam' },
         journal: { firstName: 'Sam', since: new Date(Date.now() - 14 * 86400000).toISOString() },
+        blackfriday: { firstName: 'Sam', endsAt: '2026-12-01T05:00:00Z' },
       }[flow];
       if (!sample) return new Response('Preview supports: journal, welcome1, welcome2, welcome3, checkout1, checkout2, cart1, cart2, browse, wishlist, postpurchase, nextreminder, vip, winback, fortnight (theme=new|deals|picks|best|blog)', { status: 400 });
       if (flow === 'fortnight' && ['new', 'blog'].includes(sample.theme)) {

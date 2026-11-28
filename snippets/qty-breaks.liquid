@@ -3,6 +3,7 @@
   real automatic discounts in Shopify. Selecting an option sets the quantity added to the bag.
   Params: product, form_id
 {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign c1 = settings.qty_1_count | default: 0
   assign c2 = settings.qty_2_count | default: 0
@@ -11,7 +12,7 @@
 {%- if c1 > 1 and v.available -%}
   <fieldset class="qtyb" data-qty-breaks data-form="{{ form_id }}">
     <legend class="qtyb__title">{% render 'icon', name: 'sparkle', class: 'icon--sm' %} {{ 'products.qty_title' | t }}</legend>
-    {%- capture rows -%}1:0{% if c1 > 1 %},{{ c1 }}:{{ settings.qty_1_percent }}{% endif %}{% if c2 > c1 %},{{ c2 }}:{{ settings.qty_2_percent }}{% endif %}{%- endcapture -%}
+    {%- capture rows -%}1:0{% if c1 > 1 %},{{ c1 }}:{{ qp1 }}{% endif %}{% if c2 > c1 %},{{ c2 }}:{{ qp2 }}{% endif %}{%- endcapture -%}
     {%- assign rows = rows | split: ',' -%}
     {%- for r in rows -%}
       {%- assign parts = r | split: ':' -%}

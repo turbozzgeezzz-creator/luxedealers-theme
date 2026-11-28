@@ -868,6 +868,21 @@ export const builders = {
         + letterLink('Read the journal', `${env.STORE_URL}/blogs/news`) + `<p style="margin:0;">Happy reading,<br>The ${esc(env.BRAND)} team</p>`,
     };
   },
+  // Black Friday / Cyber Monday (multi-buy event). Queued by hand to engaged subscribers; skipped after the event ends.
+  async blackfriday(env, email, d) {
+    if (d.endsAt && Date.parse(d.endsAt) < Date.now() + 3600 * 1000) return null;
+    const picks = (await collectionProducts(env, env.BEST_COLLECTION || 'shop-all', 6)).slice(0, 3);
+    const end = new Date(Date.parse(d.endsAt) - 60000).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', timeZone: 'America/New_York' });
+    return {
+      letter: true,
+      subject: d.firstName ? `${d.firstName}, our Black Friday deal is on` : 'Our Black Friday deal is on',
+      preheader: '20% off 2 items, 25% off 3 or more. Ends Monday.',
+      body: P(hi(d.firstName)) + P(`Our Black Friday deal is on until ${esc(end)} (midnight Eastern):`)
+        + P(`<strong>Buy any 2 items, save 20%</strong><br><strong>Buy 3 or more, save 25%</strong>`)
+        + P(`No code needed. Mix and match anything, and the discount is taken off in your bag. Shipping is free on orders over US$100 and every order is tracked.`)
+        + P('A few customer favourites to start with:') + letterItems(picks) + letterLink('Shop the Black Friday deal', `${env.STORE_URL}/collections/${env.BEST_COLLECTION || 'shop-all'}`) + SIGN(env),
+    };
+  },
   async fortnight(env, email, d) {
     // Each theme still carries its offer (a New arrivals or subscriber code), mentioned in the text.
     const offer = (what) => d.offer ? P(`For subscribers: <strong>${esc(d.offer.code)}</strong> takes 10% off ${what}, until ${fmtDate(d.offer.endsAt)} (once per customer).`) : '';
@@ -906,7 +921,7 @@ export const builders = {
  * With `id`, sends just that one job now (the welcome email, right after sign-up).
  */
 const REMINDERS = ['checkout1', 'checkout2', 'cart1', 'cart2', 'browse'];
-const DROP_WHEN_QUIET = ['fortnight', 'journal', 'browse', 'wishlist', 'cart1', 'cart2', 'welcome2', 'welcome3', 'winback'];
+const DROP_WHEN_QUIET = ['blackfriday', 'fortnight', 'journal', 'browse', 'wishlist', 'cart1', 'cart2', 'welcome2', 'welcome3', 'winback'];
 
 export async function drainOutbox(env, { id } = {}) {
   // Master switch: until the sending domain is approved, jobs stay queued and nothing is sent.

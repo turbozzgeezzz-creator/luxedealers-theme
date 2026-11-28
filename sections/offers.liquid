@@ -2,6 +2,7 @@
   Current offers in one calm band. Every figure comes from Theme settings (Cart > Buy more, save more;
   Welcome offer), so the band only ever shows offers that really apply at checkout.
 {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign s = section.settings
   assign c1 = settings.qty_1_count | default: 0
@@ -23,13 +24,13 @@
         {%- if c1 > 1 -%}
           <li class="offer-item">
             <span class="offer-item__when">{{ 'sections.offers_qty' | t: count: c1 }}</span>
-            <span class="offer-item__fig">{{ settings.qty_1_percent }}% <small>{{ 'sections.offers_off' | t }}</small></span>
+            <span class="offer-item__fig">{{ qp1 }}% <small>{{ 'sections.offers_off' | t }}</small></span>
             <span class="offer-item__note">{{ 'sections.offers_auto' | t: count: c1 }}</span>
           </li>
           {%- if c2 > c1 -%}
             <li class="offer-item">
               <span class="offer-item__when">{{ 'sections.offers_qty_plus' | t: count: c2 }}</span>
-              <span class="offer-item__fig">{{ settings.qty_2_percent }}% <small>{{ 'sections.offers_off' | t }}</small></span>
+              <span class="offer-item__fig">{{ qp2 }}% <small>{{ 'sections.offers_off' | t }}</small></span>
               <span class="offer-item__note">{{ 'sections.offers_mix' | t }}</span>
             </li>
           {%- endif -%}

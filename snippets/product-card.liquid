@@ -2,6 +2,7 @@
   Product card. Params: product, sizes, eager (bool), reveal (bool, default true)
   Badges and stock come from real product data only.
 {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign ratio = settings.card_ratio | default: 'portrait'
   assign sizes = sizes | default: '(min-width: 1200px) 25vw, (min-width: 750px) 33vw, 50vw'
@@ -101,8 +102,8 @@
     <h3 class="card__title"><a href="{{ product.url }}" data-card-link>{{ product.title }}</a></h3>
     {% render 'price', product: product, show_from: true %}
     {%- comment -%} The real buy-more price (automatic discount at checkout), to encourage a few pieces per order. {%- endcomment -%}
-    {%- if settings.qty_2_count > 1 and settings.qty_2_percent > 0 and product.available -%}
-      {%- assign each3 = 100 | minus: settings.qty_2_percent | times: product.price | divided_by: 100 | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}
+    {%- if settings.qty_2_count > 1 and qp2 > 0 and product.available -%}
+      {%- assign each3 = 100 | minus: qp2 | times: product.price | divided_by: 100 | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' -%}
       <p class="card__multi">{{ 'sections.ribbon_each' | t: price: each3, count: settings.qty_2_count }}</p>
     {%- endif -%}
 

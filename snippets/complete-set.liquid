@@ -4,6 +4,7 @@
   Shoppers tap to add, choose an option for each, and add everything at once.
   Totals are the real sum of prices. Params: product, block
 {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign current = product.selected_or_first_available_variant
   assign picks = block.settings.products
@@ -71,7 +72,7 @@
     {{ cards }}
   </div>
   {%- comment -%} The saving shown is the store's buy-more discount (Theme settings > Cart), applied automatically at checkout. {%- endcomment -%}
-  <div class="bset__bar" data-q1="{{ settings.qty_1_count | default: 0 }}" data-p1="{{ settings.qty_1_percent | default: 0 }}" data-q2="{{ settings.qty_2_count | default: 0 }}" data-p2="{{ settings.qty_2_percent | default: 0 }}">
+  <div class="bset__bar" data-q1="{{ settings.qty_1_count | default: 0 }}" data-p1="{{ qp1 | default: 0 }}" data-q2="{{ settings.qty_2_count | default: 0 }}" data-p2="{{ qp2 | default: 0 }}">
     <div class="bset__sum">
       <span class="bset__count"><span data-set-count>1</span> {{ 'bundle.selected' | t }}</span>
       <span class="bset__prices"><s data-set-was hidden></s> <strong data-set-total>{{ current.price | money_with_currency | replace: '.00 ', ' ' | replace: ',00 ', ' ' }}</strong></span>

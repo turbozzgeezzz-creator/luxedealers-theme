@@ -590,5 +590,40 @@
         "label": "Social sharing image"
       }
     ]
+  },
+  {
+    "name": "Sale event",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Shows a sale's multi-buy percents and banner until the end time, then switches back by itself. Create the matching automatic discounts in Shopify (same percents, same end time)."
+      },
+      {
+        "type": "text",
+        "id": "promo_name",
+        "label": "Event name",
+        "default": "Black Friday"
+      },
+      {
+        "type": "text",
+        "id": "promo_end",
+        "label": "Ends (UTC, e.g. 2026-12-01T05:00:00Z)"
+      },
+      {
+        "type": "number",
+        "id": "promo_qty_1_percent",
+        "label": "Percent off for the first multi-buy tier during the event"
+      },
+      {
+        "type": "number",
+        "id": "promo_qty_2_percent",
+        "label": "Percent off for the second multi-buy tier during the event"
+      },
+      {
+        "type": "text",
+        "id": "promo_banner",
+        "label": "Top banner message during the event"
+      }
+    ]
   }
 ]

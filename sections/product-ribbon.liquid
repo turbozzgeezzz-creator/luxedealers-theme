@@ -2,10 +2,11 @@
   A slow-moving ribbon of real products (photo, name, price), with the buy-more price for 3 or more pieces.
   Pauses on hover; shows as a normal swipeable row for visitors who prefer less motion.
 {%- endcomment -%}
+{%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- assign qp1 = qp1 | strip | plus: 0 -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}{%- assign qp2 = qp2 | strip | plus: 0 -%}
 {%- liquid
   assign s = section.settings
   assign c2 = settings.qty_2_count | default: 0
-  assign p2 = settings.qty_2_percent | default: 0
+  assign p2 = qp2 | default: 0
   assign coll = s.collection | default: collections['new-arrivals']
 -%}
 {%- if coll and coll.products_count > 0 -%}
@@ -15,7 +16,7 @@
       {%- if s.eyebrow != blank -%}<span class="ribbon__eyebrow">{{ s.eyebrow }}</span>{%- endif -%}
       <h2 class="ribbon__title">{{ s.heading }}</h2>
     </div>
-    {%- if c2 > 1 -%}<p class="ribbon__deal">{{ 'sections.ribbon_deal' | t: q1: settings.qty_1_count, p1: settings.qty_1_percent, q2: c2, p2: p2 }}</p>{%- endif -%}
+    {%- if c2 > 1 -%}<p class="ribbon__deal">{{ 'sections.ribbon_deal' | t: q1: settings.qty_1_count, p1: qp1, q2: c2, p2: p2 }}</p>{%- endif -%}
     <a class="ribbon__all" href="{{ coll.url }}">{{ 'sections.ribbon_all' | t }} {% render 'icon', name: 'arrow-right', class: 'icon--sm' %}</a>
   </div>
   <div class="ribbon__viewport">

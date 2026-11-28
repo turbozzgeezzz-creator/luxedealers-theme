@@ -1,0 +1,22 @@
+{%- comment -%}
+  The multi-buy discount percent to show right now. Param: n (1 = first tier, 2 = second tier).
+  During a sale event (Theme settings > Sale event, until promo_end) the event's percents are shown instead,
+  matching the Shopify automatic discounts, then it switches back by itself.
+{%- endcomment -%}
+{%- liquid
+  if n == 2
+    assign pct = settings.qty_2_percent
+    assign promo_pct = settings.promo_qty_2_percent
+  else
+    assign pct = settings.qty_1_percent
+    assign promo_pct = settings.promo_qty_1_percent
+  endif
+  if settings.promo_end != blank and promo_pct > 0
+    assign now_s = 'now' | date: '%s' | plus: 0
+    assign end_s = settings.promo_end | date: '%s' | plus: 0
+    if now_s < end_s
+      assign pct = promo_pct
+    endif
+  endif
+  echo pct
+-%}
