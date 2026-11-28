@@ -1,0 +1,26 @@
+{%- comment -%}
+  Sale-event countdown under the header, on every page. Counts down to the real end time (Theme settings > Sale event)
+  and removes itself when it's over (also server-side, so it never shows after the event).
+{%- endcomment -%}
+{%- capture promo_on -%}{% render 'promo-on' %}{%- endcapture -%}
+{%- if promo_on == 'true' -%}
+  {%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}
+  <a class="promo-strip" href="{{ routes.all_products_collection_url }}" data-promo-end="{{ settings.promo_end }}">
+    <span class="promo-strip__name">{{ settings.promo_name | default: 'Sale' | upcase }}</span>
+    <span class="promo-strip__deal">Buy {{ settings.qty_1_count }}, save {{ qp1 | strip }}% · Buy {{ settings.qty_2_count }}+, save {{ qp2 | strip }}%</span>
+    <span class="promo-strip__time">Ends in <strong data-promo-count>{{ 'now' | date: '%s' | minus: 0 }}</strong></span>
+  </a>
+  <script>
+    (function () {
+      var el = document.querySelector('[data-promo-end]'); if (!el) return;
+      var end = Date.parse(el.getAttribute('data-promo-end')), out = el.querySelector('[data-promo-count]');
+      function tick() {
+        var s = Math.floor((end - Date.now()) / 1000);
+        if (!(s > 0)) { el.remove(); return; }
+        var d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60), sec = s % 60;
+        out.textContent = (d ? d + 'd ' : '') + h + 'h ' + (m < 10 ? '0' : '') + m + 'm ' + (sec < 10 ? '0' : '') + sec + 's';
+      }
+      tick(); setInterval(tick, 1000);
+    })();
+  </script>
+{%- endif -%}

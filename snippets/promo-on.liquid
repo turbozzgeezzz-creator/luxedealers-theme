@@ -1,0 +1,6 @@
+{%- comment -%} Outputs "true" while the sale event in Theme settings > Sale event is running (until promo_end). {%- endcomment -%}
+{%- if settings.promo_end != blank -%}
+  {%- assign now_s = 'now' | date: '%s' | plus: 0 -%}
+  {%- assign end_s = settings.promo_end | date: '%s' | plus: 0 -%}
+  {%- if now_s < end_s -%}true{%- endif -%}
+{%- endif -%}

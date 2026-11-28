@@ -139,6 +139,7 @@
     {% render 'splash' %}
 
     {% sections 'header-group' %}
+    {% render 'promo-strip' %}
 
     <main id="MainContent" class="main-content" role="main" tabindex="-1">
       {%- if request.page_type == 'index' -%}<h1 class="visually-hidden">{{ settings.seo_home_title | default: shop.name }}</h1>{%- endif -%}

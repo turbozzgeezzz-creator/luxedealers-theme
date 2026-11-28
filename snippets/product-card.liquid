@@ -80,6 +80,7 @@
     {%- elsif is_new -%}
       <span class="badge badge--new">{{ 'products.new' | t }}</span>
     {%- endif -%}
+    {%- if product.available -%}{%- capture card_promo -%}{% render 'promo-on' %}{%- endcapture -%}{%- if card_promo == 'true' -%}<span class="badge badge--bf">{{ settings.promo_name | default: 'Sale' }}</span>{%- endif -%}{%- endif -%}
   </div>
   <div class="card__wish">
     <button type="button" class="wish-btn" data-wish="{{ product.handle }}" aria-pressed="false" aria-label="{{ 'products.save_wishlist' | t: title: product.title | escape }}" data-added-text="{{ 'products.wish_added' | t }}" data-removed-text="{{ 'products.wish_removed' | t }}">

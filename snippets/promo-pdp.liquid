@@ -1,0 +1,9 @@
+{%- comment -%} Sale-event note on the product page, just above Add to bag. {%- endcomment -%}
+{%- capture promo_on -%}{% render 'promo-on' %}{%- endcapture -%}
+{%- if promo_on == 'true' and product.available -%}
+  {%- capture qp1 -%}{% render 'qty-pct', n: 1 %}{%- endcapture -%}{%- capture qp2 -%}{% render 'qty-pct', n: 2 %}{%- endcapture -%}
+  <div class="promo-pdp">
+    <span class="promo-pdp__tag">{{ settings.promo_name | default: 'Sale' }}</span>
+    <p><strong>Add 1 more item to save {{ qp1 | strip }}%</strong>, or 3+ to save {{ qp2 | strip }}%. Taken off in your bag, no code needed. <span class="promo-pdp__ends">Ends Monday night.</span></p>
+  </div>
+{%- endif -%}
